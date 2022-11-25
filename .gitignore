@@ -41,6 +41,6 @@ vignettes/*.pdf
 .Renviron
 
 # Dll and related
-.dll
-.o
-.so
+*.dll
+*.o
+*.so
