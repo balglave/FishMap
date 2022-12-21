@@ -29,15 +29,40 @@ t_com_i <- vmslogbook_data_2$t
 b_com_i <- vmslogbook_data_2$f
 
 # Covariates
-Cov_x_com <- matrix(data = vmslogbook_data_2$bathy_com, ncol = 1)
+cov_x_com <- matrix(data = vmslogbook_data_2$bathy_com, ncol = 1)
 
-## To delete
-c_com_x <- array(NA,dim = c(nrow(loc_x),nrow(time.step_df),length(unique(vmslogbook_data$f))))
-c_com_x[which(is.na(c_com_x))] <- 0
+# Number of fishing points per cell
+c_com_x <- array(NA,
+                 dim = c(nrow(loc_x),
+                         nrow(time.step_df),
+                         length(unique(vmslogbook_data_2$f))))
+
+for(f_i in 1:length(unique(vmslogbook_data_2$f))){
+  
+  for(t_i in 1:length(unique(vmslogbook_data_2$t))){
+    
+    df_c_com_x <- vmslogbook_data_2 %>%
+      filter(f == f_i & t == t_i) %>%
+      dplyr::select("layer","t") %>%
+      dplyr::group_by(layer,t) %>%
+      count() %>%
+      arrange(t) %>%
+      pivot_wider(id_cols = c("layer"), names_from = "t",values_from = "n") %>%
+      full_join(loc_x[,c("layer","cell")],by = "layer") %>%
+      inner_join(loc_x[,c("layer","cell")]) %>%
+      arrange(cell) %>%
+      ungroup() %>%
+      dplyr::select(-cell,-layer)
+    c_com_x[,t_i,f_i] <- as.matrix(df_c_com_x)
+    
+  }
+  
+}
+
+c_com_x[is.na(c_com_x)] <- 0
 
 ## Mesh objects for commercial data
 A <- inla.spde.make.A(mesh, loc=as.matrix(vmslogbook_data_2[,c("long","lati")] ))
 A <- as( A, "dgTMatrix" )
 Aix_ij_com <- cbind(A@i,A@j)
 Aix_w_com <- A@x
-

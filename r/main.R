@@ -3,11 +3,13 @@
 #----------------------------------------------
 
 ## Packages
-library(raster)
+library(dplyr)
 library(INLA)
+library(ggplot2)
+library(raster)
 library(sf)
 library(stringr)
-library(tidyverse)
+library(tidyr)
 library(TMB)
 
 ## Load data
@@ -21,9 +23,8 @@ data_folder <- paste0("data/",species,"/")
 fitted_data <- "biomass" # "biomass" "presabs"
 
 # Scientific data
-n_survey <- 1 # number of survey
+n_survey <- 1 # number of surveys
 load(paste0(data_folder,"survey_data.Rdata")) # scientific observations
-
 scientific_observation <- "CPUE" # 'CPUE' or 'Density'
 
 load(paste0(data_folder,"bathy_sci.Rdata")) # covariates related to the scientific observations
@@ -50,7 +51,7 @@ vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
 year_start <- 2018
 year_end <- 2018
 year_vec <- year_start:year_end
-month_start <- 9
+month_start <- 10
 month_end <- 12
 month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
@@ -100,12 +101,10 @@ create_mesh <- "from_shapefile"
 # from_data: the mesh will be denser in the areas where there are data
 
 # Mesh parameterization
-k <- 0.5
+k <- 0.75
 Alpha <- 2
 
 load(paste0(data_folder,"study_domain.Rdata"))
-load(paste0(data_folder,"bathy_pred.Rdata"))
-Cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
 
 ## Load domain / mesh / spde object
 source("r/domain_mesh_spde.R")
@@ -122,6 +121,8 @@ if(fitted_data=="presabs"){
   lf_link <- 1 # logit link
 }
 
+load(paste0(data_folder,"bathy_pred.Rdata"))
+cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
 
 ########################################################################################
 ##################### After this point --> need to be cleaned ##########################
@@ -131,17 +132,22 @@ if(fitted_data=="presabs"){
 #-----------
 
 ## Model configuration
-Estimation_model_i <- 1 # 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
-DataObs <- 2
-Samp_process <- 0
-b_constraint <- 2
-biomassAR1 <- T
-sampAR1 <- F
-anisotropy <- F
-lf_link <- 0
-ref_data <- "com"
-EM <- "est_b"
-month_ref <- 1 # reference month
+SE <- 1 # run ADREPORT - 0: no, 1: yes
+data_source <- 1 # 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
+data_obs <- 2 # observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
+samp_process <- 1 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
+b_constraint <- 2 # put constraint on b parameters - 1: b are positive, 2: no constraints
+const_spphab <- 1 # Species-habitat relationship - 1: constant in time
+cov_samp_process <- 0 # covariate in the sampling process - 0: none, 1: covariate in the samplign process
+biomass_temporal <- 1 # Account for temporal correlation in biomass - 0: no, 1: AR1
+sampling_temporal <- 0 # Account for temporal correlation in sampling process - 0: no, 1: AR1
+anisotropy <- 0 # Account for anisotropy
+lf_link <- 0 # link function of the latent field - 0: log (biomass data), 1: logit (presence absence data)
+ref_data <- "com" # reference data - "com": commercial (default) or "sci": scientific
+EM <- "est_b" # "est_b": b is estimated, "fix_b": b is fixed
+month_ref <- 1 # reference month (here January)
+cov_samp_process <- 0 # 0: no covariate in the sampling process, 1: put covariate in the sampling process
+
 xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
 
@@ -173,34 +179,34 @@ dyn.load( dynlib("inst/model") )
 # dyn.unload( dynlib( "inst/model" ) )
 # #-----------
 
-Obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = T )
-Obj$fn( Obj$par )
+obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = T )
+obj$fn( obj$par )
 
 # Parameters boundary for optimization
 Lower <- -50
 Upper <- 50
 
-if(T %in% str_detect(names(Obj$par),"rho_")){
+if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
   
-  Lower <- rep(-50,length(Obj$par))
-  Upper <- rep(50,length(Obj$par))
+  Lower <- rep(-50,length(obj$par))
+  Upper <- rep(50,length(obj$par))
   
-  Lower[which(str_detect(names(Obj$par),"rho_"))] <- -0.99
-  Upper[which(str_detect(names(Obj$par),"rho_"))] <- 0.99
+  Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
+  Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
   
 }
 
-Opt = nlminb( start=Obj$par, objective=Obj$fn, gradient=Obj$gr, lower=Lower, upper=Upper)
-Opt[["diagnostics"]] = data.frame( "Param"=names(Obj$par), "Lower"=-Inf, "Est"=Opt$par, "Upper"=Inf, "gradient"=Obj$gr(Opt$par) )
-Report = Obj$report() # output values
-Converge=Opt$convergence # convergence test
-SD = sdreport(Obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
+opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=1000))
+opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
+report = obj$report() # output values
+converge=opt$convergence # convergence test
+SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
 
 dyn.unload( dynlib( "inst/model" ) )
 
 ## Plot model outputs
 #--------------------
-pred_df <- cbind(loc_x[,c("long","lati")],S_x=Report$S_p[1:nrow(loc_x),]) %>%
+pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
   pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
   mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
   inner_join(time.step_df)
@@ -209,12 +215,13 @@ pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
 
 pred_plot <- ggplot(pred_sf)+
   geom_sf(aes(col=S_x))+
-  scale_color_distiller(palette = "Spectral")# +facet_wrap(.~Year_Month)
+  scale_color_distiller(palette = "Spectral")+
+  facet_wrap(.~Year_Month)
 
 x11();plot(pred_plot)
 
 for(i in 1:3){
-  eta_df <- cbind(loc_x[,c("long","lati")],eta=Report$lambda_p[1:nrow(loc_x),,i]) %>%
+  eta_df <- cbind(loc_x[,c("long","lati")],eta=report$lambda_p[1:nrow(loc_x),,i]) %>%
     pivot_longer(cols = starts_with("eta."),names_to = "t", values_to = "eta") %>%
     mutate(t = as.numeric(str_replace(t,"eta.",""))) %>%
     inner_join(time.step_df)
@@ -223,8 +230,8 @@ for(i in 1:3){
   
   eta_plot <- ggplot(eta_sf)+
     geom_sf(aes(col=log(eta)))+
-    scale_color_distiller(palette = "Spectral")#+facet_wrap(.~Year_Month)
+    scale_color_distiller(palette = "Spectral")+
+    facet_wrap(.~Year_Month)
   
   x11();plot(eta_plot)
-  
 }

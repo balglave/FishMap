@@ -82,8 +82,8 @@ spde <- (inla.spde2.matern(mesh, alpha=Alpha)$param.inla)[c("M0","M1","M2")]
 
 ## Prediction mesh and related spde objects
 mesh_pred <- inla.mesh.create( loc_x[,c('long','lati')] )
-W <- rep(1,nrow(Cov_x_pred))
-W <- c(W,rep(0,mesh_pred$n - nrow(Cov_x_pred)))
+W <- rep(1,nrow(cov_x_pred))
+W <- c(W,rep(0,mesh_pred$n - nrow(cov_x_pred)))
 
 A <- inla.spde.make.A(mesh, loc=as.matrix(loc_x[,c("long","lati")] ))
 A <- as( A, "dgTMatrix" )
