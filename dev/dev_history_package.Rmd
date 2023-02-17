@@ -1,0 +1,150 @@
+---
+title: "Dev history - Package"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE
+  )
+```
+
+In this document, you will find the useful steps/commands to start the development of a package (structure, documentation, ...)
+
+# At the beggining of the developments
+## Set the dev tools
+
+### Add git templates
+
+```{r}
+# GitLab MR and git commit templates
+# lozen::add_git_templates()
+```
+
+### Add kit package
+
+```{r}
+# lozen::add_kit_package(type = c("package", "deliverables"))
+# lozen::add_kit_project()
+```
+
+### Create a `inst` dir
+
+```{r}
+dir.create("inst")
+```
+
+### Hide some files in .Rbuildignore and .gitignore
+
+```{r}
+usethis::use_build_ignore("dev")
+# usethis::use_build_ignore("ci/lib")
+# usethis::use_build_ignore("rsconnect")
+
+usethis::use_git_ignore("docs/")
+# usethis::use_git_ignore("rsconnect/")
+usethis::git_vaccinate()
+usethis::use_git_ignore(c(".DS_Store", ".Rproj.user", ".Rdata", ".Rhistory", ".httr-oauth"))
+```
+
+### Add some required packages
+
+```{r}
+# Pipe ----
+usethis::use_pipe()
+# _Tests ----
+usethis::use_testthat()
+```
+
+### Set the CI
+
+```{r}
+# GitHub Actions ----
+usethis::use_github_action("check-standard")
+# usethis::use_github_action("pkgdown")
+#  _Add remotes::install_github("ThinkR-open/thinkrtemplate") in this action
+# usethis::use_github_action("test-coverage")
+```
+
+## Add general information/documentation about the package
+
+### Update DESCRIPTION
+
+```{r}
+library(desc)
+unlink("DESCRIPTION")
+# Utiliser `lozen::get_author()` pour aider à remplir DESCRIPTION'
+lozen::get_author()
+
+my_desc <- description$new("!new")
+my_desc$set_version("0.0.0.9000")
+my_desc$set(Package = "FishMap")
+my_desc$set(Title = "Spatial-temporal Models For Fish Distributions with 'TMB'")
+my_desc$set(Description = "Combine survey and VMS data to model the distribution of fish using 'TMB' models.")
+my_desc$set(
+  "Authors@R",
+  'c(
+    person("Baptiste", "Alglave", email = "balglave@uw.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0000-0000-0000")),
+    person("Sebastien", "Rochette", email = "sebastien@thinkr.fr", role = c("aut"), comment = c(ORCID = "0000-0002-1565-9313")),
+    person(given = "Swann", family = "Floc\'hlay", role = "aut", email = "swann@thinkr.fr", comment = c(ORCID = "0000-0003-1477-830X")),
+  person(given = "Ifremer", role = "cph")
+)'
+)
+my_desc$set("VignetteBuilder", "knitr")
+my_desc$del("Maintainer")
+my_desc$del("URL")
+my_desc$del("BugReports")
+my_desc$write(file = "DESCRIPTION")
+```
+
+### Licence
+
+```{r}
+# usethis::use_proprietary_license("ThinkR")
+usethis::use_mit_license("Baptiste Alglave")
+```
+
+### README
+
+```{r}
+# usethis::use_readme_rmd()
+```
+
+### NEWS
+
+```{r}
+usethis::use_news_md()
+```
+
+### Code of conduct
+
+```{r}
+usethis::use_code_of_conduct(contact = "balglave@uw.edu")
+```
+
+### Contributing guide
+
+```{r}
+usethis::use_tidy_contributing()
+```
+
+### Package-level documentation
+
+```{r}
+usethis::use_package_doc()
+```
+
+## Tools to help to resolve issues
+
+```{r}
+# Get global variables
+checkhelper::print_globals()
+checkhelper::find_missing_tags()
+# Hexadecimal translation of an accent - if there are notes about non ASCII characters
+stringi::stri_trans_general("é", "hex")
+```
+
