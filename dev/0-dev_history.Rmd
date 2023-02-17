@@ -47,6 +47,7 @@ usethis::use_news_md()
 ```{r, eval=FALSE}
 # Pipe
 usethis::use_pipe()
+usethis::use_data_raw()
 
 # package-level documentation
 usethis::use_package_doc()

@@ -2,12 +2,20 @@ Package: FishMap
 Title: Spatial-temporal Models For Fish Distributions with 'TMB'
 Version: 0.0.0.9000
 Authors@R: c(
-    person("Baptiste", "Alglave", email = "balglave@uw.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0000-0000-0000")),
-    person("Sebastien", "Rochette", email = "sebastien@thinkr.fr", role = c("aut"), comment = c(ORCID = "0000-0002-1565-9313")),
-    person(given = "Swann", family = "Floc'hlay", role = "aut", email = "swann@thinkr.fr", comment = c(ORCID = "0000-0003-1477-830X")),
-  person(given = "Ifremer", role = "cph")
- )
-Description: Combine survey and VMS data to model the distribution of fish using 'TMB' models.
+    person("Baptiste", "Alglave", , "balglave@uw.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0000-0000-0000")),
+    person("Sebastien", "Rochette", , "sebastien@thinkr.fr", role = "aut",
+           comment = c(ORCID = "0000-0002-1565-9313")),
+    person("Swann", "Floc'hlay", , "swann@thinkr.fr", role = "aut",
+           comment = c(ORCID = "0000-0003-1477-830X")),
+    person("Ifremer", role = "cph")
+  )
+Description: Combine survey and VMS data to model the distribution of fish
+    using 'TMB' models.
 License: MIT + file LICENSE
+Imports: 
+    magrittr
+Suggests: 
+    testthat
 Encoding: UTF-8
-VignetteBuilder: knitr
+RoxygenNote: 7.2.2
