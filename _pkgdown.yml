@@ -1,2 +1,4 @@
-template:
-  package: thinkrtemplate
+url: https://balglave.github.io/FishMap
+
+development:
+  mode: auto
