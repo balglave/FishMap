@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![.github/workflows/R-CMD-check](https://github.com/balglave/FishMap/actions/workflows/.github/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/balglave/FishMap/actions/workflows/.github/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/balglave/FishMap/branch/main/graph/badge.svg)](https://app.codecov.io/gh/balglave/FishMap?branch=main)
 <!-- badges: end -->
 
 The goal of FishMap is to …
