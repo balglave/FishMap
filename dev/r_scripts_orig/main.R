@@ -12,28 +12,30 @@ library(stringr)
 library(tidyr)
 library(TMB)
 
+#----- Flat 1 : Data preparation ----
+
 ## Load data
 #-----------
 species <- "Solea_solea" # species of interest
 fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
 # The first one will be taken as reference level in the model
 
-data_folder <- paste0("data/",species,"/")
+data_folder <- here::here("data-raw",species)
 
 fitted_data <- "biomass" # "biomass" "presabs"
 
 # Scientific data
 n_survey <- 1 # number of surveys
-load(paste0(data_folder,"survey_data.Rdata")) # scientific observations
+load(file.path(data_folder,"survey_data.Rdata")) # scientific observations
 scientific_observation <- "CPUE" # 'CPUE' or 'Density'
 
-load(paste0(data_folder,"bathy_sci.Rdata")) # covariates related to the scientific observations
+load(file.path(data_folder,"bathy_sci.Rdata")) # covariates related to the scientific observations
 survey_data$bathy_sci <- bathy_sci
 
 survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
 
 # 'VMS x logbook' data
-load(paste0(data_folder,"vmslogbook_data.Rdata")) # 'vms x logbooks' observations
+load(file.path(data_folder,"vmslogbook_data.Rdata")) # 'vms x logbooks' observations
 
 select_aggreg_level <- paste(fleet,collapse = "|")
 vmslogbook_data <- vmslogbook_data %>%
@@ -41,7 +43,7 @@ vmslogbook_data <- vmslogbook_data %>%
 
 vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
 
-load(paste0(data_folder,"bathy_com.Rdata"))
+load(file.path(data_folder,"bathy_com.Rdata"))
 vmslogbook_data$bathy_com <- bathy_com
 
 vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
@@ -57,10 +59,10 @@ month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
 
 if(time_step == "Month"){
-  
+
   time.step_df <- expand.grid(month_vec,year_vec)
   colnames(time.step_df) <- c("Month","Year")
-  
+
   time.step_df <- time.step_df %>%
     arrange(Year,Month) %>%
     mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
@@ -68,12 +70,12 @@ if(time_step == "Month"){
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Month <- as.character(time.step_df$Month)
-  
+
 }else if(time_step == "Quarter"){
-  
+
   time.step_df <- expand.grid(1:4,all_years)
   colnames(time.step_df) <- c("Quarter","Year")
-  
+
   time.step_df <- time.step_df %>%
     arrange(Year,Quarter) %>%
     mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
@@ -81,7 +83,7 @@ if(time_step == "Month"){
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Quarter <- as.character(time.step_df$Quarter)
-  
+
 }
 
 
@@ -104,16 +106,16 @@ create_mesh <- "from_shapefile"
 k <- 0.75
 Alpha <- 2
 
-load(paste0(data_folder,"study_domain.Rdata"))
+load(file.path(data_folder,"study_domain.Rdata"))
 
 ## Load domain / mesh / spde object
-source("r/domain_mesh_spde.R")
+source(here::here("dev/r_scripts_orig/domain_mesh_spde.R"))
 
 ## Shape scientific data
-source("r/shape_sci_data_st.R")
+source(here::here("dev/r_scripts_orig/shape_sci_data_st.R"))
 
 ## Shape commercial data
-source("r/shape_vmslogbook_data_st.R")
+source(here::here("dev/r_scripts_orig/shape_vmslogbook_data_st.R"))
 
 if(fitted_data=="presabs"){
   y_com_i[which(y_com_i > 0)] <- 1
@@ -121,12 +123,10 @@ if(fitted_data=="presabs"){
   lf_link <- 1 # logit link
 }
 
-load(paste0(data_folder,"bathy_pred.Rdata"))
+load(file.path(data_folder,"bathy_pred.Rdata"))
 cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
 
-########################################################################################
-##################### After this point --> need to be cleaned ##########################
-########################################################################################
+#---------- Flat 2 : Model init and fit ----
 
 ## Fit model
 #-----------
@@ -152,23 +152,25 @@ xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
 
 ## Build Data, Params and Map objects for model fitting
-source("r/build_data_params_map.R")
+source(here::here("dev/r_scripts_orig/build_data_params_map.R"))
 
 # Add link to path
-fixwinpath <- function(){
-  PATH <- Sys.getenv("PATH")
-  PATH <- paste0(R.home(), "/bin/x64;", PATH)
-  PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
-  Sys.setenv(PATH=PATH)
+if (.Platform$OS.type == "windows"){
+  fixwinpath <- function(){
+    PATH <- Sys.getenv("PATH")
+    PATH <- paste0(R.home(), "/bin/x64;", PATH)
+    PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
+    Sys.setenv(PATH=PATH)
+  }
+  fixwinpath()
+  shell("where g++")
+  shell("where gdb")
+  shell("where Rterm")
 }
-fixwinpath()
-shell("where g++")
-shell("where gdb")
-shell("where Rterm")
 
 ## Model compilation
-TMB::compile("inst/model.cpp","-O1 -g",DLLFLAGS="")
-dyn.load( dynlib("inst/model") )
+TMB::compile(here::here("inst/model.cpp"),"-O1 -g",DLLFLAGS="")
+dyn.load( dynlib(here::here("inst/model") ))
 
 ## Fit model
 
@@ -179,7 +181,8 @@ dyn.load( dynlib("inst/model") )
 # dyn.unload( dynlib( "inst/model" ) )
 # #-----------
 
-obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = T )
+obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
+# next line takes a long time ----
 obj$fn( obj$par )
 
 # Parameters boundary for optimization
@@ -187,22 +190,36 @@ Lower <- -50
 Upper <- 50
 
 if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
-  
+
   Lower <- rep(-50,length(obj$par))
   Upper <- rep(50,length(obj$par))
-  
+
   Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
   Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
-  
+
 }
 
+# next line takes a VERY long time ----
 opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=1000))
 opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
+
+#save intermediate opt
+saveRDS(object = opt, file = here::here("data-raw/opt_output.rds"))
+saveRDS(object = obj, file = here::here("data-raw/obj_input.rds"))
+
 report = obj$report() # output values
 converge=opt$convergence # convergence test
+# next line takes a VERY long time ----
 SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
 
-dyn.unload( dynlib( "inst/model" ) )
+#save intermediate opt
+saveRDS(object = report, file = here::here("data-raw/report_output.rds"))
+saveRDS(object = converge, file = here::here("data-raw/converge_output.rds"))
+saveRDS(object = SD, file = here::here("data-raw/sd_output.rds"))
+
+dyn.unload( dynlib( here::here("inst/model" ) ))
+
+#---- Flat 3 : Generate graphs -----
 
 ## Plot model outputs
 #--------------------
@@ -218,20 +235,20 @@ pred_plot <- ggplot(pred_sf)+
   scale_color_distiller(palette = "Spectral")+
   facet_wrap(.~Year_Month)
 
-x11();plot(pred_plot)
+plot(pred_plot)
 
 for(i in 1:3){
   eta_df <- cbind(loc_x[,c("long","lati")],eta=report$lambda_p[1:nrow(loc_x),,i]) %>%
     pivot_longer(cols = starts_with("eta."),names_to = "t", values_to = "eta") %>%
     mutate(t = as.numeric(str_replace(t,"eta.",""))) %>%
     inner_join(time.step_df)
-  
+
   eta_sf <- st_as_sf(eta_df,coords = c("long","lati"))
-  
+
   eta_plot <- ggplot(eta_sf)+
     geom_sf(aes(col=log(eta)))+
     scale_color_distiller(palette = "Spectral")+
     facet_wrap(.~Year_Month)
-  
-  x11();plot(eta_plot)
+
+  plot(eta_plot)
 }

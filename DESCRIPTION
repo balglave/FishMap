@@ -16,7 +16,14 @@ License: MIT + file LICENSE
 Imports: 
     magrittr
 Suggests: 
-    covr,
-    testthat
+    dplyr,
+    ggplot2,
+    INLA,
+    raster,
+    sf,
+    stringr,
+    testthat,
+    tidyr,
+    TMB
 Encoding: UTF-8
 RoxygenNote: 7.2.2

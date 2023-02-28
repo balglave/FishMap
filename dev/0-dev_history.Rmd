@@ -77,8 +77,12 @@ usethis::use_github_action("test-coverage")
 # Simulate package installation
 pkgload::load_all()
 
+# Extract all pakg liste in r_script_orig
+extra_pkg <- attachment::att_from_rscripts(path = c("dev/r_scripts_orig/", "dev/r_scripts_orig/function/"))
+
 # Generate documentation and deal with dependencies
-attachment::att_amend_desc()
+attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)
+#remotes::install_deps(upgrade = "never")
 
 # Check the package
 devtools::check()
