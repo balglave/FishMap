@@ -18,7 +18,7 @@ species <- "Solea_solea" # species of interest
 fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
 # The first one will be taken as reference level in the model
 
-data_folder <- paste0("data/",species,"/")
+data_folder <- paste0("data-raw/",species,"/")
 
 fitted_data <- "biomass" # "biomass" "presabs"
 
@@ -57,10 +57,10 @@ month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
 
 if(time_step == "Month"){
-  
+
   time.step_df <- expand.grid(month_vec,year_vec)
   colnames(time.step_df) <- c("Month","Year")
-  
+
   time.step_df <- time.step_df %>%
     arrange(Year,Month) %>%
     mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
@@ -68,12 +68,12 @@ if(time_step == "Month"){
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Month <- as.character(time.step_df$Month)
-  
+
 }else if(time_step == "Quarter"){
-  
+
   time.step_df <- expand.grid(1:4,all_years)
   colnames(time.step_df) <- c("Quarter","Year")
-  
+
   time.step_df <- time.step_df %>%
     arrange(Year,Quarter) %>%
     mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
@@ -81,7 +81,7 @@ if(time_step == "Month"){
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Quarter <- as.character(time.step_df$Quarter)
-  
+
 }
 
 
@@ -107,13 +107,13 @@ Alpha <- 2
 load(paste0(data_folder,"study_domain.Rdata"))
 
 ## Load domain / mesh / spde object
-source("r/domain_mesh_spde.R")
+source("dev/r_scripts_orig/domain_mesh_spde.R")
 
 ## Shape scientific data
-source("r/shape_sci_data_st.R")
+source("dev/r_scripts_orig/shape_sci_data_st.R")
 
 ## Shape commercial data
-source("r/shape_vmslogbook_data_st.R")
+source("dev/r_scripts_orig/shape_vmslogbook_data_st.R")
 
 if(fitted_data=="presabs"){
   y_com_i[which(y_com_i > 0)] <- 1
@@ -152,7 +152,7 @@ xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
 
 ## Build Data, Params and Map objects for model fitting
-source("r/build_data_params_map.R")
+source("dev/r_scripts_orig/build_data_params_map.R")
 
 # Add link to path
 fixwinpath <- function(){
@@ -187,13 +187,13 @@ Lower <- -50
 Upper <- 50
 
 if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
-  
+
   Lower <- rep(-50,length(obj$par))
   Upper <- rep(50,length(obj$par))
-  
+
   Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
   Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
-  
+
 }
 
 opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=1000))
@@ -225,13 +225,13 @@ for(i in 1:3){
     pivot_longer(cols = starts_with("eta."),names_to = "t", values_to = "eta") %>%
     mutate(t = as.numeric(str_replace(t,"eta.",""))) %>%
     inner_join(time.step_df)
-  
+
   eta_sf <- st_as_sf(eta_df,coords = c("long","lati"))
-  
+
   eta_plot <- ggplot(eta_sf)+
     geom_sf(aes(col=log(eta)))+
     scale_color_distiller(palette = "Spectral")+
     facet_wrap(.~Year_Month)
-  
+
   x11();plot(eta_plot)
 }

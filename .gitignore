@@ -44,3 +44,10 @@ vignettes/*.pdf
 *.dll
 *.o
 *.so
+.Rproj.user
+rsconnect/
+docs
+!.github/*/*
+docs/
+.DS_Store
+.Rdata

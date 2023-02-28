@@ -1,0 +1,12 @@
+^FishMap\.Rproj$
+^\.Rproj\.user$
+^dev$
+^_pkgdown\.yml$
+^pkgdown$
+^ci/lib$
+^\.github$
+^README\.Rmd$
+^LICENSE\.md$
+^CODE_OF_CONDUCT\.md$
+^data-raw$
+^codecov\.yml$
