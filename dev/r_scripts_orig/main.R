@@ -199,7 +199,7 @@ if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
 
 }
 
-opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1))
+opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1,maxit=200))
 opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
 report = obj$report() # output values
 converge=opt$convergence # convergence test
@@ -212,17 +212,33 @@ end_time - start_time
 
 ## Plot model outputs
 #--------------------
-pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
-  pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
-  mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
-  inner_join(time.step_df)
 
-pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+if(nrow(time.step_df)==1){
 
-pred_plot <- ggplot(pred_sf)+
-  geom_sf(aes(col=S_x))+
-  scale_color_distiller(palette = "Spectral")+
-  facet_wrap(.~Year_Month)
+  pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
+    pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
+    mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
+    inner_join(time.step_df)
+
+  pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+
+  pred_plot <- ggplot(pred_sf)+
+    geom_sf(aes(col=S_x))+
+    scale_color_distiller(palette = "Spectral")+
+    facet_wrap(.~Year_Month)
+
+
+}else if(nrow(time.step_df)>1){
+
+  pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),])
+
+  pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+
+  pred_plot <- ggplot(pred_sf)+
+    geom_sf(aes(col=S_x))+
+    scale_color_distiller(palette = "Spectral")
+
+}
 
 x11();plot(pred_plot)
 
