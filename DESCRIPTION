@@ -13,6 +13,7 @@ Authors@R: c(
 Description: Combine survey and VMS data to model the distribution of fish
     using 'TMB' models.
 License: MIT + file LICENSE
+Additional_repositories: https://inla.r-inla-download.org/R/stable
 Imports: 
     magrittr
 Suggests: 
@@ -26,6 +27,5 @@ Suggests:
     testthat,
     tidyr,
     TMB
-Remotes: bioc::Rgraphviz, bioc::graph, url::https://inla.r-inla-download.org/R/stable/src/contrib/INLA_22.12.16.tar.gz
 Encoding: UTF-8
 RoxygenNote: 7.2.2
