@@ -51,8 +51,8 @@ vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
 year_start <- 2018
 year_end <- 2018
 year_vec <- year_start:year_end
-month_start <- 10
-month_end <- 12
+month_start <- 11
+month_end <- 11
 month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
 
@@ -101,7 +101,7 @@ create_mesh <- "from_shapefile"
 # from_data: the mesh will be denser in the areas where there are data
 
 # Mesh parameterization
-k <- 0.75
+k <- 0.25
 Alpha <- 2
 
 load(paste0(data_folder,"study_domain.Rdata"))
@@ -135,7 +135,7 @@ cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
 SE <- 1 # run ADREPORT - 0: no, 1: yes
 data_source <- 1 # 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
 data_obs <- 2 # observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
-samp_process <- 1 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
+samp_process <- 0 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
 b_constraint <- 2 # put constraint on b parameters - 1: b are positive, 2: no constraints
 const_spphab <- 1 # Species-habitat relationship - 1: constant in time
 cov_samp_process <- 0 # covariate in the sampling process - 0: none, 1: covariate in the samplign process
@@ -147,6 +147,7 @@ ref_data <- "com" # reference data - "com": commercial (default) or "sci": scien
 EM <- "est_b" # "est_b": b is estimated, "fix_b": b is fixed
 month_ref <- 1 # reference month (here January)
 cov_samp_process <- 0 # 0: no covariate in the sampling process, 1: put covariate in the sampling process
+compute_sd <- F
 
 xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
@@ -179,6 +180,8 @@ dyn.load( dynlib("inst/model") )
 # dyn.unload( dynlib( "inst/model" ) )
 # #-----------
 
+start_time <- Sys.time()
+
 obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = T )
 obj$fn( obj$par )
 
@@ -196,13 +199,16 @@ if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
 
 }
 
-opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=1000))
+opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1))
 opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
 report = obj$report() # output values
 converge=opt$convergence # convergence test
-SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
+if(compute_sd) SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
 
 dyn.unload( dynlib( "inst/model" ) )
+
+end_time <- Sys.time()
+end_time - start_time
 
 ## Plot model outputs
 #--------------------
