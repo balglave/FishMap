@@ -26,5 +26,6 @@ Suggests:
     testthat,
     tidyr,
     TMB
+Remotes: bioc::Rgraphviz, bioc::graph, url::https://inla.r-inla-download.org/R/stable/src/contrib/INLA_22.12.16.tar.gz
 Encoding: UTF-8
 RoxygenNote: 7.2.2
