@@ -10,3 +10,5 @@
 ^CODE_OF_CONDUCT\.md$
 ^data-raw$
 ^codecov\.yml$
+^inst/model\.so$
+^inst/model\.o$
