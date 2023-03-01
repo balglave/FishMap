@@ -24,6 +24,22 @@ The goal of FishMap is to ...
 
 ## Installation
 
+### Dependencies
+
+You must [install INLA](https://www.r-inla.org/download-install).
+Checkout [INLA doc](https://www.r-inla.org/download-install) to upgrade INLA.
+
+```{r, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
+
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+```
+
+
+### FishMap
+
 You can install the development version of FishMap from [GitHub](https://github.com/) with:
 
 ``` r
