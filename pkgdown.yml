@@ -1,8 +1,9 @@
 pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
-articles: {}
-last_built: 2023-03-01T11:12Z
+articles:
+  execute-main: execute-main.html
+last_built: 2023-03-02T14:46Z
 urls:
   reference: https://balglave.github.io/FishMap/reference
   article: https://balglave.github.io/FishMap/articles
