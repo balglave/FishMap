@@ -20,12 +20,17 @@ Suggests:
     ggplot2,
     here,
     INLA,
+    knitr,
     raster,
+    rmarkdown,
     sf,
     stringr,
     testthat,
+    tictoc,
     tidyr,
     TMB
+VignetteBuilder: 
+    knitr
 Additional_repositories: https://inla.r-inla-download.org/R/stable
 Encoding: UTF-8
 RoxygenNote: 7.2.2

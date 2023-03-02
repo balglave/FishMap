@@ -11,11 +11,15 @@ library(sf)
 library(stringr)
 library(tidyr)
 library(TMB)
+library(tictoc)
 
 #----- Flat 1 : Data preparation ----
 
 ## Load data
 #-----------
+message("Running step 1 -loading data-")
+tic("Step 1 -loading data-")
+
 species <- "Solea_solea" # species of interest
 fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
 # The first one will be taken as reference level in the model
@@ -126,10 +130,15 @@ if(fitted_data=="presabs"){
 load(file.path(data_folder,"bathy_pred.Rdata"))
 cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
 
+# finished step 1 -loading data-
+toc()
+
 #---------- Flat 2 : Model init and fit ----
 
 ## Fit model
 #-----------
+message("Running step 2 -compile model-")
+tic("Step 2 -compile model-")
 
 ## Model configuration
 SE <- 1 # run ADREPORT - 0: no, 1: yes
@@ -172,7 +181,12 @@ if (.Platform$OS.type == "windows"){
 TMB::compile(here::here("inst/model.cpp"),"-O1 -g",DLLFLAGS="")
 dyn.load( dynlib(here::here("inst/model") ))
 
+# finished step 2 -compile model-
+toc()
+
 ## Fit model
+message("Running step 3 -fit model-")
+tic("Step 3 -fit model-")
 
 # ## Debugging
 # source("r/function/MakeADFun_windows_debug.R")
@@ -204,8 +218,11 @@ opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upp
 opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
 
 #save intermediate opt
-saveRDS(object = opt, file = here::here("data-raw/opt_output.rds"))
-saveRDS(object = obj, file = here::here("data-raw/obj_input.rds"))
+if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
+  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
+  saveRDS(object = opt, file = file.path(output_dir, "opt_output.rds"))
+  saveRDS(object = obj, file = file.path(output_dir, "obj_input.rds"))
+}
 
 report = obj$report() # output values
 converge=opt$convergence # convergence test
@@ -213,16 +230,25 @@ converge=opt$convergence # convergence test
 SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
 
 #save intermediate opt
-saveRDS(object = report, file = here::here("data-raw/report_output.rds"))
-saveRDS(object = converge, file = here::here("data-raw/converge_output.rds"))
-saveRDS(object = SD, file = here::here("data-raw/sd_output.rds"))
+if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
+  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
+  saveRDS(object = report, file = file.path(output_dir,"report_output.rds"))
+  saveRDS(object = converge, file = file.path(output_dir, "converge_output.rds"))
+  saveRDS(object = SD, file = file.path(output_dir, "sd_output.rds"))
+}
 
 dyn.unload( dynlib( here::here("inst/model" ) ))
+
+# Finished step 3 - fit model-
+toc()
 
 #---- Flat 3 : Generate graphs -----
 
 ## Plot model outputs
 #--------------------
+message("Running step 4 -plot graphs-")
+tic("Step 4 -plot graphs-")
+
 pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
   pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
   mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
@@ -253,3 +279,6 @@ for(i in 1:3){
   plot(eta_plot)
 
 }
+
+# finished step 4 -plot graph-
+toc()

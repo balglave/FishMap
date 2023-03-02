@@ -51,3 +51,4 @@ docs
 docs/
 .DS_Store
 .Rdata
+inst/doc
