@@ -101,6 +101,7 @@ create_mesh <- "from_shapefile"
 # from_data: the mesh will be denser in the areas where there are data
 
 # Mesh parameterization
+# reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
 k <- 0.25
 Alpha <- 2
 
