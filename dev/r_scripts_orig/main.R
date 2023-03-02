@@ -236,7 +236,6 @@ if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
   output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
   saveRDS(object = report, file = file.path(output_dir,"report_output.rds"))
   saveRDS(object = converge, file = file.path(output_dir, "converge_output.rds"))
-  saveRDS(object = SD, file = file.path(output_dir, "sd_output.rds"))
 }
 
 dyn.unload( dynlib( here::here("inst/model" ) ))
@@ -250,7 +249,7 @@ toc()
 message("Running step 4 -plot graphs-")
 tic("Step 4 -plot graphs-")
 
-if(nrow(time.step_df)==1){
+if(nrow(time.step_df)>1){
 
   pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
     pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
@@ -265,7 +264,7 @@ if(nrow(time.step_df)==1){
     facet_wrap(.~Year_Month)
 
 
-}else if(nrow(time.step_df)>1){
+}else if(nrow(time.step_df)==1){
 
   pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),])
 
@@ -279,21 +278,23 @@ if(nrow(time.step_df)==1){
 
 plot(pred_plot)
 
-for(i in 1:3){
-  eta_df <- cbind(loc_x[,c("long","lati")],eta=report$lambda_p[1:nrow(loc_x),,i]) %>%
-    pivot_longer(cols = starts_with("eta."),names_to = "t", values_to = "eta") %>%
-    mutate(t = as.numeric(str_replace(t,"eta.",""))) %>%
-    inner_join(time.step_df)
+# plot eta if sampling is active
+if (samp_process == 1){
+  for(i in 1:3){
+    eta_df <- cbind(loc_x[,c("long","lati")],eta=report$lambda_p[1:nrow(loc_x),,i]) %>%
+      pivot_longer(cols = starts_with("eta."),names_to = "t", values_to = "eta") %>%
+      mutate(t = as.numeric(str_replace(t,"eta.",""))) %>%
+      inner_join(time.step_df)
 
-  eta_sf <- st_as_sf(eta_df,coords = c("long","lati"))
+    eta_sf <- st_as_sf(eta_df,coords = c("long","lati"))
 
-  eta_plot <- ggplot(eta_sf)+
-    geom_sf(aes(col=log(eta)))+
-    scale_color_distiller(palette = "Spectral")+
-    facet_wrap(.~Year_Month)
+    eta_plot <- ggplot(eta_sf)+
+      geom_sf(aes(col=log(eta)))+
+      scale_color_distiller(palette = "Spectral")+
+      facet_wrap(.~Year_Month)
 
-  plot(eta_plot)
-
+    plot(eta_plot)
+  }
 }
 
 # finished step 4 -plot graph-
