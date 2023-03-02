@@ -57,8 +57,8 @@ vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
 year_start <- 2018
 year_end <- 2018
 year_vec <- year_start:year_end
-month_start <- 10
-month_end <- 12
+month_start <- 11
+month_end <- 11
 month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
 
@@ -107,7 +107,8 @@ create_mesh <- "from_shapefile"
 # from_data: the mesh will be denser in the areas where there are data
 
 # Mesh parameterization
-k <- 0.75
+# reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
+k <- 0.25
 Alpha <- 2
 
 load(file.path(data_folder,"study_domain.Rdata"))
@@ -144,7 +145,7 @@ tic("Step 2 -compile model-")
 SE <- 1 # run ADREPORT - 0: no, 1: yes
 data_source <- 1 # 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
 data_obs <- 2 # observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
-samp_process <- 1 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
+samp_process <- 0 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
 b_constraint <- 2 # put constraint on b parameters - 1: b are positive, 2: no constraints
 const_spphab <- 1 # Species-habitat relationship - 1: constant in time
 cov_samp_process <- 0 # covariate in the sampling process - 0: none, 1: covariate in the samplign process
@@ -156,6 +157,7 @@ ref_data <- "com" # reference data - "com": commercial (default) or "sci": scien
 EM <- "est_b" # "est_b": b is estimated, "fix_b": b is fixed
 month_ref <- 1 # reference month (here January)
 cov_samp_process <- 0 # 0: no covariate in the sampling process, 1: put covariate in the sampling process
+compute_sd <- FALSE
 
 xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
@@ -214,7 +216,7 @@ if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
 }
 
 # next line takes a VERY long time ----
-opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=1000))
+opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
 opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
 
 #save intermediate opt
@@ -227,7 +229,7 @@ if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
 report = obj$report() # output values
 converge=opt$convergence # convergence test
 # next line takes a VERY long time ----
-SD = sdreport(obj,bias.correct=F,ignore.parm.uncertainty=T) # compute standard deviation
+if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
 
 #save intermediate opt
 if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
@@ -243,23 +245,37 @@ dyn.unload( dynlib( here::here("inst/model" ) ))
 toc()
 
 #---- Flat 3 : Generate graphs -----
-
 ## Plot model outputs
 #--------------------
 message("Running step 4 -plot graphs-")
 tic("Step 4 -plot graphs-")
 
-pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
-  pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
-  mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
-  inner_join(time.step_df)
+if(nrow(time.step_df)==1){
 
-pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+  pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
+    pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
+    mutate(t = as.numeric(str_replace(t,"S_x.",""))) %>%
+    inner_join(time.step_df)
 
-pred_plot <- ggplot(pred_sf)+
-  geom_sf(aes(col=S_x))+
-  scale_color_distiller(palette = "Spectral")+
-  facet_wrap(.~Year_Month)
+  pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+
+  pred_plot <- ggplot(pred_sf)+
+    geom_sf(aes(col=S_x))+
+    scale_color_distiller(palette = "Spectral")+
+    facet_wrap(.~Year_Month)
+
+
+}else if(nrow(time.step_df)>1){
+
+  pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),])
+
+  pred_sf <- st_as_sf(pred_df,coords = c("long","lati"))
+
+  pred_plot <- ggplot(pred_sf)+
+    geom_sf(aes(col=S_x))+
+    scale_color_distiller(palette = "Spectral")
+
+}
 
 plot(pred_plot)
 
