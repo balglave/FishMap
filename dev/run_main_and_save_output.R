@@ -3,6 +3,8 @@
 # FISHMAP_UPDATE_OUTPUTS=TRUE
 # FISHMAP_OUTPUT_DIR=path/to/output/dir
 
+# load lib to record execution time
+library(tictoc)
 
 # Set seed to make FishMap run reproducible
 set.seed(29510)
@@ -17,4 +19,6 @@ if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
 } else {message("Running main.R without saving output")}
 
 # run main.R
+tic("run main.R")
 source(here::here("dev/r_scripts_orig/main.R"))
+toc()

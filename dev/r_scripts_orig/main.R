@@ -11,12 +11,14 @@ library(sf)
 library(stringr)
 library(tidyr)
 library(TMB)
+library(tictoc)
 
 #----- Flat 1 : Data preparation ----
 
 ## Load data
 #-----------
-message("loading data...")
+message("Running step 1 -loading data-")
+tic("Step 1 -loading data-")
 
 species <- "Solea_solea" # species of interest
 fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
@@ -128,11 +130,15 @@ if(fitted_data=="presabs"){
 load(file.path(data_folder,"bathy_pred.Rdata"))
 cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
 
+# finished step 1 -loading data-
+toc()
+
 #---------- Flat 2 : Model init and fit ----
 
 ## Fit model
 #-----------
-message("compile model...")
+message("Running step 2 -compile model-")
+tic("Step 2 -compile model-")
 
 ## Model configuration
 SE <- 1 # run ADREPORT - 0: no, 1: yes
@@ -175,8 +181,12 @@ if (.Platform$OS.type == "windows"){
 TMB::compile(here::here("inst/model.cpp"),"-O1 -g",DLLFLAGS="")
 dyn.load( dynlib(here::here("inst/model") ))
 
+# finished step 2 -compile model-
+toc()
+
 ## Fit model
-message("fit model...")
+message("Running step 3 -fit model-")
+tic("Step 3 -fit model-")
 
 # ## Debugging
 # source("r/function/MakeADFun_windows_debug.R")
@@ -229,11 +239,15 @@ if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
 
 dyn.unload( dynlib( here::here("inst/model" ) ))
 
+# Finished step 3 - fit model-
+toc()
+
 #---- Flat 3 : Generate graphs -----
 
 ## Plot model outputs
 #--------------------
-message("plot outputs...")
+message("Running step 4 -plot graphs-")
+tic("Step 4 -plot graphs-")
 
 pred_df <- cbind(loc_x[,c("long","lati")],S_x=report$S_p[1:nrow(loc_x),]) %>%
   pivot_longer(cols = starts_with("S_x."),names_to = "t", values_to = "S_x") %>%
@@ -265,3 +279,6 @@ for(i in 1:3){
   plot(eta_plot)
 
 }
+
+# finished step 4 -plot graph-
+toc()
