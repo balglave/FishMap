@@ -33,9 +33,6 @@ n_survey <- 1 # number of surveys
 load(file.path(data_folder,"survey_data.Rdata")) # scientific observations
 scientific_observation <- "CPUE" # 'CPUE' or 'Density'
 
-load(file.path(data_folder,"bathy_sci.Rdata")) # covariates related to the scientific observations
-survey_data$bathy_sci <- bathy_sci
-
 survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
 
 # 'VMS x logbook' data
@@ -46,9 +43,6 @@ vmslogbook_data <- vmslogbook_data %>%
   filter(str_detect(LE_MET_level6,select_aggreg_level))
 
 vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
-
-load(file.path(data_folder,"bathy_com.Rdata"))
-vmslogbook_data$bathy_com <- bathy_com
 
 vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
 
@@ -128,8 +122,20 @@ if(fitted_data=="presabs"){
   lf_link <- 1 # logit link
 }
 
-load(file.path(data_folder,"bathy_pred.Rdata"))
-cov_x_pred <- matrix(data = bathy_pred[1:nrow(loc_x)], ncol = 1)
+
+## Covariates
+#------------
+# load(file.path(data_folder,"bathy_pred.Rdata"))
+bathy_pred = rep(0,nrow(loc_x))
+cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
+
+# load(file.path(data_folder,"bathy_com.Rdata"))
+bathy_com = rep(0,nrow(vmslogbook_data_2))
+cov_x_com <- matrix(data = bathy_com, ncol = 1)
+
+# load(file.path(data_folder,"bathy_sci.Rdata"))
+bathy_sci = rep(0,nrow(survey_data_2))
+cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
 
 # finished step 1 -loading data-
 toc()

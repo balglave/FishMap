@@ -30,7 +30,6 @@ if(scientific_observation == "CPUE") survey_data_2$Sci.obs_spp <- survey_data_2$
 
 y_sci_i <- survey_data_2$Sci.obs_spp # scientific observation
 t_sci_i <- survey_data_2$t # time step
-cov_x_sci <- matrix(data = survey_data_2$bathy_sci, ncol = 1) # covariates
 
 ## Mesh objects for scientific data
 A <- inla.spde.make.A(mesh, loc=as.matrix(survey_data_2[,c("long","lati")] ))

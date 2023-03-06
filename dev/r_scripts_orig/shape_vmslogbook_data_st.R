@@ -28,9 +28,6 @@ t_com_i <- vmslogbook_data_2$t
 # clusters
 b_com_i <- vmslogbook_data_2$f
 
-# Covariates
-cov_x_com <- matrix(data = vmslogbook_data_2$bathy_com, ncol = 1)
-
 # Number of fishing points per cell
 c_com_x <- array(NA,
                  dim = c(nrow(loc_x),
@@ -38,9 +35,9 @@ c_com_x <- array(NA,
                          length(unique(vmslogbook_data_2$f))))
 
 for(f_i in 1:length(unique(vmslogbook_data_2$f))){
-  
+
   for(t_i in 1:length(unique(vmslogbook_data_2$t))){
-    
+
     df_c_com_x <- vmslogbook_data_2 %>%
       filter(f == f_i & t == t_i) %>%
       dplyr::select("layer","t") %>%
@@ -54,9 +51,9 @@ for(f_i in 1:length(unique(vmslogbook_data_2$f))){
       ungroup() %>%
       dplyr::select(-cell,-layer)
     c_com_x[,t_i,f_i] <- as.matrix(df_c_com_x)
-    
+
   }
-  
+
 }
 
 c_com_x[is.na(c_com_x)] <- 0
