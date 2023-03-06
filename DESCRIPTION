@@ -25,6 +25,7 @@ Suggests:
     rmarkdown,
     sf,
     sp,
+    splancs,
     stringr,
     testthat,
     tictoc,
