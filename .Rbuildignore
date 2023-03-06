@@ -12,3 +12,4 @@
 ^codecov\.yml$
 ^inst/model\.so$
 ^inst/model\.o$
+^docs$

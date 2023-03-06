@@ -70,7 +70,7 @@ usethis::use_github_action("check-standard")
 usethis::use_github_action("pkgdown")
 usethis::use_github_action("test-coverage")
 
-# ignore model files in build
+# ignore data and model files in build
 usethis::use_build_ignore(c("inst/model.so","inst/model.o"))
 ```
 
@@ -87,8 +87,12 @@ extra_pkg <- attachment::att_from_rscripts(path = c("dev/r_scripts_orig/", "dev/
 attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)
 #remotes::install_deps(upgrade = "never")
 
-# Check the package
+# Check the package with FishMap execution
 devtools::check()
+
+# Check the package without FishMap execution
+devtools::check(args = c("--no-vignettes"),
+                 build_args = c("--no-build-vignettes"))
 
 # Add a new flat template
 fusen::add_flat_template("add")
