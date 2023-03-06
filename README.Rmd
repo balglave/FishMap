@@ -51,6 +51,13 @@ remotes::install_github("balglave/FishMap")
 
 Full documentation website on: https://balglave.github.io/FishMap
 
+## Workflow
+
+```{r echo=FALSE}
+knitr::include_graphics("man/figures/FishMap_user.png")
+```
+
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:

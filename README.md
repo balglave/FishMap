@@ -42,6 +42,10 @@ remotes::install_github("balglave/FishMap")
 
 Full documentation website on: <https://balglave.github.io/FishMap>
 
+## Workflow
+
+<img src="man/figures/FishMap_user.png" width="100%" />
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
