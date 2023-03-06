@@ -14,7 +14,8 @@ Description: Combine survey and VMS data to model the distribution of fish
     using 'TMB' models.
 License: MIT + file LICENSE
 Imports: 
-    magrittr,
+    magrittr
+Suggests: 
     dplyr,
     ggplot2,
     here,
