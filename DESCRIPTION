@@ -21,6 +21,7 @@ Imports:
     INLA,
     knitr,
     raster,
+    rgdal,
     rmarkdown,
     sf,
     sp,
