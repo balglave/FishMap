@@ -24,6 +24,7 @@ Suggests:
     raster,
     rmarkdown,
     sf,
+    sp,
     stringr,
     testthat,
     tictoc,
