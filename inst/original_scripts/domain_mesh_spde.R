@@ -14,7 +14,7 @@ gridpolygon_sf <- st_as_sf(gridpolygon)
 raster_to_point <- rasterToPoints(grid)
 datapoint <- SpatialPointsDataFrame(coords=raster_to_point,
                                     data=data.frame(layer = 1:nrow(raster_to_point)),
-                                    proj4string=crs(grid_projection))
+                                    proj4string=sp::CRS(grid_projection))
 datapoint_sf <- st_as_sf(datapoint)
 datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
 
@@ -34,25 +34,25 @@ bound2 <- inla.nonconvex.hull(unique(as.matrix(datapoint_2[,c("long","lati")])),
 
 # create mesh
 if(create_mesh == "from_shapefile"){
-  
+
   mesh <- inla.mesh.2d(
     loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
     boundary=list(bound,bound2),
     max.edge=c(1/k, 2/k), ## mandatory
-    cutoff=0.1/k,crs = inla.CRS(projargs = crs(grid_projection))) ## good to have >0
-  
+    cutoff=0.1/k,crs = inla.CRS(projargs = sp::CRS(grid_projection))) ## good to have >0
+
 }else if(create_mesh == "from_data"){
-  
+
   ptvms_wgs84_sf <- st_as_sf(vmslogbook_data,coords = c("long","lati"),crs=grid_projection)
   ptvms_wgs84_sf_2 <- ptvms_wgs84_sf[st_intersects(ptvms_wgs84_sf,study_domain_sf) %>% lengths > 0,]
   ptvms_wgs84_sf_2 <- st_join(ptvms_wgs84_sf_2,study_domain_sf)
-  
+
   mesh <- inla.mesh.2d(
     as.matrix(st_coordinates(ptvms_wgs84_sf_2)), ## provide locations or domain
     boundary=list(bound,bound2),
     max.edge=c(1/k, 2/k), ## mandatory
     cutoff=0.1/k)
-  
+
 }
 
 ## Anisotropic objects
