@@ -30,6 +30,7 @@ library(stringr)
 library(tidyr)
 library(TMB)
 library(tictoc)
+library(testthat)
 ```
 
 # `main.R`
@@ -39,133 +40,30 @@ This vignette runs a toy example of the FishMap spatio-temporal model. The execu
 
 ## part1: Data preparation
 
-```{r}
-## Load data
-#-----------
-message("Running step 1 -loading data-")
-tictoc::tic("Step 1 -loading data-")
+# fm_load_data
 
-species <- "Solea_solea" # species of interest
-fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
-# The first one will be taken as reference level in the model
+This function Prepare all the necessary output for the model fitting. It will filter and shape the observation data (VMS and scientific). It will generate the spatial mesh for the study domain. All outputs are reported as part of a named list.
+    
 
-data_folder <- system.file(file.path("original_data",species), package = "FishMap") 
-script_folder <- system.file("original_scripts", package = "FishMap") 
+  
 
-fitted_data <- "biomass" # "biomass" "presabs"
+```{r example-fm_load_data}
+# run part1
+fm_data_inputs <- fm_load_data()
 
-# Scientific data
-n_survey <- 1 # number of surveys
-load(file.path(data_folder,"survey_data.Rdata")) # scientific observations
-scientific_observation <- "CPUE" # 'CPUE' or 'Density'
-
-survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
-
-# 'VMS x logbook' data
-load(file.path(data_folder,"vmslogbook_data.Rdata")) # 'vms x logbooks' observations
-
-select_aggreg_level <- paste(fleet,collapse = "|")
-vmslogbook_data <- vmslogbook_data %>%
-  filter(str_detect(LE_MET_level6,select_aggreg_level))
-
-vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
-
-vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
-
-## Time series
-#-------------
-year_start <- 2018
-year_end <- 2018
-year_vec <- year_start:year_end
-month_start <- 11
-month_end <- 11
-month_vec <- month_start:month_end
-time_step <- "Month" # Month or Quarter
-
-if(time_step == "Month"){
-
-  time.step_df <- expand.grid(month_vec,year_vec)
-  colnames(time.step_df) <- c("Month","Year")
-
-  time.step_df <- time.step_df %>%
-    arrange(Year,Month) %>%
-    mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
-    mutate(Year_Month = paste0(Year,"_",Month)) %>%
-    mutate(t = 1:nrow(time.step_df))
-  time.step_df$Year <- as.character(time.step_df$Year)
-  time.step_df$Month <- as.character(time.step_df$Month)
-
-}else if(time_step == "Quarter"){
-
-  time.step_df <- expand.grid(1:4,all_years)
-  colnames(time.step_df) <- c("Quarter","Year")
-
-  time.step_df <- time.step_df %>%
-    arrange(Year,Quarter) %>%
-    mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
-    mutate(Year_Quarter = paste0(Year,"_",Quarter)) %>%
-    mutate(t = 1:nrow(time.step_df))
-  time.step_df$Year <- as.character(time.step_df$Year)
-  time.step_df$Quarter <- as.character(time.step_df$Quarter)
-
+# save part1 outputs
+if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
+  # setup save dir, create it if necessary
+  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
+  if (isFALSE(dir.exists(output_dir))){
+    dir.create(output_dir)
+  }
+  # save output
+  saveRDS(object = fm_data_inputs, file = file.path(output_dir, "part1_output.rds"))
 }
-
-
-## Configure spatial domain
-#--------------------------
-grid_xmin <- -6
-grid_xmax <- 0
-grid_ymin <- 42
-grid_ymax <- 48
-grid_limit <- extent(c(grid_xmin,grid_xmax,grid_ymin,grid_ymax))
-
-grid_projection <- "+proj=longlat +datum=WGS84"
-
-resol <- 0.05 # resolution of the discretization grid
-create_mesh <- "from_shapefile"
-# from_shapefile: the mesh will be more regular on the grid
-# from_data: the mesh will be denser in the areas where there are data
-
-# Mesh parameterization
-# reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
-k <- 0.25
-Alpha <- 2
-
-load(file.path(data_folder,"study_domain.Rdata"))
-
-## Load domain / mesh / spde object
-source(file.path(script_folder,"domain_mesh_spde.R"))
-
-## Shape scientific data
-source(file.path(script_folder,"shape_sci_data_st.R"))
-
-## Shape commercial data
-source(file.path(script_folder,"shape_vmslogbook_data_st.R"))
-
-if(fitted_data=="presabs"){
-  y_com_i[which(y_com_i > 0)] <- 1
-  y_sci_i[which(y_sci_i > 0)] <- 1
-  lf_link <- 1 # logit link
-}
-
-
-## Covariates
-#------------
-# load(file.path(data_folder,"bathy_pred.Rdata"))
-bathy_pred = rep(0,nrow(loc_x))
-cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
-
-# load(file.path(data_folder,"bathy_com.Rdata"))
-bathy_com = rep(0,nrow(vmslogbook_data_2))
-cov_x_com <- matrix(data = bathy_com, ncol = 1)
-
-# load(file.path(data_folder,"bathy_sci.Rdata"))
-bathy_sci = rep(0,nrow(survey_data_2))
-cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
-
-# finished step 1 -loading data-
-toc()
 ```
+
+  
 
 ## part2: fit model
 
@@ -174,6 +72,33 @@ toc()
 #-----------
 message("Running step 2 -compile model-")
 tic("Step 2 -compile model-")
+
+## Dependencies from Part1 factorization
+species = "Solea_solea"
+data_folder <- system.file(file.path("original_data",species), package = "FishMap") 
+script_folder <- system.file("original_scripts", package = "FishMap")
+b_com_i <- fm_data_inputs[["b_com_i"]]
+mesh <- fm_data_inputs[["mesh"]]
+time.step_df <- fm_data_inputs[["time.step_df"]]
+loc_x <- fm_data_inputs[["loc_x"]]
+y_com_i <- fm_data_inputs[["y_com_i"]]
+y_sci_i <- fm_data_inputs[["y_sci_i"]]
+cov_x_com <- fm_data_inputs[["cov_x_com"]]
+cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
+c_com_x <- fm_data_inputs[["c_com_x"]]
+t_com_i <- fm_data_inputs[["t_com_i"]]
+t_sci_i <- fm_data_inputs[["t_sci_i"]]
+spde <- fm_data_inputs[["spde"]]
+Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
+Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
+Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
+Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
+cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
+Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
+Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
+W <- fm_data_inputs[["W"]]
+n_survey <- fm_data_inputs[["n_survey"]]
+MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
 
 ## Model configuration
 SE <- 1 # run ADREPORT - 0: no, 1: yes

@@ -90,6 +90,10 @@ extra_pkg <- c(extra_pkg, "splancs", "rgdal")
 attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)
 #remotes::install_deps(upgrade = "never")
 
+# Check the package with FishMap execution in CRAN conditions
+# install.packages('checkhelper', repos = 'https://thinkr-open.r-universe.dev')
+checkhelper::check_as_cran()
+
 # Check the package with FishMap execution
 devtools::check()
 
