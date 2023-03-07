@@ -24,7 +24,7 @@ species <- "Solea_solea" # species of interest
 fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0") # Fleet to filter
 # The first one will be taken as reference level in the model
 
-data_folder <- here::here("data-raw",species)
+data_folder <- here::here("inst","original_data",species)
 
 fitted_data <- "biomass" # "biomass" "presabs"
 
@@ -108,13 +108,13 @@ Alpha <- 2
 load(file.path(data_folder,"study_domain.Rdata"))
 
 ## Load domain / mesh / spde object
-source(here::here("dev/r_scripts_orig/domain_mesh_spde.R"))
+source(here::here("inst","original_scripts","domain_mesh_spde.R"))
 
 ## Shape scientific data
-source(here::here("dev/r_scripts_orig/shape_sci_data_st.R"))
+source(here::here("inst","original_scripts","shape_sci_data_st.R"))
 
 ## Shape commercial data
-source(here::here("dev/r_scripts_orig/shape_vmslogbook_data_st.R"))
+source(here::here("inst","original_scripts","shape_vmslogbook_data_st.R"))
 
 if(fitted_data=="presabs"){
   y_com_i[which(y_com_i > 0)] <- 1
@@ -169,7 +169,7 @@ xfb_x <- NULL # TO DELETE
 weights_com <- 1 # TO DELETE
 
 ## Build Data, Params and Map objects for model fitting
-source(here::here("dev/r_scripts_orig/build_data_params_map.R"))
+source(here::here("inst","original_scripts","build_data_params_map.R"))
 
 # Add link to path
 if (.Platform$OS.type == "windows"){
@@ -186,8 +186,8 @@ if (.Platform$OS.type == "windows"){
 }
 
 ## Model compilation
-TMB::compile(here::here("inst/model.cpp"),"-O1 -g",DLLFLAGS="")
-dyn.load( dynlib(here::here("inst/model") ))
+TMB::compile(here::here("inst","model.cpp"),"-O1 -g",DLLFLAGS="")
+dyn.load( dynlib(here::here("inst","model") ))
 
 # finished step 2 -compile model-
 toc()
@@ -244,7 +244,7 @@ if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
   saveRDS(object = converge, file = file.path(output_dir, "converge_output.rds"))
 }
 
-dyn.unload( dynlib( here::here("inst/model" ) ))
+dyn.unload( dynlib( here::here("inst","model" ) ))
 
 # Finished step 3 - fit model-
 toc()
