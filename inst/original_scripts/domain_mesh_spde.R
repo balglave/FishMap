@@ -1,28 +1,33 @@
 #-------------------------------
 ## Build spatial domain and mesh
 #-------------------------------
+#' @importFrom dplyr mutate select
+#' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom sp SpatialPointsDataFrame CRS
+
 ## Build regular grid objects
 # Create raster of the grid
-grid <- raster(grid_limit,res = resol,crs = grid_projection)
+grid <- raster::raster(grid_limit,res = resol,crs = grid_projection)
 
 # Create spatialpolygon based on raster
-gridpolygon <- rasterToPolygons(grid)
+gridpolygon <- raster::rasterToPolygons(grid)
 gridpolygon$layer <- c(1:length(gridpolygon$layer))
 gridpolygon_sf <- st_as_sf(gridpolygon)
 
 # Create spatial points based on raster
-raster_to_point <- rasterToPoints(grid)
+raster_to_point <- raster::rasterToPoints(grid)
 datapoint <- SpatialPointsDataFrame(coords=raster_to_point,
                                     data=data.frame(layer = 1:nrow(raster_to_point)),
-                                    proj4string=sp::CRS(grid_projection))
+                                    proj4string=CRS(grid_projection))
 datapoint_sf <- st_as_sf(datapoint)
 datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
 
 # Cross grid with study domain
 datapoint_sf_2 <- st_join(datapoint_sf_2,study_domain)
 datapoint_2 <- datapoint_sf_2 %>%
-  mutate(long = sf::st_coordinates(.)[,1],
-         lati = sf::st_coordinates(.)[,2]) %>%
+  mutate(long = st_coordinates(.)[,1],
+         lati = st_coordinates(.)[,2]) %>%
   as.data.frame %>%
   dplyr::select(-geometry)
 loc_x <- datapoint_2 %>% mutate(cell = 1:nrow(datapoint_2))
@@ -39,7 +44,7 @@ if(create_mesh == "from_shapefile"){
     loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
     boundary=list(bound,bound2),
     max.edge=c(1/k, 2/k), ## mandatory
-    cutoff=0.1/k,crs = inla.CRS(projargs = sp::CRS(grid_projection))) ## good to have >0
+    cutoff=0.1/k,crs = inla.CRS(projargs = CRS(grid_projection))) ## good to have >0
 
 }else if(create_mesh == "from_data"){
 
@@ -69,7 +74,7 @@ E2 = V1 - V0
 Tri_Area = rep(NA, nrow(E0))
 crossprod_fn = function(Vec1,Vec2) abs(det( rbind(Vec1,Vec2) ))
 for(i in 1:length(Tri_Area)) Tri_Area[i] = crossprod_fn( E0[i,],E1[i,] )/2   # T = area of each triangle
-anisotropic_spde = INLA::inla.spde2.matern(anisotropic_mesh, alpha=2)
+anisotropic_spde = inla.spde2.matern(anisotropic_mesh, alpha=2)
 MeshList_aniso <- list(anisotropic_spde = anisotropic_spde,
                        Tri_Area = Tri_Area,
                        E0 = E0,

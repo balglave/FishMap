@@ -14,23 +14,23 @@ Description: Combine survey and VMS data to model the distribution of fish
     using 'TMB' models.
 License: MIT + file LICENSE
 Imports: 
-    magrittr
-Suggests: 
     dplyr,
-    ggplot2,
-    here,
     INLA,
-    knitr,
+    magrittr,
     raster,
-    rgdal,
-    rmarkdown,
     sf,
     sp,
-    splancs,
     stringr,
-    testthat,
     tictoc,
-    tidyr,
+    tidyr
+Suggests: 
+    ggplot2,
+    here,
+    knitr,
+    rgdal,
+    rmarkdown,
+    splancs,
+    testthat,
     TMB
 VignetteBuilder: 
     knitr
