@@ -1,6 +1,9 @@
 #-----------------------
 ## Shape scientific data
 #-----------------------
+#' @importFrom dplyr mutate inner_join ungroup select
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
 
 survey_data_0$Month <- as.character(survey_data_0$Month)
 survey_data_0$Year <- as.character(survey_data_0$Year)
@@ -20,8 +23,8 @@ survey_data_sf <- st_as_sf(survey_data_1,
 ## Discretize scientific data
 survey_data_sf <- survey_data_sf[st_intersects(survey_data_sf,gridpolygon_sf) %>% lengths > 0,]
 survey_data_2 <- st_join(survey_data_sf,gridpolygon_sf) %>%
-  mutate(long = sf::st_coordinates(.)[,1],
-         lati = sf::st_coordinates(.)[,2]) %>%
+  mutate(long = st_coordinates(.)[,1],
+         lati = st_coordinates(.)[,2]) %>%
   as.data.frame() %>%
   dplyr::select(-geometry)
 

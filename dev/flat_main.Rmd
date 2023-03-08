@@ -14,7 +14,6 @@ pkgload::load_all(export_all = FALSE)
 library(dplyr)
 library(INLA)
 library(ggplot2)
-library(raster)
 library(sf)
 library(stringr)
 library(tidyr)
@@ -47,17 +46,25 @@ This function Prepare all the necessary output for the model fitting. It will fi
 #' @param month_end integer Upper bound month filter to select data
 #' @param time_step character Time intervals, must be Month or Quarter 
 #'
-#' @import raster
+#' @importFrom dplyr ungroup select filter arrange mutate
+#' @importFrom stringr str_detect
 #' @importFrom tictoc tic toc
-#' @import dplyr
-#' @import stringr
-#' @import INLA
-#' @import ggplot2
-#' @import sf
-#' @import sp
-#' @import tidyr
-#' @import TMB
-#' 
+# source domain_mesh_spde
+#' @importFrom dplyr mutate select
+#' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom sp SpatialPointsDataFrame CRS
+# source shape_sci_data
+#' @importFrom dplyr mutate inner_join ungroup select
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+# source shape_vms_logbook
+#' @importFrom dplyr inner_join mutate select filter group_by count arrange full_join ungroup
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom tidyr pivot_wider
+
+
 #' @return list A named list of all necessary outputs for model fitting (step 2)
 #' @export
 #'
@@ -140,7 +147,7 @@ fm_load_data <- function(species = "Solea_solea",
   grid_xmax <- 0
   grid_ymin <- 42
   grid_ymax <- 48
-  grid_limit <- extent(c(grid_xmin,grid_xmax,grid_ymin,grid_ymax))
+  grid_limit <- raster::extent(c(grid_xmin,grid_xmax,grid_ymin,grid_ymax))
   
   grid_projection <- "+proj=longlat +datum=WGS84"
   

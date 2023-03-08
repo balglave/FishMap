@@ -1,6 +1,10 @@
 #----------------------------
 ## Shape 'VMS x logbook' data
 #----------------------------
+#' @importFrom dplyr inner_join mutate select filter group_by count arrange full_join ungroup
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom tidyr pivot_wider
 
 ## Join commercial data with time dataframe
 vmslogbook_data_1 <- vmslogbook_data_0 %>%
@@ -14,8 +18,8 @@ vmslogbook_data_sf <- st_as_sf(vmslogbook_data_1,
 ## Intersect 'VMS x logbook' data with spatial domain
 vmslogbook_data_sf <- vmslogbook_data_sf[st_intersects(vmslogbook_data_sf,gridpolygon_sf) %>% lengths > 0,]
 vmslogbook_data_2 <- st_join(vmslogbook_data_sf,gridpolygon_sf) %>%
-  mutate(long = sf::st_coordinates(.)[,1],
-         lati = sf::st_coordinates(.)[,2]) %>%
+  mutate(long = st_coordinates(.)[,1],
+         lati = st_coordinates(.)[,2]) %>%
   as.data.frame() %>%
   dplyr::select(-geometry)
 
@@ -41,7 +45,7 @@ for(f_i in 1:length(unique(vmslogbook_data_2$f))){
     df_c_com_x <- vmslogbook_data_2 %>%
       filter(f == f_i & t == t_i) %>%
       dplyr::select("layer","t") %>%
-      dplyr::group_by(layer,t) %>%
+      group_by(layer,t) %>%
       count() %>%
       arrange(t) %>%
       pivot_wider(id_cols = c("layer"), names_from = "t",values_from = "n") %>%
