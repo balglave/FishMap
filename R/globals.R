@@ -6,5 +6,7 @@ globalVariables(unique(c(
   "t_sci_i", "vmslogbook_data_2",
   # part2
   "Data", "Params", "Random",
+  # part3
+  "S_x", "eta",
   NULL
 )))
