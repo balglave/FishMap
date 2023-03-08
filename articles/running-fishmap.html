@@ -91,7 +91,6 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">INLA</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
@@ -100,7 +99,8 @@
 <span><span class="co">#&gt; TMB was built with Matrix version 1.5.3</span></span>
 <span><span class="co">#&gt; Current Matrix version is 1.5.1</span></span>
 <span><span class="co">#&gt; Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jabiru/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jabiru/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="main-r">
 <code>main.R</code><a class="anchor" aria-label="anchor" href="#main-r"></a>
@@ -111,141 +111,26 @@ fitting and graph generation.</p>
 <div class="section level3">
 <h3 id="part1-data-preparation">part1: Data preparation<a class="anchor" aria-label="anchor" href="#part1-data-preparation"></a>
 </h3>
+</div>
+</div>
+<div class="section level2">
+<h2 id="fm_load_data">fm_load_data<a class="anchor" aria-label="anchor" href="#fm_load_data"></a>
+</h2>
+<p>This function Prepare all the necessary output for the model fitting.
+It will filter and shape the observation data (VMS and scientific). It
+will generate the spatial mesh for the study domain. All outputs are
+reported as part of a named list.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Load data</span></span>
-<span><span class="co">#-----------</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Running step 1 -loading data-"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># run part1</span></span>
+<span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fm_load_data.html">fm_load_data</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running step 1 -loading data-</span></span>
-<span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="st">"Step 1 -loading data-"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">species</span> <span class="op">&lt;-</span> <span class="st">"Solea_solea"</span> <span class="co"># species of interest</span></span>
-<span><span class="va">fleet</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OTB_DEF_&gt;=70_0"</span>,<span class="st">"OTB_CEP_&gt;=70_0"</span>,<span class="st">"OTT_DEF_&gt;=70_0"</span><span class="op">)</span> <span class="co"># Fleet to filter</span></span>
-<span><span class="co"># The first one will be taken as reference level in the model</span></span>
-<span></span>
-<span><span class="va">data_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"original_data"</span>,<span class="va">species</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span> </span>
-<span><span class="va">script_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_scripts"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="va">fitted_data</span> <span class="op">&lt;-</span> <span class="st">"biomass"</span> <span class="co"># "biomass" "presabs"</span></span>
-<span></span>
-<span><span class="co"># Scientific data</span></span>
-<span><span class="va">n_survey</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># number of surveys</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_folder</span>,<span class="st">"survey_data.Rdata"</span><span class="op">)</span><span class="op">)</span> <span class="co"># scientific observations</span></span>
-<span><span class="va">scientific_observation</span> <span class="op">&lt;-</span> <span class="st">"CPUE"</span> <span class="co"># 'CPUE' or 'Density'</span></span>
-<span></span>
-<span><span class="va">survey_data_0</span> <span class="op">&lt;-</span> <span class="va">survey_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">ungroup</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">layer</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 'VMS x logbook' data</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_folder</span>,<span class="st">"vmslogbook_data.Rdata"</span><span class="op">)</span><span class="op">)</span> <span class="co"># 'vms x logbooks' observations</span></span>
-<span></span>
-<span><span class="va">select_aggreg_level</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">fleet</span>,collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span></span>
-<span><span class="va">vmslogbook_data</span> <span class="op">&lt;-</span> <span class="va">vmslogbook_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">LE_MET_level6</span>,<span class="va">select_aggreg_level</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vmslogbook_data</span><span class="op">$</span><span class="va">LE_MET_level6</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">vmslogbook_data</span><span class="op">$</span><span class="va">LE_MET_level6</span><span class="op">)</span>,levels <span class="op">=</span> <span class="va">fleet</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vmslogbook_data_0</span> <span class="op">&lt;-</span> <span class="va">vmslogbook_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="va">ungroup</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">layer</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Time series</span></span>
-<span><span class="co">#-------------</span></span>
-<span><span class="va">year_start</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span>
-<span><span class="va">year_end</span> <span class="op">&lt;-</span> <span class="fl">2018</span></span>
-<span><span class="va">year_vec</span> <span class="op">&lt;-</span> <span class="va">year_start</span><span class="op">:</span><span class="va">year_end</span></span>
-<span><span class="va">month_start</span> <span class="op">&lt;-</span> <span class="fl">11</span></span>
-<span><span class="va">month_end</span> <span class="op">&lt;-</span> <span class="fl">11</span></span>
-<span><span class="va">month_vec</span> <span class="op">&lt;-</span> <span class="va">month_start</span><span class="op">:</span><span class="va">month_end</span></span>
-<span><span class="va">time_step</span> <span class="op">&lt;-</span> <span class="st">"Month"</span> <span class="co"># Month or Quarter</span></span>
-<span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="va">time_step</span> <span class="op">==</span> <span class="st">"Month"</span><span class="op">)</span><span class="op">{</span></span>
-<span></span>
-<span>  <span class="va">time.step_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span><span class="va">month_vec</span>,<span class="va">year_vec</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Month"</span>,<span class="st">"Year"</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">time.step_df</span> <span class="op">&lt;-</span> <span class="va">time.step_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">Year</span>,<span class="va">Month</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Month <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">Month</span> <span class="op">&lt;</span> <span class="fl">10</span>,<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"0"</span>,<span class="va">Month</span><span class="op">)</span>,<span class="va">Month</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year_Month <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">Year</span>,<span class="st">"_"</span>,<span class="va">Month</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">time.step_df</span><span class="op">$</span><span class="va">Year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">$</span><span class="va">Year</span><span class="op">)</span></span>
-<span>  <span class="va">time.step_df</span><span class="op">$</span><span class="va">Month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span></span>
-<span></span>
-<span><span class="op">}</span><span class="kw">else</span> <span class="kw">if</span><span class="op">(</span><span class="va">time_step</span> <span class="op">==</span> <span class="st">"Quarter"</span><span class="op">)</span><span class="op">{</span></span>
-<span></span>
-<span>  <span class="va">time.step_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,<span class="va">all_years</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Quarter"</span>,<span class="st">"Year"</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">time.step_df</span> <span class="op">&lt;-</span> <span class="va">time.step_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">Year</span>,<span class="va">Quarter</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Quarter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">Quarter</span> <span class="op">&lt;</span> <span class="fl">10</span>,<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"0"</span>,<span class="va">Quarter</span><span class="op">)</span>,<span class="va">Quarter</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Year_Quarter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">Year</span>,<span class="st">"_"</span>,<span class="va">Quarter</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">time.step_df</span><span class="op">$</span><span class="va">Year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">$</span><span class="va">Year</span><span class="op">)</span></span>
-<span>  <span class="va">time.step_df</span><span class="op">$</span><span class="va">Quarter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">time.step_df</span><span class="op">$</span><span class="va">Quarter</span><span class="op">)</span></span>
-<span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## Configure spatial domain</span></span>
-<span><span class="co">#--------------------------</span></span>
-<span><span class="va">grid_xmin</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">6</span></span>
-<span><span class="va">grid_xmax</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="va">grid_ymin</span> <span class="op">&lt;-</span> <span class="fl">42</span></span>
-<span><span class="va">grid_ymax</span> <span class="op">&lt;-</span> <span class="fl">48</span></span>
-<span><span class="va">grid_limit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">grid_xmin</span>,<span class="va">grid_xmax</span>,<span class="va">grid_ymin</span>,<span class="va">grid_ymax</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">grid_projection</span> <span class="op">&lt;-</span> <span class="st">"+proj=longlat +datum=WGS84"</span></span>
-<span></span>
-<span><span class="va">resol</span> <span class="op">&lt;-</span> <span class="fl">0.05</span> <span class="co"># resolution of the discretization grid</span></span>
-<span><span class="va">create_mesh</span> <span class="op">&lt;-</span> <span class="st">"from_shapefile"</span></span>
-<span><span class="co"># from_shapefile: the mesh will be more regular on the grid</span></span>
-<span><span class="co"># from_data: the mesh will be denser in the areas where there are data</span></span>
-<span></span>
-<span><span class="co"># Mesh parameterization</span></span>
-<span><span class="co"># reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.</span></span>
-<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">0.25</span></span>
-<span><span class="va">Alpha</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_folder</span>,<span class="st">"study_domain.Rdata"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Load domain / mesh / spde object</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">script_folder</span>,<span class="st">"domain_mesh_spde.R"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; as(&lt;dgCMatrix&gt;, "dgTMatrix") is deprecated since Matrix 1.5-0; do as(., "TsparseMatrix") instead</span></span>
-<span></span>
-<span><span class="co">## Shape scientific data</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">script_folder</span>,<span class="st">"shape_sci_data_st.R"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(Year, Month)`</span></span>
-<span></span>
-<span><span class="co">## Shape commercial data</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">script_folder</span>,<span class="st">"shape_vmslogbook_data_st.R"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(Month, Year, Year_Month)`</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
-<span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="va">fitted_data</span><span class="op">==</span><span class="st">"presabs"</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="va">y_com_i</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">y_com_i</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span>  <span class="va">y_sci_i</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">y_sci_i</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span>  <span class="va">lf_link</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># logit link</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## Covariates</span></span>
-<span><span class="co">#------------</span></span>
-<span><span class="co"># load(file.path(data_folder,"bathy_pred.Rdata"))</span></span>
-<span><span class="va">bathy_pred</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">loc_x</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cov_x_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">bathy_pred</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># load(file.path(data_folder,"bathy_com.Rdata"))</span></span>
-<span><span class="va">bathy_com</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">vmslogbook_data_2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cov_x_com</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">bathy_com</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># load(file.path(data_folder,"bathy_sci.Rdata"))</span></span>
-<span><span class="va">bathy_sci</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">survey_data_2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cov_x_sci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">bathy_sci</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># finished step 1 -loading data-</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Step 1 -loading data-: 9.208 sec elapsed</span></span></code></pre></div>
-</div>
+<span><span class="co">#&gt; Step 1 -loading data-: 15.017 sec elapsed</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="part2-fit-model">part2: fit model<a class="anchor" aria-label="anchor" href="#part2-fit-model"></a>
 </h3>
@@ -255,6 +140,33 @@ fitting and graph generation.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Running step 2 -compile model-"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running step 2 -compile model-</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="st">"Step 2 -compile model-"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Dependencies from Part1 factorization</span></span>
+<span><span class="va">species</span> <span class="op">=</span> <span class="st">"Solea_solea"</span></span>
+<span><span class="va">data_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"original_data"</span>,<span class="va">species</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span> </span>
+<span><span class="va">script_folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_scripts"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span></span>
+<span><span class="va">b_com_i</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"b_com_i"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">mesh</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"mesh"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">time.step_df</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"time.step_df"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">loc_x</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"loc_x"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">y_com_i</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"y_com_i"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">y_sci_i</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"y_sci_i"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">cov_x_com</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"cov_x_com"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">cov_x_sci</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"cov_x_sci"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">c_com_x</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"c_com_x"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">t_com_i</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"t_com_i"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">t_sci_i</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"t_sci_i"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">spde</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"spde"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_ij_com</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_ij_com"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_w_com</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_w_com"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_ij_sci</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_ij_sci"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_w_sci</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_w_sci"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">cov_x_pred</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"cov_x_pred"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_ij_pred</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_ij_pred"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">Aix_w_pred</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"Aix_w_pred"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">W</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"W"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">n_survey</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"n_survey"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">MeshList_aniso</span> <span class="op">&lt;-</span> <span class="va">fm_data_inputs</span><span class="op">[[</span><span class="st">"MeshList_aniso"</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co">## Model configuration</span></span>
 <span><span class="va">SE</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># run ADREPORT - 0: no, 1: yes</span></span>
@@ -301,7 +213,7 @@ fitting and graph generation.</p>
 <span></span>
 <span><span class="co"># finished step 2 -compile model-</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Step 2 -compile model-: 43.223 sec elapsed</span></span>
+<span><span class="co">#&gt; Step 2 -compile model-: 50.318 sec elapsed</span></span>
 <span></span>
 <span><span class="co">## Fit model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Running step 3 -fit model-"</span><span class="op">)</span></span>
@@ -479,11 +391,11 @@ fitting and graph generation.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dynload.html" class="external-link">dyn.unload</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/pkg/TMB/man/dynlib.html" class="external-link">dynlib</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span>,<span class="st">"model"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: 4 external pointers will be removed</span></span>
+<span><span class="co">#&gt; Warning: 5 external pointers will be removed</span></span>
 <span></span>
 <span><span class="co"># Finished step 3 - fit model-</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Step 3 -fit model-: 32.287 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; Step 3 -fit model-: 35.368 sec elapsed</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="part3-generate-output-graphs">part3: generate output graphs<a class="anchor" aria-label="anchor" href="#part3-generate-output-graphs"></a>
@@ -522,8 +434,8 @@ fitting and graph generation.</p>
 <span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pred_plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="running-fishmap_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pred_plot</span><span class="op">)</span></span></code></pre></div>
+<p><img src="running-fishmap_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># plot eta if sampling is active</span></span>
@@ -541,13 +453,13 @@ fitting and graph generation.</p>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_distiller</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Spectral"</span><span class="op">)</span><span class="op">+</span></span>
 <span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="va">.</span><span class="op">~</span><span class="va">Year_Month</span><span class="op">)</span></span>
 <span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eta_plot</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eta_plot</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># finished step 4 -plot graph-</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Step 4 -plot graphs-: 0.343 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; Step 4 -plot graphs-: 0.437 sec elapsed</span></span></code></pre></div>
 </div>
 </div>
   </div>
