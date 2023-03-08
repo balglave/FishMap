@@ -48,14 +48,4 @@ Load and prepare data for model fitting
 # run part1
 fm_data_inputs <- fm_load_data()
 
-# save part1 outputs
-if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
-  # setup save dir, create it if necessary
-  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-  if (isFALSE(dir.exists(output_dir))){
-    dir.create(output_dir)
-  }
-  # save output
-  saveRDS(object = fm_data_inputs, file = file.path(output_dir, "part1_output.rds"))
-}
 }

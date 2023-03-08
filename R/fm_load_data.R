@@ -13,10 +13,16 @@
 #' @param month_end integer Upper bound month filter to select data
 #' @param time_step character Time intervals, must be Month or Quarter 
 #'
+#' @import raster
 #' @importFrom tictoc tic toc
-#' @importFrom dplyr select ungroup arrange mutate filter
-#' @importFrom stringr str_detect
-#' @importFrom raster extent
+#' @import dplyr
+#' @import stringr
+#' @import INLA
+#' @import ggplot2
+#' @import sf
+#' @import sp
+#' @import tidyr
+#' @import TMB
 #' 
 #' @return list A named list of all necessary outputs for model fitting (step 2)
 #' @export
@@ -25,16 +31,6 @@
 #' # run part1
 #' fm_data_inputs <- fm_load_data()
 #' 
-#' # save part1 outputs
-#' if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
-#'   # setup save dir, create it if necessary
-#'   output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-#'   if (isFALSE(dir.exists(output_dir))){
-#'     dir.create(output_dir)
-#'   }
-#'   # save output
-#'   saveRDS(object = fm_data_inputs, file = file.path(output_dir, "part1_output.rds"))
-#' }
 fm_load_data <- function(species = "Solea_solea",
                          fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
                          survey_data_file = "survey_data.Rdata",
