@@ -44,8 +44,3 @@ list A named list of all necessary outputs for model fitting (step 2)
 \description{
 Load and prepare data for model fitting
 }
-\examples{
-# run part1
-fm_data_inputs <- fm_load_data()
-
-}

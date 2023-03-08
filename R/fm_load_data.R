@@ -35,10 +35,6 @@
 #' @return list A named list of all necessary outputs for model fitting (step 2)
 #' @export
 #'
-#' @examples
-#' # run part1
-#' fm_data_inputs <- fm_load_data()
-#' 
 fm_load_data <- function(species = "Solea_solea",
                          fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
                          survey_data_file = "survey_data.Rdata",
@@ -53,7 +49,7 @@ fm_load_data <- function(species = "Solea_solea",
   ## Load data
   #-----------
   message("Running step 1 -loading data-")
-  tictoc::tic("Step 1 -loading data-")
+  tic("Step 1 -loading data-")
   
   data_folder <- system.file(file.path("original_data",species), package = "FishMap") 
   script_folder <- system.file("original_scripts", package = "FishMap") 
@@ -167,7 +163,8 @@ fm_load_data <- function(species = "Solea_solea",
   toc()
 
   # return outputs as names list
-  return(list("b_com_i" = b_com_i,
+  return(list("species" = species,
+              "b_com_i" = b_com_i,
               "mesh" = mesh,
               "time.step_df" = time.step_df,
               "loc_x" = loc_x,

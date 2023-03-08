@@ -20,9 +20,11 @@ Imports:
     raster,
     sf,
     sp,
+    stats,
     stringr,
     tictoc,
-    tidyr
+    tidyr,
+    TMB
 Suggests: 
     ggplot2,
     here,
@@ -30,8 +32,7 @@ Suggests:
     rgdal,
     rmarkdown,
     splancs,
-    testthat,
-    TMB
+    testthat
 VignetteBuilder: 
     knitr
 Additional_repositories: https://inla.r-inla-download.org/R/stable
