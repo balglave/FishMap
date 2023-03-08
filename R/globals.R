@@ -4,5 +4,7 @@ globalVariables(unique(c(
   "LE_MET_level6", "MeshList_aniso", "Month", "Quarter", "W", "Year", "all_years", "b_com_i",
   "c_com_x", "layer", "loc_x", "mesh", "spde", "survey_data", "survey_data_2", "t_com_i",
   "t_sci_i", "vmslogbook_data_2",
+  # part2
+  "Data", "Params", "Random",
   NULL
 )))

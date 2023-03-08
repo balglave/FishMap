@@ -39,14 +39,14 @@ This vignette runs a toy example of the FishMap spatio-temporal model. The execu
 
 ## part1: Data preparation
 
-# fm_load_data
+### `fm_load_data()` : prepare and load model inputs
 
 This function Prepare all the necessary output for the model fitting. It will filter and shape the observation data (VMS and scientific). It will generate the spatial mesh for the study domain. All outputs are reported as part of a named list.
     
 
   
 
-```{r example-fm_load_data}
+```{r preex-fm_load_data}
 # run part1
 fm_data_inputs <- fm_load_data()
 
@@ -56,141 +56,20 @@ fm_data_inputs <- fm_load_data()
 
 ## part2: fit model
 
-```{r}
-## Fit model
-#-----------
-message("Running step 2 -compile model-")
-tic("Step 2 -compile model-")
+### `fm_fit_model()`: compile model and fit to data
 
-## Dependencies from Part1 factorization
-species = "Solea_solea"
-data_folder <- system.file(file.path("original_data",species), package = "FishMap") 
-script_folder <- system.file("original_scripts", package = "FishMap")
-b_com_i <- fm_data_inputs[["b_com_i"]]
-mesh <- fm_data_inputs[["mesh"]]
-time.step_df <- fm_data_inputs[["time.step_df"]]
-loc_x <- fm_data_inputs[["loc_x"]]
-y_com_i <- fm_data_inputs[["y_com_i"]]
-y_sci_i <- fm_data_inputs[["y_sci_i"]]
-cov_x_com <- fm_data_inputs[["cov_x_com"]]
-cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
-c_com_x <- fm_data_inputs[["c_com_x"]]
-t_com_i <- fm_data_inputs[["t_com_i"]]
-t_sci_i <- fm_data_inputs[["t_sci_i"]]
-spde <- fm_data_inputs[["spde"]]
-Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
-Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
-Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
-Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
-cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
-Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
-Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
-W <- fm_data_inputs[["W"]]
-n_survey <- fm_data_inputs[["n_survey"]]
-MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
+This function will fit the model to the observation data. It will compile the model cpp file. It will fit the model to the input data generated from `fm_load_data()` and provide the results as a named list.
 
-## Model configuration
-SE <- 1 # run ADREPORT - 0: no, 1: yes
-data_source <- 1 # 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
-data_obs <- 2 # observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
-samp_process <- 0 # Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
-b_constraint <- 2 # put constraint on b parameters - 1: b are positive, 2: no constraints
-const_spphab <- 1 # Species-habitat relationship - 1: constant in time
-cov_samp_process <- 0 # covariate in the sampling process - 0: none, 1: covariate in the samplign process
-biomass_temporal <- 1 # Account for temporal correlation in biomass - 0: no, 1: AR1
-sampling_temporal <- 0 # Account for temporal correlation in sampling process - 0: no, 1: AR1
-anisotropy <- 0 # Account for anisotropy
-lf_link <- 0 # link function of the latent field - 0: log (biomass data), 1: logit (presence absence data)
-ref_data <- "com" # reference data - "com": commercial (default) or "sci": scientific
-EM <- "est_b" # "est_b": b is estimated, "fix_b": b is fixed
-month_ref <- 1 # reference month (here January)
-cov_samp_process <- 0 # 0: no covariate in the sampling process, 1: put covariate in the sampling process
-compute_sd <- FALSE
+    
 
-xfb_x <- NULL # TO DELETE
-weights_com <- 1 # TO DELETE
+  
 
-## Build Data, Params and Map objects for model fitting
-source(file.path(script_folder,"build_data_params_map.R"))
-
-# Add link to path
-if (.Platform$OS.type == "windows"){
-  fixwinpath <- function(){
-    PATH <- Sys.getenv("PATH")
-    PATH <- paste0(R.home(), "/bin/x64;", PATH)
-    PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
-    Sys.setenv(PATH=PATH)
-  }
-  fixwinpath()
-  shell("where g++")
-  shell("where gdb")
-  shell("where Rterm")
-}
-
-## Model compilation
-TMB::compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
-dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
-
-# finished step 2 -compile model-
-toc()
-
-## Fit model
-message("Running step 3 -fit model-")
-tic("Step 3 -fit model-")
-
-# ## Debugging
-# source("r/function/MakeADFun_windows_debug.R")
-# MakeADFun_windows_debug(cpp_name = "inst/model",  data=Data, parameters=Params,  random=Random)
-# TMB::gdbsource("inst/model.R",interactive = T) ## Non-interactive
-# dyn.unload( dynlib( "inst/model" ) )
-# #-----------
-
-obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
-# next line takes a long time ----
-obj$fn( obj$par )
-
-# Parameters boundary for optimization
-Lower <- -50
-Upper <- 50
-
-if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
-
-  Lower <- rep(-50,length(obj$par))
-  Upper <- rep(50,length(obj$par))
-
-  Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
-  Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
-
-}
-
-# next line takes a VERY long time ----
-opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
-opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
-
-#save intermediate opt
-if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
-  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-  saveRDS(object = opt, file = file.path(output_dir, "opt_output.rds"))
-  saveRDS(object = obj, file = file.path(output_dir, "obj_input.rds"))
-}
-
-report = obj$report() # output values
-converge=opt$convergence # convergence test
-# next line takes a VERY long time ----
-if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
-
-#save intermediate opt
-if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
-  output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-  saveRDS(object = report, file = file.path(output_dir,"report_output.rds"))
-  saveRDS(object = converge, file = file.path(output_dir, "converge_output.rds"))
-}
-
-dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
-
-# Finished step 3 - fit model-
-toc()
+```{r preex-fm_fit_model}
+# run part 2
+fm_model_results <- fm_fit_model(fm_data_inputs)
 ```
+
+  
 
 ## part3: generate output graphs
 
@@ -199,6 +78,12 @@ toc()
 #--------------------
 message("Running step 4 -plot graphs-")
 tic("Step 4 -plot graphs-")
+
+## Dependencies from Part1 factorization
+loc_x <- fm_model_results[["loc_x"]]
+time.step_df <- fm_model_results[["time.step_df"]]
+report <- fm_model_results[["report"]]
+samp_process <- fm_model_results[["samp_process"]]
 
 if(nrow(time.step_df)>1){
 
