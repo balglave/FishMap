@@ -162,7 +162,7 @@ fm_load_data <- function(species = "Solea_solea",
   # finished step 1 -loading data-
   toc()
 
-  # return outputs as names list
+  # return outputs as named list
   return(list("species" = species,
               "b_com_i" = b_com_i,
               "mesh" = mesh,

@@ -150,7 +150,7 @@ fm_fit_model <- function(fm_data_inputs,
   # Finished step 3 - fit model-
   toc()
   
-  # return outputs as names list
+  # return outputs as named list
   return(list("time.step_df" = time.step_df,
               "loc_x" = loc_x,
               "report" = report,
