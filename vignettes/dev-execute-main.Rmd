@@ -28,7 +28,7 @@ Make sure you have the two following environment variables in your `.Renviron` f
 
 * `FISHMAP_UPDATE_OUTPUTS` : logical, enable outputs to be saved if sets to `TRUE`
 
-To update your `.Renviron` file, you can run the `usethis::edit_r_environ()` command which will directly open the file in edit mode.
+To update your `.Renviron` file, you can run the `usethis::edit_r_environ()` command which will directly open the file in edit mode. Once your changes saved, you will need to restart your R session.
 
 
 ```{r vign-renviron, eval = FALSE}
