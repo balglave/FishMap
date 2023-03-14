@@ -73,7 +73,12 @@
 <span>  year_end <span class="op">=</span> <span class="fl">2018</span>,</span>
 <span>  month_start <span class="op">=</span> <span class="fl">11</span>,</span>
 <span>  month_end <span class="op">=</span> <span class="fl">11</span>,</span>
-<span>  time_step <span class="op">=</span> <span class="st">"Month"</span></span>
+<span>  time_step <span class="op">=</span> <span class="st">"Month"</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>  grid_xmin <span class="op">=</span> <span class="op">-</span><span class="fl">6</span>,</span>
+<span>  grid_xmax <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  grid_ymin <span class="op">=</span> <span class="fl">42</span>,</span>
+<span>  grid_ymax <span class="op">=</span> <span class="fl">48</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -117,6 +122,14 @@
 
 <dt>time_step</dt>
 <dd><p>character Time intervals, must be Month or Quarter</p></dd>
+
+
+<dt>k</dt>
+<dd><p>reduce the mesh size, smaller k reduces the number of knots at which the spatial random effect is computed</p></dd>
+
+
+<dt>grid_xmin, grid_xmax, grid_ymin, grid_ymax</dt>
+<dd><p>Build regular grid objects to create spatialpolygon based on raster</p></dd>
 
 </dl></div>
     <div id="value">
