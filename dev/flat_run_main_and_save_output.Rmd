@@ -13,6 +13,8 @@ Make sure you have the two following environment variables in your `.Renviron` f
 
 * `FISHMAP_UPDATE_OUTPUTS` : logical, enable outputs to be saved if sets to `TRUE`
 
+To update your `.Renviron` file, you can run the `usethis::edit_r_environ()` command which will directly open the file in edit mode.
+
 ```{r vign-renviron, eval = FALSE}
 FISHMAP_OUTPUT_DIR="~/shared/outputs_fishmap"
 FISHMAP_UPDATE_OUTPUTS=TRUE
@@ -29,6 +31,10 @@ source(here::here("dev","run_main_and_save_output.R"))
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
-fusen::inflate(flat_file = "dev/flat_run_main_and_save_output.Rmd", vignette_name = "Execute main")
+fusen::inflate(flat_file = "dev/flat_run_main_and_save_output.Rmd",
+               vignette_name = "dev - execute main",
+               check = FALSE)
+
+# To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use every time needed`
 ```
 

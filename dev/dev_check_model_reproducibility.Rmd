@@ -1,5 +1,5 @@
 ---
-title: "Verify model reproducibility"
+title: "dev - check model reproducibility"
 author: "swann floc'hlay"
 date: '2023-03-09'
 output: html_document
@@ -196,7 +196,7 @@ compare_output_file <- function(file_name, author) {
     stop("author must be either juliette or baptiste")
   }
 
-  # running waldo on one file (thinkR ~ juliette)
+  # running waldo on one file (thinkR ~ client)
   message(glue::glue("contrasting output of {file_name} between thinkr and {author}"))
   compare_author <- waldo::compare(
     x = readRDS(
@@ -243,7 +243,7 @@ compare_output_file(file_name = "report_output.rds", author = "juliette")
 compare_output_file(file_name = "obj_input.rds", author = "juliette")
 ```
 
-We encounter an error when contrasting the `fn` and `env` element of the `obj_input.rds` object between Baptiste's version and ThinkR's version. We run `{waldo}` element by element except object of class `environment`, with a specific parameter (`ignore_function_env = TRUE`) that ignore function environment comparison and allows the comparison to succeed. This error might come from a difference in package version (cf. comment at the beginning of section).
+We encounter an error when contrasting the `fn` and `env` element of the `obj_input.rds` object between Baptiste's version and ThinkR's version. We run `{waldo}` element by element except for the object of class `environment`, with a specific parameter (`ignore_function_env = TRUE`) that ignore function environment comparison and allows the comparison to succeed. This error might come from a difference in package version (cf. comment at the beginning of section).
 
 ```{r}
 file_name <- "obj_input.rds"
@@ -289,6 +289,6 @@ unlink(tmp_folder)
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
   input = here::here("dev/dev_check_model_reproducibility.Rmd"),
-  output = here::here("vignettes/check_model_reproducibility.Rmd")
+  output = here::here("vignettes/dev-check-model-reproducibility.Rmd")
 )
 ```

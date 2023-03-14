@@ -1,8 +1,8 @@
 ---
-title: "Execute main"
+title: "dev - execute main"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{execute-main}
+  %\VignetteIndexEntry{dev-execute-main}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,6 +27,8 @@ Make sure you have the two following environment variables in your `.Renviron` f
 * `FISHMAP_OUTPUT_DIR` : path to the directory to store the model output, it will be created if it does not exist
 
 * `FISHMAP_UPDATE_OUTPUTS` : logical, enable outputs to be saved if sets to `TRUE`
+
+To update your `.Renviron` file, you can run the `usethis::edit_r_environ()` command which will directly open the file in edit mode.
 
 
 ```{r vign-renviron, eval = FALSE}
