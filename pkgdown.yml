@@ -2,10 +2,10 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  check_model_reproducibility: check_model_reproducibility.html
-  execute-main: execute-main.html
-  running-fishmap: running-fishmap.html
-last_built: 2023-03-14T10:05Z
+  dev-check-model-reproducibility: dev-check-model-reproducibility.html
+  dev-execute-main: dev-execute-main.html
+  dev-running-fishmap: dev-running-fishmap.html
+last_built: 2023-03-14T11:53Z
 urls:
   reference: https://balglave.github.io/FishMap/reference
   article: https://balglave.github.io/FishMap/articles
