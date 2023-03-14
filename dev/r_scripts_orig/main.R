@@ -51,8 +51,8 @@ vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
 year_start <- 2018
 year_end <- 2018
 year_vec <- year_start:year_end
-month_start <- 11
-month_end <- 11
+month_start <- 10
+month_end <- 12
 month_vec <- month_start:month_end
 time_step <- "Month" # Month or Quarter
 
@@ -102,7 +102,7 @@ create_mesh <- "from_shapefile"
 
 # Mesh parameterization
 # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
-k <- 0.25
+k <- 0.75
 Alpha <- 2
 
 load(file.path(data_folder,"study_domain.Rdata"))
