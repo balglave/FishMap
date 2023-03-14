@@ -84,7 +84,7 @@ pkgload::load_all()
 extra_pkg <- attachment::att_from_rscripts(path = c("inst/original_scripts", "dev/r_scripts_orig/function/","dev/r_scripts_orig/"))
 
 # add splancs
-extra_pkg <- c(extra_pkg, "splancs", "rgdal")
+extra_pkg <- c("splancs", "rgdal")
 
 # Generate documentation and deal with dependencies
 attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)

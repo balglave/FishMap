@@ -27,12 +27,12 @@ Imports:
     tidyr,
     TMB
 Suggests: 
-    here,
     knitr,
     rgdal,
     rmarkdown,
     splancs,
-    testthat
+    testthat,
+    withr
 VignetteBuilder: 
     knitr
 Additional_repositories: https://inla.r-inla-download.org/R/stable
