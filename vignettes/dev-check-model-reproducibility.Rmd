@@ -1,5 +1,5 @@
 ---
-title: "Verify model reproducibility"
+title: "dev - check model reproducibility"
 author: "swann floc'hlay"
 date: '2023-03-09'
 output: html_document
@@ -24,7 +24,7 @@ We generate the outputs on ThinkR machine.
 source(here::here("dev", "run_main_and_save_output.R"))
 ```
 
-![](figure/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
 
 > Note: model fit is perfomed in 118 steps in this run
 
@@ -37,8 +37,7 @@ list.files(path = file.path(output_dir))
 ```
 
 ```
-## [1] "converge_output.rds" "obj_input.rds"       "opt_output.rds"     
-## [4] "report_output.rds"
+## [1] "converge_output.rds" "obj_input.rds"       "opt_output.rds"      "report_output.rds"
 ```
 
 
@@ -64,7 +63,7 @@ fs::file_move(
 source(here::here("dev", "run_main_and_save_output.R"))
 ```
 
-![](figure/unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
 
 ```r
 # Move ThinkR second execution in the temp folder
@@ -97,10 +96,10 @@ glue::glue("The paths to ThinkR's second run output files are :\n {thinkr1_outpu
 
 ```
 ## The paths to ThinkR's second run output files are :
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output/converge_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output/obj_input.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output/opt_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output/report_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output/converge_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output/obj_input.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output/opt_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output/report_output.rds
 ```
 
 ```r
@@ -119,10 +118,10 @@ glue::glue("The paths to ThinkR's first run output files are :\n {thinkr2_output
 
 ```
 ## The paths to ThinkR's first run output files are :
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output_rerun/converge_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output_rerun/obj_input.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output_rerun/opt_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/thinkr_output_rerun/report_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output_rerun/converge_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output_rerun/obj_input.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output_rerun/opt_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/thinkr_output_rerun/report_output.rds
 ```
 
 ## Checking seed reproducibility
@@ -196,10 +195,10 @@ glue::glue("The paths to Juliette's output files are :\n {jc_output}")
 
 ```
 ## The paths to Juliette's output files are :
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/jc_output/converge_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/jc_output/obj_input.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/jc_output/opt_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/jc_output/report_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/jc_output/converge_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/jc_output/obj_input.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/jc_output/opt_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/jc_output/report_output.rds
 ```
 
 ```r
@@ -230,10 +229,10 @@ glue::glue("The paths to Baptiste's output files are :\n {ba_output}")
 
 ```
 ## The paths to Baptiste's output files are :
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/ba_output/shared/outputs_fishmap/converge_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/ba_output/shared/outputs_fishmap/obj_input.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/ba_output/shared/outputs_fishmap/opt_output.rds
-## /tmp/RtmppNtHpz/fishmap_check1d5d3f3263a1/ba_output/shared/outputs_fishmap/report_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/ba_output/shared/outputs_fishmap/converge_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/ba_output/shared/outputs_fishmap/obj_input.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/ba_output/shared/outputs_fishmap/opt_output.rds
+## /tmp/RtmpDuyRzc/fishmap_check5bb231d5b921/ba_output/shared/outputs_fishmap/report_output.rds
 ```
 
 
@@ -262,7 +261,7 @@ compare_output_file <- function(file_name, author) {
     stop("author must be either juliette or baptiste")
   }
 
-  # running waldo on one file (thinkR ~ juliette)
+  # running waldo on one file (thinkR ~ client)
   message(glue::glue("contrasting output of {file_name} between thinkr and {author}"))
   compare_author <- waldo::compare(
     x = readRDS(
@@ -320,21 +319,8 @@ compare_output_file(file_name = "opt_output.rds", author = "baptiste")
 ```
 
 ```
-##      baptiste$par | thinkr$par     
-##  [1] -1.9490      - -1.1795    [1] 
-##  [2] 0.2168       - 0.3379     [2] 
-##  [3] -2.5303      - -2.1648    [3] 
-##  [4] -0.0850      - -0.0860    [4] 
-##  [5] 0.5574       - 0.5643     [5] 
-##  [6] 0.6502       - 0.6460     [6] 
-##  [7] 0.1979       - 0.1989     [7] 
-##  [8] 0.0129       - 0.0112     [8] 
-##  [9] 0.0233       - 0.0236     [9] 
-## [10] 0.5913       - 0.5894     [10]
-## [11] 0.9355       - 0.9549     [11]
-## [12] 0.4452       - 0.4382     [12]
-## [13] 0.6195       - 0.5922     [13]
-## [14] 3.5273       - 3.6926     [14]
+## `baptiste$par`: -1.9490 0.2168 -2.5303 -0.0850 0.5574 0.6502 0.1979 0.0129 0.0233 0.5913 0.9355 0.4452 0.6195 3.5273
+##   `thinkr$par`: -1.1795 0.3379 -2.1648 -0.0860 0.5643 0.6460 0.1989 0.0112 0.0236 0.5894 0.9549 0.4382 0.5922 3.6926
 ## 
 ## `baptiste$objective`: 33456
 ##   `thinkr$objective`: 33408
@@ -1431,208 +1417,108 @@ compare_output_file(file_name = "report_output.rds", author = "baptiste")
 ## [100] 0.699712                   - 0.701962                 [100]             
 ##   ... ...                          ...                      and 26684 more ...
 ## 
-## baptiste$log_notencounterprob_com vs thinkr$log_notencounterprob_com
-## - -1.247080
-## + -1.082115
-## - -0.919281
-## + -1.087237
-## - -0.755619
-## + -0.651860
-## - -0.799955
-## + -0.689846
-## - -0.846893
-## + -0.730046
-## - -0.846893
-## + -0.730046
-## - -0.921091
-## + -0.821281
-## - -0.921091
-## + -0.821281
-## - -1.109285
-## + -1.082527
-## - -1.203096
-## + -1.213531
-## - -1.352308
-## + -1.370533
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.416037
-## + -1.430806
-## - -1.259793
-## + -1.266900
-## - -1.416037
-## + -1.430806
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.319162
-## + -1.322617
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.482769
-## + -1.493731
-## - -1.031735
-## + -1.162937
-## - -0.880842
-## + -1.004151
-## - -0.832478
-## + -0.967965
-## - -0.714838
-## + -0.662822
-## - -0.756782
-## + -0.701447
-## - -0.981027
-## + -0.944814
-## - -0.981027
-## + -0.944814
-## - -1.203012
-## + -1.210535
-## - -1.203012
-## + -1.210535
-## - -1.203012
-## + -1.210535
-## - -1.070274
-## + -1.071863
-## - -1.203012
-## + -1.210535
-## - -1.203012
-## + -1.210535
-## - -1.203012
-## + -1.210535
-## and 26684 more ...
+##       baptiste$log_notencounterprob_com | thinkr$log_notencounterprob_com                   
+##   [1] -1.247080                         - -1.082115                       [1]               
+##   [2] -0.919281                         - -1.087237                       [2]               
+##   [3] -0.755619                         - -0.651860                       [3]               
+##   [4] -0.799955                         - -0.689846                       [4]               
+##   [5] -0.846893                         - -0.730046                       [5]               
+##   [6] -0.846893                         - -0.730046                       [6]               
+##   [7] -0.921091                         - -0.821281                       [7]               
+##   [8] -0.921091                         - -0.821281                       [8]               
+##   [9] -1.109285                         - -1.082527                       [9]               
+##  [10] -1.203096                         - -1.213531                       [10]              
+##  [11] -1.352308                         - -1.370533                       [11]              
+##  [12] -1.259793                         - -1.266900                       [12]              
+##  [13] -1.416037                         - -1.430806                       [13]              
+##  [14] -1.416037                         - -1.430806                       [14]              
+##  [15] -1.416037                         - -1.430806                       [15]              
+##  [16] -1.416037                         - -1.430806                       [16]              
+##  [17] -1.416037                         - -1.430806                       [17]              
+##  [18] -1.259793                         - -1.266900                       [18]              
+##  [19] -1.416037                         - -1.430806                       [19]              
+##  [20] -1.259793                         - -1.266900                       [20]              
+##  [21] -1.416037                         - -1.430806                       [21]              
+##  [22] -1.416037                         - -1.430806                       [22]              
+##  [23] -1.416037                         - -1.430806                       [23]              
+##  [24] -1.416037                         - -1.430806                       [24]              
+##  [25] -1.259793                         - -1.266900                       [25]              
+##  [26] -1.416037                         - -1.430806                       [26]              
+##  [27] -1.416037                         - -1.430806                       [27]              
+##  [28] -1.416037                         - -1.430806                       [28]              
+##  [29] -1.416037                         - -1.430806                       [29]              
+##  [30] -1.416037                         - -1.430806                       [30]              
+##  [31] -1.416037                         - -1.430806                       [31]              
+##  [32] -1.416037                         - -1.430806                       [32]              
+##  [33] -1.416037                         - -1.430806                       [33]              
+##  [34] -1.416037                         - -1.430806                       [34]              
+##  [35] -1.416037                         - -1.430806                       [35]              
+##  [36] -1.416037                         - -1.430806                       [36]              
+##  [37] -1.416037                         - -1.430806                       [37]              
+##  [38] -1.416037                         - -1.430806                       [38]              
+##  [39] -1.416037                         - -1.430806                       [39]              
+##  [40] -1.416037                         - -1.430806                       [40]              
+##  [41] -1.416037                         - -1.430806                       [41]              
+##  [42] -1.416037                         - -1.430806                       [42]              
+##  [43] -1.416037                         - -1.430806                       [43]              
+##  [44] -1.416037                         - -1.430806                       [44]              
+##  [45] -1.416037                         - -1.430806                       [45]              
+##  [46] -1.416037                         - -1.430806                       [46]              
+##  [47] -1.416037                         - -1.430806                       [47]              
+##  [48] -1.416037                         - -1.430806                       [48]              
+##  [49] -1.416037                         - -1.430806                       [49]              
+##  [50] -1.416037                         - -1.430806                       [50]              
+##  [51] -1.416037                         - -1.430806                       [51]              
+##  [52] -1.416037                         - -1.430806                       [52]              
+##  [53] -1.416037                         - -1.430806                       [53]              
+##  [54] -1.416037                         - -1.430806                       [54]              
+##  [55] -1.259793                         - -1.266900                       [55]              
+##  [56] -1.416037                         - -1.430806                       [56]              
+##  [57] -1.416037                         - -1.430806                       [57]              
+##  [58] -1.416037                         - -1.430806                       [58]              
+##  [59] -1.416037                         - -1.430806                       [59]              
+##  [60] -1.416037                         - -1.430806                       [60]              
+##  [61] -1.416037                         - -1.430806                       [61]              
+##  [62] -1.416037                         - -1.430806                       [62]              
+##  [63] -1.259793                         - -1.266900                       [63]              
+##  [64] -1.416037                         - -1.430806                       [64]              
+##  [65] -1.416037                         - -1.430806                       [65]              
+##  [66] -1.259793                         - -1.266900                       [66]              
+##  [67] -1.416037                         - -1.430806                       [67]              
+##  [68] -1.482769                         - -1.493731                       [68]              
+##  [69] -1.482769                         - -1.493731                       [69]              
+##  [70] -1.482769                         - -1.493731                       [70]              
+##  [71] -1.482769                         - -1.493731                       [71]              
+##  [72] -1.482769                         - -1.493731                       [72]              
+##  [73] -1.482769                         - -1.493731                       [73]              
+##  [74] -1.482769                         - -1.493731                       [74]              
+##  [75] -1.482769                         - -1.493731                       [75]              
+##  [76] -1.482769                         - -1.493731                       [76]              
+##  [77] -1.482769                         - -1.493731                       [77]              
+##  [78] -1.482769                         - -1.493731                       [78]              
+##  [79] -1.482769                         - -1.493731                       [79]              
+##  [80] -1.482769                         - -1.493731                       [80]              
+##  [81] -1.319162                         - -1.322617                       [81]              
+##  [82] -1.482769                         - -1.493731                       [82]              
+##  [83] -1.482769                         - -1.493731                       [83]              
+##  [84] -1.482769                         - -1.493731                       [84]              
+##  [85] -1.482769                         - -1.493731                       [85]              
+##  [86] -1.482769                         - -1.493731                       [86]              
+##  [87] -1.031735                         - -1.162937                       [87]              
+##  [88] -0.880842                         - -1.004151                       [88]              
+##  [89] -0.832478                         - -0.967965                       [89]              
+##  [90] -0.714838                         - -0.662822                       [90]              
+##  [91] -0.756782                         - -0.701447                       [91]              
+##  [92] -0.981027                         - -0.944814                       [92]              
+##  [93] -0.981027                         - -0.944814                       [93]              
+##  [94] -1.203012                         - -1.210535                       [94]              
+##  [95] -1.203012                         - -1.210535                       [95]              
+##  [96] -1.203012                         - -1.210535                       [96]              
+##  [97] -1.070274                         - -1.071863                       [97]              
+##  [98] -1.203012                         - -1.210535                       [98]              
+##  [99] -1.203012                         - -1.210535                       [99]              
+## [100] -1.203012                         - -1.210535                       [100]             
+##   ... ...                                 ...                             and 26684 more ...
 ## 
 ##      baptiste$E_sci | thinkr$E_sci     
 ##  [1] 4.603          - 4.725        [1] 
@@ -2034,18 +1920,17 @@ compare_output_file(file_name = "obj_input.rds", author = "juliette")
 ```
 
 ```
-## body(environment(juliette$fn)$dataSanitize)[2:8] vs body(environment(thinkr$fn)$dataSanitize)[2:8]
-##   `    if (is.list(x)) `
-##   `        return(lapply(x, dataSanitize))`
-##   `    if (is(x, "sparseMatrix")) {`
-## - `        x <- as(as(x, "TsparseMatrix"), "generalMatrix")`
-## + `        x <- as(x, "dgTMatrix")`
-##   `    }`
-##   `    else if (is.character(x)) {`
-##   `    }`
+##     body(environment(juliette$fn)$dataSanitize)                | body(environment(thinkr$fn)$dataSanitize)    
+## [2] `    if (is.list(x)) `                                     | `    if (is.list(x)) `                    [2]
+## [3] `        return(lapply(x, dataSanitize))`                  | `        return(lapply(x, dataSanitize))` [3]
+## [4] `    if (is(x, "sparseMatrix")) {`                         | `    if (is(x, "sparseMatrix")) {`        [4]
+## [5] `        x <- as(as(x, "TsparseMatrix"), "generalMatrix")` - `        x <- as(x, "dgTMatrix")`         [5]
+## [6] `    }`                                                    | `    }`                                   [6]
+## [7] `    else if (is.character(x)) {`                          | `    else if (is.character(x)) {`         [7]
+## [8] `    }`                                                    | `    }`                                   [8]
 ```
 
-We encounter an error when contrasting the `fn` and `env` element of the `obj_input.rds` object between Baptiste's version and ThinkR's version. We run `{waldo}` element by element except object of class `environment`, with a specific parameter (`ignore_function_env = TRUE`) that ignore function environment comparison and allows the comparison to succeed. This error might come from a difference in package version (cf. comment at the beginning of section).
+We encounter an error when contrasting the `fn` and `env` element of the `obj_input.rds` object between Baptiste's version and ThinkR's version. We run `{waldo}` element by element except for the object of class `environment`, with a specific parameter (`ignore_function_env = TRUE`) that ignore function environment comparison and allows the comparison to succeed. This error might come from a difference in package version (cf. comment at the beginning of section).
 
 
 ```r
@@ -2361,6 +2246,6 @@ unlink(tmp_folder)
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
   input = here::here("dev/dev_check_model_reproducibility.Rmd"),
-  output = here::here("vignettes/check_model_reproducibility.Rmd")
+  output = here::here("vignettes/dev-check-model-reproducibility.Rmd")
 )
 ```
