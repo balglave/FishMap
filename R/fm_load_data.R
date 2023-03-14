@@ -12,6 +12,8 @@
 #' @param month_start integer Lower bound month filter to select data
 #' @param month_end integer Upper bound month filter to select data
 #' @param time_step character Time intervals, must be Month or Quarter 
+#' @param k reduce the mesh size, smaller k reduces the number of knots at which the spatial random effect is computed
+#' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  Build regular grid objects to create spatialpolygon based on raster
 #'
 #' @importFrom dplyr ungroup select filter arrange mutate
 #' @importFrom stringr str_detect
@@ -44,7 +46,12 @@ fm_load_data <- function(species = "Solea_solea",
                          year_end = 2018,
                          month_start = 11,
                          month_end = 11,
-                         time_step = "Month"
+                         time_step = "Month",
+                         k = 0.25,
+                         grid_xmin = -6,
+                         grid_xmax = 0,
+                         grid_ymin = 42,
+                         grid_ymax = 48
                          ) {
   ## Load data
   #-----------
@@ -109,11 +116,17 @@ fm_load_data <- function(species = "Solea_solea",
   
   ## Configure spatial domain
   #--------------------------
-  grid_xmin <- -6
-  grid_xmax <- 0
-  grid_ymin <- 42
-  grid_ymax <- 48
-  grid_limit <- raster::extent(c(grid_xmin,grid_xmax,grid_ymin,grid_ymax))
+  grid_xmin <- grid_xmin
+  grid_xmax <- grid_xmax
+  grid_ymin <- grid_ymin
+  grid_ymax <- grid_ymax
+  
+  grid_limit <- raster::extent(
+    c(grid_xmin,
+      grid_xmax,
+      grid_ymin,
+      grid_ymax)
+  )
   
   grid_projection <- "+proj=longlat +datum=WGS84"
   
@@ -124,7 +137,7 @@ fm_load_data <- function(species = "Solea_solea",
   
   # Mesh parameterization
   # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
-  k <- 0.25
+  k <- k
   Alpha <- 2
   
   load(file.path(data_folder,study_domain_file))

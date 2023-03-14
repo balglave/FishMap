@@ -14,7 +14,12 @@ fm_load_data(
   year_end = 2018,
   month_start = 11,
   month_end = 11,
-  time_step = "Month"
+  time_step = "Month",
+  k = 0.25,
+  grid_xmin = -6,
+  grid_xmax = 0,
+  grid_ymin = 42,
+  grid_ymax = 48
 )
 }
 \arguments{
@@ -37,6 +42,10 @@ fm_load_data(
 \item{month_end}{integer Upper bound month filter to select data}
 
 \item{time_step}{character Time intervals, must be Month or Quarter}
+
+\item{k}{reduce the mesh size, smaller k reduces the number of knots at which the spatial random effect is computed}
+
+\item{grid_xmin, grid_xmax, grid_ymin, grid_ymax}{Build regular grid objects to create spatialpolygon based on raster}
 }
 \value{
 list A named list of all necessary outputs for model fitting (step 2)
