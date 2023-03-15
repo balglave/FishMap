@@ -20,7 +20,8 @@ fm_fit_model(
   ref_data = "com",
   EM = "est_b",
   month_ref = 1,
-  compute_sd = FALSE
+  compute_sd = FALSE,
+  Version = ""
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ fm_fit_model(
 \item{month_ref}{integer reference month (default is 1 for January)}
 
 \item{compute_sd}{logical compute SD report (time-consumming)}
+
+\item{Version}{version for fm_build_data_params_map}
 }
 \value{
 list A named list of all necessary outputs for generating graphs (step 3)
