@@ -1,8 +1,8 @@
 ---
-title: "dev - running fishmap"
+title: "user - running fishmap"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-running-fishmap}
+  %\VignetteIndexEntry{user-running-fishmap}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
