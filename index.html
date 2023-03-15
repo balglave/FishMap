@@ -57,7 +57,7 @@
       <a href="articles/dev-execute-main.html">dev - execute main</a>
     </li>
     <li>
-      <a href="articles/dev-running-fishmap.html">dev - running fishmap</a>
+      <a href="articles/user-running-fishmap.html">user - running fishmap</a>
     </li>
   </ul>
 </li>
@@ -105,6 +105,15 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"balglave/FishMap"</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h3>
+<p>You can install the development version of FishMap together with the vignettes with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"balglave/FishMap"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>Installing with <code>build_vignettes = TRUE</code> will allow you to access the vignettes locally. Once you have installed FishMap with vignettes, you can access them using the command <code>vignette(package = "FishMap")</code>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
@@ -120,7 +129,7 @@
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># library(FishMap)</span></span>
 <span><span class="co">## basic example code</span></span></code></pre></div>
 </div>
