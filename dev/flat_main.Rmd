@@ -280,7 +280,7 @@ test_that("fm_load_data works", {
 This function will fit the model to the observation data. It will compile the model cpp file. It will fit the model to the input data generated from `fm_load_data()` and provide the results as a named list.
 
     
-```{r function-fm_fit_model}
+```{r function-fm_fit_model }
 #' Compile model and fit to data
 #'
 #' @param fm_data_inputs list Named list obtained from `fm_load_data()`
@@ -299,6 +299,7 @@ This function will fit the model to the observation data. It will compile the mo
 #' @param EM character "est_b": b is estimated, "fix_b": b is fixed
 #' @param month_ref integer reference month (default is 1 for January)
 #' @param compute_sd logical compute SD report (time-consumming)
+#' @param Version version for fm_build_data_params_map
 #'
 #' @importFrom stats nlminb
 #' @importFrom stringr str_detect
@@ -327,7 +328,8 @@ fm_fit_model <- function(fm_data_inputs,
                          ref_data = "com",
                          EM = "est_b",
                          month_ref = 1,
-                         compute_sd = FALSE) {
+                         compute_sd = FALSE,
+                         Version = "") {
   ## Fit model
   #-----------
   message("Running step 2 -compile model-")
@@ -366,7 +368,53 @@ fm_fit_model <- function(fm_data_inputs,
   weights_com <- 1 # TO DELETE
   
   ## Build Data, Params and Map objects for model fitting
-  source(file.path(script_folder,"build_data_params_map.R"), local=TRUE)
+  data_params_map_random <- fm_build_data_params_map(
+    SE = SE,
+    data_source = data_source,
+    data_obs = data_obs,
+    samp_process = samp_process,
+    b_constraint = b_constraint,
+    cov_samp_process = cov_samp_process,
+    const_spphab = const_spphab,
+    biomass_temporal = biomass_temporal,
+    sampling_temporal = sampling_temporal,
+    anisotropy = anisotropy,
+    lf_link = lf_link,
+    b_com_i = b_com_i,
+    mesh = mesh,
+    time.step_df = time.step_df,
+    loc_x = loc_x,
+    y_com_i = y_com_i,
+    y_sci_i = y_sci_i,
+    cov_x_com = cov_x_com,
+    cov_x_sci = cov_x_sci,
+    xfb_x = xfb_x,
+    c_com_x = c_com_x,
+    t_com_i = t_com_i,
+    weights_com = weights_com,
+    t_sci_i = t_sci_i,
+    spde = spde,
+    Aix_ij_com = Aix_ij_com,
+    Aix_w_com = Aix_w_com,
+    Aix_ij_sci = Aix_ij_sci,
+    Aix_w_sci = Aix_w_sci,
+    cov_x_pred = cov_x_pred,
+    Aix_ij_pred = Aix_ij_pred,
+    Aix_w_pred = Aix_w_pred,
+    W = W,
+    n_survey = n_survey,
+    MeshList_aniso = MeshList_aniso,
+    EM = EM,
+    ref_data = ref_data,
+    month_ref = month_ref,
+    Version = Version
+  )
+  
+  # define global var
+  Data <- data_params_map_random$data
+  Params <- data_params_map_random$params
+  Map <- data_params_map_random$map
+  Random <- data_params_map_random$random
   
   # Add link to path
   if (.Platform$OS.type == "windows"){
