@@ -38,6 +38,20 @@ You can install the development version of FishMap from
 remotes::install_github("balglave/FishMap")
 ```
 
+### Vignettes
+
+You can install the development version of FishMap together with the
+vignettes with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("balglave/FishMap", build_vignettes = TRUE)
+```
+
+Installing with `build_vignettes = TRUE` will allow you to access the
+vignettes locally. Once you have installed FishMap with vignettes, you
+can access them using the command `vignette(package = "FishMap")`.
+
 ## Documentation
 
 Full documentation website on: <https://balglave.github.io/FishMap>
