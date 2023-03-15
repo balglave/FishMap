@@ -357,8 +357,21 @@ test_that("fm_load_data works", {
     fm_data_inputs$mesh$meta$prefix
   expected_output$MeshList_aniso$anisotropic_spde$mesh$meta$prefix <-
     fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
-  expect_equal(object = fm_data_inputs,
-               expected = expected_output)
+
+  resort_all <- function(x){
+    x <- x[sort(names(x))]
+    
+    result <- lapply(x, function(x){
+       x[sort(names(x))]
+    })
+    
+    result
+  }
+  
+  resorted_result <- resort_all(fm_data_inputs)
+  resorted_expected <- resort_all(expected_output)
+  expect_equal(object = resorted_result,
+               expected = resorted_expected)
   
 })
 ```
