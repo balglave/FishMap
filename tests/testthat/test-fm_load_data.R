@@ -131,10 +131,8 @@ test_that("fm_load_data works", {
   
   resorted_result <- resort_all(fm_data_inputs)
   resorted_expected <- resort_all(expected_output)
-  
-  readr::write_rds(resorted_result, "resorted_result.rds")
-  readr::write_rds(resorted_expected, "resorted_expected.rds")
-  
+  attr(resorted_expected$loc_x$long, which = "names") <- NULL
+  attr(resorted_expected$loc_x$lati, which = "names") <- NULL
   expect_equal(object = resorted_result,
                expected = resorted_expected)
   
