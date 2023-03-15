@@ -2,7 +2,7 @@
 
 test_that("fm_fit_model works", {
   
-  # You can test your model with another parameter k. By construction, the first test of a value of k will always pass. Do not use for CI. You have to run tests localy to stock the rds file
+  # You can test your model with another parameter k. By construction, the first test of a value of k will always pass. Do not use for CI. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
   
   if(Sys.getenv("FISHMAP_K_PARAM") != ""){
     k <- Sys.getenv("FISHMAP_K_PARAM")
@@ -30,22 +30,26 @@ test_that("fm_fit_model works", {
     }
     # save output
     saveRDS(object = fm_model_results, file = file.path(output_dir, paste0("part2_output", k ,".rds")))
-    saveRDS(object = fm_model_results, file = file.path(paste0("part2_output", k ,".rds")))
+    
+    # TODO To reduce size of the rds, we have to only save some parts, not all
+    # saveRDS(object = fm_model_results, file = file.path(paste0("part2_output", k ,".rds")))
   }
+
   
   # check output is saved as rds
   if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
     output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
+    
+    #' @description Test to check if we can save output
     expect_true(file.exists(file.path(output_dir, paste0("part2_output", k ,".rds"))))
   }
   
   # Check resultats of model 
   
-  # is a list
+  #' @description Testing the result of `fm_fit_model` is a list
   expect_type(object = fm_model_results,  "list")
   
-  # check names
-  
+  #' @description Testing names of the list return by `fm_fit_model` 
   expect_named(
     object = fm_model_results, 
     expected = c(
@@ -56,21 +60,19 @@ test_that("fm_fit_model works", {
       "converge" )
     )
   
-  # check types inside the list
   
-  # could be a map2 maybe
+  #' @description Testing types inside the list return by `fm_fit_model` 
   expect_s3_class(fm_model_results$time.step_df, "data.frame")
   expect_s3_class(fm_model_results$loc_x, "data.frame")
   expect_type(fm_model_results$report, "list")
   expect_type(fm_model_results$samp_process, "double")
   expect_type(fm_model_results$converge, "integer")
   
-  # Checking the object
-  
-  expect_identical(
-    object = fm_model_results,
-    expected = readRDS(file.path(paste0("part2_output", k ,".rds")))
-  )
-  
+  # TODO To reduce size of the rds, we have to check only some parts
+  # #' @description Testing that the result of `fm_fit_model` is stable
+  # expect_equal(
+  #   object = fm_model_results,
+  #   expected = readRDS(file.path(paste0("part2_output", k ,".rds")))
+  # )
   
 })
