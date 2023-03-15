@@ -10,7 +10,6 @@
 # Params : list of parameters
 # Map : parameters that are fixed to a specific value
 
-fm_build_data_params_map <- function(SE, data_source, data_obs, samp_process, b_constraint, cov_samp_process, const_spphab, biomass_temporal, sampling_temporal, anisotropy, lf_link, b_com_i, mesh, time.step_df, loc_x, y_com_i, y_sci_i, cov_x_com, cov_x_sci, xfb_x, c_com_x, t_com_i, weights_com, t_sci_i, spde, Aix_ij_com, Aix_w_com, Aix_ij_sci, Aix_w_sci, cov_x_pred, Aix_ij_pred, Aix_w_pred, W, n_survey, MeshList_aniso, EM, ref_data, month_ref, Version) {
   options_vec = c('SE'=SE, # run ADREPORT
                   'data_source' = data_source, # 1: integrated, 2: scientific, 3: commercial
                   'data_obs' = data_obs,  # 1 : zinfgamma, 2 : zinflognormal
@@ -438,4 +437,3 @@ fm_build_data_params_map <- function(SE, data_source, data_obs, samp_process, b_
     if(data_source %in% 3) Map$k_com <- factor(c(NA,1:(length(Params$k_com)-1)))
 
   }
-}
