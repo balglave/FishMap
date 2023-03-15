@@ -5,7 +5,7 @@ test_that("fm_fit_model works", {
   # You can test your model with another parameter k. By construction, the first test of a value of k will always pass. Do not use for CI. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
   
   if(Sys.getenv("FISHMAP_K_PARAM") != ""){
-    k <- Sys.getenv("FISHMAP_K_PARAM")
+    k <- as.numeric(Sys.getenv("FISHMAP_K_PARAM"))
   }else{
     k <- 0.25
   }

@@ -2,28 +2,123 @@
 
 test_that("fm_load_data works", {
   
-  # run function
-  fm_data_inputs <- fm_load_data()
+  # The test are done by default with k = 0.25, which allow the use of small size objects
   
-  # save part1 outputs
+  if (Sys.getenv("FISHMAP_K_PARAM") != "") {
+    k <- as.numeric(Sys.getenv("FISHMAP_K_PARAM"))
+  } else{
+    k <- 0.25
+  }
+  
+  # run part1
+  fm_data_inputs <- fm_load_data(k = k)
+  
+  # save part1 outputs, one for each k tested
   if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
     # setup save dir, create it if necessary
     output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-    if (isFALSE(dir.exists(output_dir))){
+    if (isFALSE(dir.exists(output_dir))) {
       dir.create(output_dir)
     }
     # save output
-    saveRDS(object = fm_data_inputs, file = file.path(output_dir, "part1_output.rds"))
+    saveRDS(
+      object = fm_data_inputs,
+      file = file.path(output_dir, paste0("part1_output", k , ".rds"))
+      )
   }
-  
-  # check output is a list
-  expect_true(object = inherits(x = fm_data_inputs,
-                                what = "list"))
   
   # check output is saved as rds
   if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
     output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-    expect_true(file.exists(file.path(output_dir, "part1_output.rds")))
+    
+    #' @description Test to check if we can save output
+    expect_true(file.exists(file.path(
+      output_dir, paste0("part1_output", k , ".rds")
+    )))
   }
+  
+  # Check `fm_load_data` output values
+  
+  #' @description Testing the result of `fm_load_data` is a list
+  expect_type(object = fm_data_inputs,  "list")
+  
+  #' @description Testing names of the list return by `fm_load_data`
+  expect_named(
+    object = fm_data_inputs,
+    expected = c(
+      "species",
+      "b_com_i",
+      "mesh",
+      "time.step_df",
+      "loc_x",
+      "y_com_i",
+      "y_sci_i",
+      "cov_x_com",
+      "cov_x_sci",
+      "c_com_x",
+      "t_com_i",
+      "t_sci_i",
+      "spde",
+      "Aix_ij_com",
+      "Aix_w_com",
+      "Aix_ij_sci",
+      "Aix_w_sci",
+      "cov_x_pred",
+      "Aix_ij_pred",
+      "Aix_w_pred",
+      "W",
+      "n_survey",
+      "MeshList_aniso"
+    )
+  )
+  
+  #' @description Testing types inside the list returned by `fm_load_data`
+  expect_type(fm_data_inputs[["species"]], "character")
+  expect_type(fm_data_inputs[["b_com_i"]], "double")
+  expect_s3_class(fm_data_inputs[["mesh"]], "inla.mesh")
+  expect_s3_class(fm_data_inputs[["time.step_df"]], "data.frame")
+  expect_s3_class(fm_data_inputs[["loc_x"]], "data.frame")
+  expect_type(fm_data_inputs[["y_com_i"]], "double")
+  expect_type(fm_data_inputs[["y_sci_i"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["cov_x_com"]]))
+  expect_true(is.matrix(fm_data_inputs[["cov_x_sci"]]))
+  expect_true(is.array(fm_data_inputs[["c_com_x"]]))
+  expect_type(fm_data_inputs[["t_com_i"]], "integer")
+  expect_type(fm_data_inputs[["t_sci_i"]], "integer")
+  expect_type(fm_data_inputs[["spde"]], "list")
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_com"]]))
+  expect_type(fm_data_inputs[["Aix_w_com"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_sci"]]))
+  expect_type(fm_data_inputs[["Aix_w_sci"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["cov_x_pred"]]))
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_pred"]]))
+  expect_type(fm_data_inputs[["Aix_w_pred"]], "double")
+  expect_type(fm_data_inputs[["W"]], "double")
+  expect_type(fm_data_inputs[["n_survey"]], "double")
+  expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
+  
+  #' @description Testing that tmpdir of the mesh exists
+  mesh_dir <- dirname(
+    path = fm_data_inputs$mesh$meta$prefix
+    )
+  expect_true(dir.exists(mesh_dir))
+  mesh_aniso_dir <- dirname(
+    path = fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
+    )
+  expect_true(dir.exists(mesh_aniso_dir))
+  
+  #' @description Testing that the result of `fm_load_data` is stable
+  test_dir <- system.file("expected_outputs", package = "FishMap")
+  expected_output <- readRDS(file.path(
+                 test_dir,
+                 paste0("part1_output", k , ".rds")
+               ))
+  # use the same tmpdir for mesh and mesh_aniso objects
+  expected_output$mesh$meta$prefix <-
+    fm_data_inputs$mesh$meta$prefix
+  expected_output$MeshList_aniso$anisotropic_spde$mesh$meta$prefix <-
+    fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
+  expect_equal(object = fm_data_inputs,
+               expected = expected_output)
   
 })
