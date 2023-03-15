@@ -351,11 +351,7 @@ test_that("fm_load_data works", {
   expect_true(dir.exists(mesh_aniso_dir))
   
   #' @description Testing that the result of `fm_load_data` is stable
-  test_dir <- system.file("expected_outputs", package = "FishMap")
-  expected_output <- readRDS(file.path(
-                 test_dir,
-                 paste0("part1_output", k , ".rds")
-               ))
+  expected_output <- readRDS(file.path(paste0("part1_output", k ,".rds")))
   # use the same tmpdir for mesh and mesh_aniso objects
   expected_output$mesh$meta$prefix <-
     fm_data_inputs$mesh$meta$prefix

@@ -112,7 +112,7 @@ To do so, you should update the files present in the `inst/expect_outputs` with 
 # Update expect output files in inst/ folder with local output files
 file_to_update <- c("part1_output0.25.rds")
 output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-test_dir <- system.file("expected_outputs", package = "FishMap")
+test_dir <- here::here("tests","testthat")
 
 file.copy(from = file.path(output_dir, file_to_update),
           to = test_dir,
