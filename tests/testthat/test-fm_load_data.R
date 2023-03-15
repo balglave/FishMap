@@ -119,7 +119,11 @@ test_that("fm_load_data works", {
     x <- x[sort(names(x))]
     
     result <- lapply(x, function(x){
-       x[sort(names(x))]
+      if(inherits(x, c("data.frame", 'list'))){
+        x[sort(names(x))]
+      }else{
+        x
+      }
     })
     
     result
@@ -127,6 +131,10 @@ test_that("fm_load_data works", {
   
   resorted_result <- resort_all(fm_data_inputs)
   resorted_expected <- resort_all(expected_output)
+  
+  readr::write_rds(resorted_result, "resorted_result.rds")
+  readr::write_rds(resorted_expected, "resorted_expected.rds")
+  
   expect_equal(object = resorted_result,
                expected = resorted_expected)
   
