@@ -264,8 +264,8 @@ test_that("fm_load_data works", {
       dir.create(output_dir)
     }
     # save output
-    saveRDS(
-      object = fm_data_inputs,
+    readr::write_rds(
+      x = fm_data_inputs,
       file = file.path(output_dir, paste0("part1_output", k , ".rds"))
       )
   }
@@ -351,7 +351,7 @@ test_that("fm_load_data works", {
   expect_true(dir.exists(mesh_aniso_dir))
   
   #' @description Testing that the result of `fm_load_data` is stable
-  expected_output <- readRDS(file.path(paste0("part1_output", k ,".rds")))
+  expected_output <- readr::read_rds(file.path(paste0("part1_output", k ,".rds")))
   # use the same tmpdir for mesh and mesh_aniso objects
   expected_output$mesh$meta$prefix <-
     fm_data_inputs$mesh$meta$prefix
