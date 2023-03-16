@@ -1,0 +1,304 @@
+---
+title: "dev - check low resolution model reproducibility"
+author: "swann floc'hlay"
+date: '2023-03-09'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dev-check-model-reproducibility-lowres}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Checking reproducibility of FishMap results
+
+ <!-- this vignette is generated from dev/dev_check_model_reproducibility_lowres.Rmd with main.R in lowres parameters, make your edit on this original file -->
+
+This notebook gather the analysis performed in order to compare the output of the original FishMap `main.R` script between Client and ThinkR. We will compare the results obtained with identical seeds following the execution of the script `dev/run_main_and_save_output.R`.
+
+Here, we use **low resolution parameters** :
+
+  * `k = 0.25`
+  * `month_start <- 11`
+  * `month_end <- 11`
+
+## Executing `main.R`
+
+We generate the outputs on ThinkR machine.
+> make sure your .Renviron variables `FISHMAP_UPDATE_OUTPUTS` and `FISHMAP_OUTPUT_DIR` are correctly set
+
+```{r message=FALSE, warning=FALSE, results = 'hide'}
+# Generate results (model files are compiled)
+source(here::here("dev", "run_main_and_save_output.R"))
+```
+
+> Note: model fit is perfomed in 118 steps in this run
+
+Executing this code results in four outputs to be compared. Result are not showm here.
+
+```{r}
+output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
+list.files(path = file.path(output_dir))
+```
+
+
+To check whether the seed is effectively making the output reproducible, we will run a second time `main.R` with the same seed. Result are not shown here.
+
+```{r message=FALSE, warning=FALSE, results = 'hide'}
+# Create a temporary folder
+tmp_folder <- tempfile(pattern = "fishmap_check")
+dir.create(tmp_folder)
+
+# Move ThinkR first execution output in temp folder
+dir.create(file.path(tmp_folder, "thinkr_output"))
+fs::file_move(
+  path = list.files(
+    path = output_dir,
+    full.names = TRUE
+  ),
+  new_path = file.path(tmp_folder, "thinkr_output")
+)
+
+# Run main.R a second time (model files are already compiled from first run)
+source(here::here("dev", "run_main_and_save_output.R"))
+
+# Move ThinkR second execution in the temp folder
+dir.create(file.path(tmp_folder, "thinkr_output_rerun"))
+fs::file_move(
+  path = list.files(
+    path = output_dir,
+    full.names = TRUE
+  ),
+  new_path = file.path(tmp_folder, "thinkr_output_rerun")
+)
+```
+
+We list the resulting output files.
+
+```{r}
+thinkr1_output_dir <- file.path(tmp_folder, "thinkr_output")
+
+thinkr1_output <- paste0(
+  list.files(
+    path = thinkr1_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to ThinkR's second run output files are :\n {thinkr1_output}")
+
+thinkr2_output_dir <- file.path(tmp_folder, "thinkr_output_rerun")
+
+thinkr2_output <- paste0(
+  list.files(
+    path = thinkr2_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to ThinkR's first run output files are :\n {thinkr2_output}")
+```
+
+## Checking seed reproducibility
+
+In order to contrast output files from both ThinkR runs, we will use the package `{waldo}`.
+
+```{r}
+# list of output fiiles to contrast
+files_to_contrast <- list.files(path = file.path(thinkr1_output_dir))
+
+# running waldo on each files comparing thinkR runs
+purrr::map(
+  .x = files_to_contrast,
+  ~ waldo::compare(
+    x = readRDS(
+      file.path(thinkr1_output_dir, .x)
+    ),
+    y = readRDS(
+      file.path(thinkr2_output_dir, .x)
+    )
+  )
+) %>% setNames(files_to_contrast)
+```
+Both ThinkR outputs are identical. We will use one of them to now compare with the Client's output.
+
+## Loading Client's output
+
+We now load the outputs generated from Clients (BA and JC) in a temporary folder.
+
+```{r}
+# Download and unzip JC outputs from Git repo
+jc_zip_file_url <- "https://github.com/balglave/FishMap/files/10897028/outputs_fishmap.zip"
+download.file(
+  url = jc_zip_file_url,
+  destfile = file.path(tmp_folder, "jc_output.zip")
+)
+
+unzip(
+  zipfile = file.path(tmp_folder, "jc_output.zip"),
+  exdir = file.path(tmp_folder, "jc_output")
+)
+
+jc_output_dir <- file.path(tmp_folder, "jc_output")
+
+jc_output <- paste0(
+  list.files(
+    path = jc_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to Juliette's output files are :\n {jc_output}")
+
+# Download and unzip BA outputs from Git repo
+ba_zip_file_url <- "https://github.com/balglave/FishMap/files/10912068/shared.zip"
+download.file(
+  url = ba_zip_file_url,
+  destfile = file.path(tmp_folder, "ba_output.zip")
+)
+
+unzip(
+  zipfile = file.path(tmp_folder, "ba_output.zip"),
+  exdir = file.path(tmp_folder, "ba_output")
+)
+
+ba_output_dir <- file.path(tmp_folder, "ba_output", "shared", "outputs_fishmap")
+
+ba_output <- paste0(
+  list.files(
+    path = ba_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to Baptiste's output files are :\n {ba_output}")
+```
+
+
+## Contrasting files
+
+Results between ThinkR and Client's are not perfectly identical. 
+
+**Important note** : To compare numerical results we will set a tolerance in numerical differences to **10e-4**.
+
+We find differences in function code present in the outputs (see section on `obj_inputs.rds`). This might indicate a difference in **package version**. Could you please indicate the `R` and `TMB` package version you used for generating the outputs ?
+
+### Create contrast function
+
+We will use again `{waldo}` within a function to display the exact differences for each file.
+
+```{r}
+# Create a function to explore waldo's output file by file between ThinkR and Baptiste + Juliette outputs
+
+compare_output_file <- function(file_name, author) {
+  if (author == "juliette") {
+    client_output_dir <- jc_output_dir
+  } else if (author == "baptiste") {
+    client_output_dir <- ba_output_dir
+  } else {
+    stop("author must be either juliette or baptiste")
+  }
+
+  # running waldo on one file (thinkR ~ client)
+  message(glue::glue("contrasting output of {file_name} between thinkr and {author}"))
+  compare_author <- waldo::compare(
+    x = readRDS(
+      file.path(client_output_dir, file_name)
+    ),
+    y = readRDS(
+      file.path(thinkr1_output_dir, file_name)
+    ),
+    x_arg = author,
+    y_arg = "thinkr",
+    max_diffs = 100,
+    tolerance = 10e-4
+  )
+
+  return(compare_author)
+}
+```
+
+### Contrasting `converge_output.rds` output
+
+```{r}
+compare_output_file(file_name = "converge_output.rds", author = "baptiste")
+compare_output_file(file_name = "converge_output.rds", author = "juliette")
+```
+
+### Contrasting `opt_output.rds` output
+
+```{r}
+compare_output_file(file_name = "opt_output.rds", author = "baptiste")
+compare_output_file(file_name = "opt_output.rds", author = "juliette")
+```
+
+### Contrasting `report_output.rds` output
+
+```{r}
+compare_output_file(file_name = "report_output.rds", author = "baptiste")
+compare_output_file(file_name = "report_output.rds", author = "juliette")
+```
+
+### Contrasting `obj_input.rds` output
+
+
+```{r}
+compare_output_file(file_name = "obj_input.rds", author = "juliette")
+```
+
+We encounter an error when contrasting the `fn` and `env` element of the `obj_input.rds` object between Baptiste's version and ThinkR's version. We run `{waldo}` element by element except for the object of class `environment`, with a specific parameter (`ignore_function_env = TRUE`) that ignore function environment comparison and allows the comparison to succeed. This error might come from a difference in package version (cf. comment at the beginning of section).
+
+```{r}
+file_name <- "obj_input.rds"
+author <- "baptiste"
+client_output_dir <- ba_output_dir
+
+message(glue::glue("contrasting elemts of {file_name} element by element between thinkr and {author}"))
+
+client_obj <- readRDS(
+    file.path(client_output_dir, file_name)
+  )
+
+thinkr_obj <- readRDS(
+    file.path(thinkr1_output_dir, file_name)
+  )
+
+# select elements of list that are not a env class
+list_is_env <- purrr::map_lgl(client_obj, ~ inherits(.x, "environment"))
+list_names_not_env <- names(client_obj)[!list_is_env]
+
+purrr::map(
+  .x = list_names_not_env,
+  ~ waldo::compare(
+  x = client_obj[[.x]],
+  y = thinkr_obj[[.x]],
+  x_arg = author,
+  y_arg = "thinkr",
+  tolerance = 10e-6,
+  max_diffs = 100,
+  ignore_function_env = TRUE
+)
+) %>% setNames(list_names_not_env)
+
+```
+
+```{r}
+# delete temporary folder
+unlink(tmp_folder)
+```
+
+
+```{r eval=FALSE}
+# knit the Rmd as a compiled Rmd in vignettes
+knitr::knit(
+  input = here::here("dev/dev_check_model_reproducibility_lowres.Rmd"),
+  output = here::here("vignettes/dev-check-model-reproducibility-lowres.Rmd")
+)
+```
