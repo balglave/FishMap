@@ -1,8 +1,12 @@
 ---
-title: "dev - check model reproducibility"
+title: "dev - check high resolution model reproducibility"
 author: "swann floc'hlay"
-date: '2023-03-09'
-output: html_document
+date: '2023-03-16'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dev-check-model-reproducibility-highres}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r include=FALSE}
@@ -11,65 +15,49 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Checking reproducibility of FishMap results
 
- <!-- this vignette is generated from dev/dev_check_model_reproducibility.Rmd, make your edit on this original file -->
+ <!-- this vignette is generated from dev/dev_check_model_reproducibility_highres.Rmd, make your edit on this original file -->
 
 This notebook gather the analysis performed in order to compare the output of the original FishMap `main.R` script between Client and ThinkR. We will compare the results obtained with identical seeds following the execution of the script `dev/run_main_and_save_output.R`.
+
+Here, we use **high resolution parameters** :
+
+  * `k = 0.75`
+  * `month_start <- 10`
+  * `month_end <- 12`
 
 ## Executing `main.R`
 
 We generate the outputs on ThinkR machine.
 > make sure your .Renviron variables `FISHMAP_UPDATE_OUTPUTS` and `FISHMAP_OUTPUT_DIR` are correctly set
 
-```{r message=FALSE, warning=FALSE, results = 'hide'}
+```{r eval=FALSE}
 # Generate results (model files are compiled)
 source(here::here("dev", "run_main_and_save_output.R"))
 ```
 
-> Note: model fit is perfomed in 118 steps in this run
-
-Executing this code results in four outputs to be compared. Result are not showm here.
+Executing this code results in four outputs to be compared.
 
 ```{r}
 output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
 list.files(path = file.path(output_dir))
 ```
 
+To check whether the seed is effectively making the output reproducible, we will run a second time `main.R` with the same seed.
 
-To check whether the seed is effectively making the output reproducible, we will run a second time `main.R` with the same seed. Result are not shown here.
-
-```{r message=FALSE, warning=FALSE, results = 'hide'}
-# Create a temporary folder
-tmp_folder <- tempfile(pattern = "fishmap_check")
-dir.create(tmp_folder)
-
-# Move ThinkR first execution output in temp folder
-dir.create(file.path(tmp_folder, "thinkr_output"))
-fs::file_move(
-  path = list.files(
-    path = output_dir,
-    full.names = TRUE
-  ),
-  new_path = file.path(tmp_folder, "thinkr_output")
-)
+```{r  message=FALSE, warning=FALSE, results = 'hide'}
+# Change output dir to avoid overriding previous run
+Sys.setenv(FISHMAP_OUTPUT_DIR = "~/shared/outputs_fishmap_highres_rerun")
 
 # Run main.R a second time (model files are already compiled from first run)
 source(here::here("dev", "run_main_and_save_output.R"))
-
-# Move ThinkR second execution in the temp folder
-dir.create(file.path(tmp_folder, "thinkr_output_rerun"))
-fs::file_move(
-  path = list.files(
-    path = output_dir,
-    full.names = TRUE
-  ),
-  new_path = file.path(tmp_folder, "thinkr_output_rerun")
-)
 ```
+
+_Note_: model fit is performed in 186 steps in this run.
 
 We list the resulting output files.
 
 ```{r}
-thinkr1_output_dir <- file.path(tmp_folder, "thinkr_output")
+thinkr1_output_dir <- file.path("~","shared","outputs_fishmap_highres_rerun")
 
 thinkr1_output <- paste0(
   list.files(
@@ -81,7 +69,7 @@ thinkr1_output <- paste0(
 
 glue::glue("The paths to ThinkR's second run output files are :\n {thinkr1_output}")
 
-thinkr2_output_dir <- file.path(tmp_folder, "thinkr_output_rerun")
+thinkr2_output_dir <- file.path("~","shared","outputs_fishmap_highres")
 
 thinkr2_output <- paste0(
   list.files(
@@ -122,8 +110,12 @@ Both ThinkR outputs are identical. We will use one of them to now compare with t
 We now load the outputs generated from Clients (BA and JC) in a temporary folder.
 
 ```{r}
-# Download and unzip JC outputs from Git repo
-jc_zip_file_url <- "https://github.com/balglave/FishMap/files/10897028/outputs_fishmap.zip"
+# Create tmp folder to store Client output
+tmp_folder <- tempfile(pattern = "fishmap_highres")
+dir.create(tmp_folder)
+
+# Download and unzip JC highres outputs from Git repo
+jc_zip_file_url <- "https://github.com/balglave/FishMap/files/10970908/outputs_fishmap_highres.zip"
 download.file(
   url = jc_zip_file_url,
   destfile = file.path(tmp_folder, "jc_output.zip")
@@ -134,7 +126,7 @@ unzip(
   exdir = file.path(tmp_folder, "jc_output")
 )
 
-jc_output_dir <- file.path(tmp_folder, "jc_output")
+jc_output_dir <- file.path(tmp_folder, "jc_output", "outputs_fishmap_highres")
 
 jc_output <- paste0(
   list.files(
@@ -146,8 +138,8 @@ jc_output <- paste0(
 
 glue::glue("The paths to Juliette's output files are :\n {jc_output}")
 
-# Download and unzip BA outputs from Git repo
-ba_zip_file_url <- "https://github.com/balglave/FishMap/files/10912068/shared.zip"
+# Download and unzip BA highres outputs from Git repo
+ba_zip_file_url <- "https://github.com/balglave/FishMap/files/10982408/outputs_fishmap_highres.zip"
 download.file(
   url = ba_zip_file_url,
   destfile = file.path(tmp_folder, "ba_output.zip")
@@ -158,7 +150,7 @@ unzip(
   exdir = file.path(tmp_folder, "ba_output")
 )
 
-ba_output_dir <- file.path(tmp_folder, "ba_output", "shared", "outputs_fishmap")
+ba_output_dir <- file.path(tmp_folder, "ba_output","outputs_fishmap_highres")
 
 ba_output <- paste0(
   list.files(
@@ -178,7 +170,7 @@ Results between ThinkR and Client's are not perfectly identical.
 
 **Important note** : To compare numerical results we will set a tolerance in numerical differences to **10e-4**.
 
-We find differences in function code present in the outputs (see section on `obj_inputs.rds`). This might indicate a difference in **package version**. Could you please indicate the `R` and `TMB` package version you used for generating the outputs ?
+We find differences in function code present in the outputs (see section on `obj_inputs.rds`). This might indicate a difference in **package version**. cf. `sessionInfo()` provided by Clients.
 
 ### Create contrast function
 
@@ -288,7 +280,7 @@ unlink(tmp_folder)
 ```{r eval=FALSE}
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
-  input = here::here("dev/dev_check_model_reproducibility.Rmd"),
-  output = here::here("vignettes/dev-check-model-reproducibility.Rmd")
+  input = here::here("dev/dev_check_model_reproducibility_highres.Rmd"),
+  output = here::here("vignettes/dev-check-model-reproducibility-highres.Rmd")
 )
 ```

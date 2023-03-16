@@ -1,17 +1,27 @@
 ---
-title: "dev - check model reproducibility"
+title: "dev - check low resolution model reproducibility"
 author: "swann floc'hlay"
 date: '2023-03-09'
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dev-check-model-reproducibility-lowres}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
 
 # Checking reproducibility of FishMap results
 
- <!-- this vignette is generated from dev/dev_check_model_reproducibility.Rmd, make your edit on this original file -->
+ <!-- this vignette is generated from dev/dev_check_model_reproducibility_lowres.Rmd with main.R in lowres parameters, make your edit on this original file -->
 
 This notebook gather the analysis performed in order to compare the output of the original FishMap `main.R` script between Client and ThinkR. We will compare the results obtained with identical seeds following the execution of the script `dev/run_main_and_save_output.R`.
+
+Here, we use **low resolution parameters** :
+
+  * `k = 0.25`
+  * `month_start <- 11`
+  * `month_end <- 11`
 
 ## Executing `main.R`
 
@@ -24,7 +34,7 @@ We generate the outputs on ThinkR machine.
 source(here::here("dev", "run_main_and_save_output.R"))
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](figure/lowres/unnamed-chunk-3-1.png)
 
 > Note: model fit is perfomed in 118 steps in this run
 
@@ -63,7 +73,7 @@ fs::file_move(
 source(here::here("dev", "run_main_and_save_output.R"))
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5](figure/lowres/unnamed-chunk-5-1.png)
 
 ```r
 # Move ThinkR second execution in the temp folder
@@ -2245,7 +2255,7 @@ unlink(tmp_folder)
 ```r
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
-  input = here::here("dev/dev_check_model_reproducibility.Rmd"),
-  output = here::here("vignettes/dev-check-model-reproducibility.Rmd")
+  input = here::here("dev/dev_check_model_reproducibility_lowres.Rmd"),
+  output = here::here("vignettes/dev-check-model-reproducibility-lowres.Rmd")
 )
 ```
