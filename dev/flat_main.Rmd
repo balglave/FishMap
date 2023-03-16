@@ -246,31 +246,34 @@ fm_data_inputs <- fm_load_data()
 test_that("fm_load_data works", {
   # The test are done by default with k = 0.25, which allow the use of small size objects
   
-  if (Sys.getenv("FISHMAP_K_PARAM") != "") {
-    k <- as.numeric(Sys.getenv("FISHMAP_K_PARAM"))
-  } else{
-    k <- 0.25
-  }
+  test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
   
   # run part1
-  fm_data_inputs <- fm_load_data(k = k)
-  
-  # save part1 outputs, one for each k tested
-  if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
-    # setup save dir, create it if necessary
-    output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-    if (isFALSE(dir.exists(output_dir))) {
-      dir.create(output_dir)
+  if (test_resolution == "small") {
+    fm_data_inputs <- fm_load_data(k = 0.25, month_start = 11, month_end = 11)
+  } else if (test_resolution == "big") {
+    fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12)
+  }
+
+  # Update expected outputs here
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    # save output depending if we are in flat or in test
+    output_test_dir <- here::here("tests", "testthat")
+    output_inst_dir <- here::here("inst", "examples")  
+    
+    if (test_resolution == "small") {
+      readr::write_rds(x = fm_data_inputs,
+                       file = file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds")))
+    } else if (test_resolution == "big") {
+      # Multiple parts
+      # output_test_dir
     }
-    # save output
-    readr::write_rds(x = fm_data_inputs,
-                     file = file.path(output_dir, paste0("part1_output", k , ".rds")))
   }
   
   # check output is saved as rds
   if (Sys.getenv("FISHMAP_UPDATE_OUTPUTS") == "TRUE") {
     output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-    
+
     #' @description Test to check if we can save output
     expect_true(file.exists(file.path(
       output_dir, paste0("part1_output", k , ".rds")
@@ -347,8 +350,14 @@ test_that("fm_load_data works", {
   
   # Load previous run saved in testdir
   # to change this file, follow dev/0-dev_history.Rmd instructions
-  expected_output <-
-    readr::read_rds(file.path(paste0("part1_output", k , ".rds")))
+  # If in flat main != in tests
+  the_path <- file.path(paste0("part1_output", k , ".rds"))
+  if (!file.exists(the_path)) {
+    # In case we are in the flat file
+    the_path <- file.path("tests", "testthat", the_path)
+    if (!file.exists(the_path)) {stop(the_path, "does not exist. Was the expected output created: See vignette to create outputs")}
+  }
+  expected_output <- readr::read_rds(the_path)
   
   # homogenize tmp dir value tested in above test
   expected_output$mesh$meta$prefix <-
@@ -357,6 +366,7 @@ test_that("fm_load_data works", {
     fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
   
   # sort list and data frame elements to avoid order discrepancies
+  # Dans un flat_utils => @noRd
   resort_all <- function(x) {
     x <- x[sort(names(x))]
     
