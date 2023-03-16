@@ -28,6 +28,7 @@ Imports:
     TMB
 Suggests: 
     knitr,
+    readr,
     rgdal,
     rmarkdown,
     splancs,

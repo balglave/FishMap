@@ -49,7 +49,6 @@ This function Prepare all the necessary output for the model fitting. It will fi
 ```{r preex-fm_load_data}
 # run part1
 fm_data_inputs <- fm_load_data()
-
 ```
 
   
