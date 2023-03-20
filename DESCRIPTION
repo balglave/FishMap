@@ -21,17 +21,18 @@ Imports:
     raster,
     sf,
     sp,
+    splancs,
     stats,
     stringr,
     tictoc,
     tidyr,
     TMB
 Suggests: 
+    here,
     knitr,
     readr,
     rgdal,
     rmarkdown,
-    splancs,
     testthat,
     withr
 VignetteBuilder: 

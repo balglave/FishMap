@@ -1,5 +1,5 @@
 ---
-title: "flat_additional.Rmd empty"
+title: "flat_fm_fit_model.Rmd empty"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -47,6 +47,7 @@ pkgload::load_all(export_all = FALSE)
 #' @param Version Version
 #' 
 #' @importFrom INLA inla.as.dgTMatrix
+#' @importFrom splancs splancs
 #' @importFrom stringr str_detect
 #'
 #' @return list
@@ -492,97 +493,97 @@ fm_build_data_params_map <- function(SE, data_source, data_obs, samp_process, b_
 
 ```
 
-An example of the function but she is not exported. Only use to remove source inside the function `fm_fit_model`
+An example of the function. Only use to remove source inside the function `fm_fit_model`
 
-```{r, eval=FALSE}
+```{r examples-fm_build_data_params_map, eval=FALSE}
 ## Settings all params
-  
-  SE <- 1
-  data_source <- 1
-  data_obs <- 2
-  samp_process <- 0
-  b_constraint <- 2
-  const_spphab <- 1
-  cov_samp_process <- 0
-  biomass_temporal <- 1
-  sampling_temporal <- 0
-  anisotropy <- 0
-  lf_link <- 0
-  ref_data <- "com"
-  EM <- "est_b"
-  month_ref <- 1
-  compute_sd <- FALSE
-  
-  fm_data_inputs <- fm_load_data()
-  
-  species <- fm_data_inputs[["species"]]
-  b_com_i <- fm_data_inputs[["b_com_i"]]
-  mesh <- fm_data_inputs[["mesh"]]
-  time.step_df <- fm_data_inputs[["time.step_df"]]
-  loc_x <- fm_data_inputs[["loc_x"]]
-  y_com_i <- fm_data_inputs[["y_com_i"]]
-  y_sci_i <- fm_data_inputs[["y_sci_i"]]
-  cov_x_com <- fm_data_inputs[["cov_x_com"]]
-  cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
-  c_com_x <- fm_data_inputs[["c_com_x"]]
-  t_com_i <- fm_data_inputs[["t_com_i"]]
-  t_sci_i <- fm_data_inputs[["t_sci_i"]]
-  spde <- fm_data_inputs[["spde"]]
-  Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
-  Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
-  Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
-  Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
-  cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
-  Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
-  Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
-  W <- fm_data_inputs[["W"]]
-  n_survey <- fm_data_inputs[["n_survey"]]
-  MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
 
-  xfb_x <- NULL # TO DELETE
-  weights_com <- 1 # TO DELETE
-  
-  result <- fm_build_data_params_map(
-    SE = SE,
-    data_source = data_source,
-    data_obs = data_obs,
-    samp_process = samp_process,
-    b_constraint = b_constraint,
-    cov_samp_process = cov_samp_process,
-    const_spphab = const_spphab,
-    biomass_temporal = biomass_temporal,
-    sampling_temporal = sampling_temporal,
-    anisotropy = anisotropy,
-    lf_link = lf_link,
-    b_com_i = b_com_i,
-    mesh = mesh,
-    time.step_df = time.step_df,
-    loc_x = loc_x,
-    y_com_i = y_com_i,
-    y_sci_i = y_sci_i,
-    cov_x_com = cov_x_com,
-    cov_x_sci = cov_x_sci,
-    xfb_x = xfb_x,
-    c_com_x = c_com_x,
-    t_com_i = t_com_i,
-    weights_com = weights_com,
-    t_sci_i = t_sci_i,
-    spde = spde,
-    Aix_ij_com = Aix_ij_com,
-    Aix_w_com = Aix_w_com,
-    Aix_ij_sci = Aix_ij_sci,
-    Aix_w_sci = Aix_w_sci,
-    cov_x_pred = cov_x_pred,
-    Aix_ij_pred = Aix_ij_pred,
-    Aix_w_pred = Aix_w_pred,
-    W = W,
-    n_survey = n_survey,
-    MeshList_aniso = MeshList_aniso,
-    EM = EM,
-    ref_data = ref_data,
-    month_ref = month_ref,
-    Version = Version
-  )
+SE <- 1
+data_source <- 1
+data_obs <- 2
+samp_process <- 0
+b_constraint <- 2
+const_spphab <- 1
+cov_samp_process <- 0
+biomass_temporal <- 1
+sampling_temporal <- 0
+anisotropy <- 0
+lf_link <- 0
+ref_data <- "com"
+EM <- "est_b"
+month_ref <- 1
+compute_sd <- FALSE
+
+fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+
+species <- fm_data_inputs[["species"]]
+b_com_i <- fm_data_inputs[["b_com_i"]]
+mesh <- fm_data_inputs[["mesh"]]
+time.step_df <- fm_data_inputs[["time.step_df"]]
+loc_x <- fm_data_inputs[["loc_x"]]
+y_com_i <- fm_data_inputs[["y_com_i"]]
+y_sci_i <- fm_data_inputs[["y_sci_i"]]
+cov_x_com <- fm_data_inputs[["cov_x_com"]]
+cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
+c_com_x <- fm_data_inputs[["c_com_x"]]
+t_com_i <- fm_data_inputs[["t_com_i"]]
+t_sci_i <- fm_data_inputs[["t_sci_i"]]
+spde <- fm_data_inputs[["spde"]]
+Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
+Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
+Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
+Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
+cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
+Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
+Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
+W <- fm_data_inputs[["W"]]
+n_survey <- fm_data_inputs[["n_survey"]]
+MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
+
+xfb_x <- NULL # TO DELETE
+weights_com <- 1 # TO DELETE
+
+result <- fm_build_data_params_map(
+  SE = SE,
+  data_source = data_source,
+  data_obs = data_obs,
+  samp_process = samp_process,
+  b_constraint = b_constraint,
+  cov_samp_process = cov_samp_process,
+  const_spphab = const_spphab,
+  biomass_temporal = biomass_temporal,
+  sampling_temporal = sampling_temporal,
+  anisotropy = anisotropy,
+  lf_link = lf_link,
+  b_com_i = b_com_i,
+  mesh = mesh,
+  time.step_df = time.step_df,
+  loc_x = loc_x,
+  y_com_i = y_com_i,
+  y_sci_i = y_sci_i,
+  cov_x_com = cov_x_com,
+  cov_x_sci = cov_x_sci,
+  xfb_x = xfb_x,
+  c_com_x = c_com_x,
+  t_com_i = t_com_i,
+  weights_com = weights_com,
+  t_sci_i = t_sci_i,
+  spde = spde,
+  Aix_ij_com = Aix_ij_com,
+  Aix_w_com = Aix_w_com,
+  Aix_ij_sci = Aix_ij_sci,
+  Aix_w_sci = Aix_w_sci,
+  cov_x_pred = cov_x_pred,
+  Aix_ij_pred = Aix_ij_pred,
+  Aix_w_pred = Aix_w_pred,
+  W = W,
+  n_survey = n_survey,
+  MeshList_aniso = MeshList_aniso,
+  EM = EM,
+  ref_data = ref_data,
+  month_ref = month_ref,
+  Version = Version
+)
 ```
 
 
@@ -633,7 +634,7 @@ test_that("fm_build_data_params_map", {
   W <- fm_data_inputs[["W"]]
   n_survey <- fm_data_inputs[["n_survey"]]
   MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
-
+  
   xfb_x <- NULL # TO DELETE
   weights_com <- 1 # TO DELETE
   
@@ -689,10 +690,350 @@ test_that("fm_build_data_params_map", {
 ```
 
 
+# `fm_fit_model()`: compile model and fit to data
+
+This function will fit the model to the observation data. It will compile the model cpp file. It will fit the model to the input data generated from `fm_load_data()` and provide the results as a named list.
+
+
+```{r function-fm_fit_model }
+#' Compile model and fit to data
+#'
+#' @param fm_data_inputs list Named list obtained from `fm_load_data()`
+#' @param SE integer run ADREPORT - 0: no, 1: yes
+#' @param data_source integer 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
+#' @param data_obs integer observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
+#' @param samp_process integer Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
+#' @param b_constraint integer put constraint on b parameters - 1: b are positive, 2: no constraints
+#' @param const_spphab integer Species-habitat relationship - 1: constant in time
+#' @param cov_samp_process integer covariate in the sampling process - 0: none, 1: covariate in the samplign process
+#' @param biomass_temporal integer Account for temporal correlation in biomass - 0: no, 1: AR1
+#' @param sampling_temporal integer Account for temporal correlation in sampling process - 0: no, 1: AR1
+#' @param anisotropy integer Account for anisotropy
+#' @param lf_link integer link function of the latent field - 0: log (biomass data), 1: logit (presence absence data)
+#' @param ref_data character reference data - "com": commercial (default) or "sci": scientific
+#' @param EM character "est_b": b is estimated, "fix_b": b is fixed
+#' @param month_ref integer reference month (default is 1 for January)
+#' @param compute_sd logical compute SD report (time-consumming)
+#' @param Version version for fm_build_data_params_map
+#'
+#' @importFrom stats nlminb
+#' @importFrom stringr str_detect
+#' @importFrom tictoc tic toc
+#' @importFrom TMB compile dynlib MakeADFun sdreport
+#  source build_data_params_map
+#' @importFrom INLA inla.as.dgTMatrix
+#' @importFrom stringr str_detect
+#' 
+#' @return list A named list of all necessary outputs for generating graphs (step 3)
+#' @export
+#'
+#' @examples
+fm_fit_model <- function(fm_data_inputs,
+                         SE = 1,
+                         data_source = 1,
+                         data_obs = 2,
+                         samp_process = 0,
+                         b_constraint = 2,
+                         const_spphab = 1,
+                         cov_samp_process = 0,
+                         biomass_temporal = 1,
+                         sampling_temporal = 0,
+                         anisotropy = 0,
+                         lf_link = 0,
+                         ref_data = "com",
+                         EM = "est_b",
+                         month_ref = 1,
+                         compute_sd = FALSE,
+                         Version = "") {
+  ## Fit model
+  #-----------
+  message("Running step 2 -compile model-")
+  tic("Step 2 -compile model-")
+  
+  ## Dependencies from Part1 outputs
+  species <- fm_data_inputs[["species"]]
+  b_com_i <- fm_data_inputs[["b_com_i"]]
+  mesh <- fm_data_inputs[["mesh"]]
+  time.step_df <- fm_data_inputs[["time.step_df"]]
+  loc_x <- fm_data_inputs[["loc_x"]]
+  y_com_i <- fm_data_inputs[["y_com_i"]]
+  y_sci_i <- fm_data_inputs[["y_sci_i"]]
+  cov_x_com <- fm_data_inputs[["cov_x_com"]]
+  cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
+  c_com_x <- fm_data_inputs[["c_com_x"]]
+  t_com_i <- fm_data_inputs[["t_com_i"]]
+  t_sci_i <- fm_data_inputs[["t_sci_i"]]
+  spde <- fm_data_inputs[["spde"]]
+  Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
+  Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
+  Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
+  Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
+  cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
+  Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
+  Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
+  W <- fm_data_inputs[["W"]]
+  n_survey <- fm_data_inputs[["n_survey"]]
+  MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
+  
+  # script location
+  data_folder <- system.file(file.path("original_data",species), package = "FishMap")
+  script_folder <- system.file("original_scripts", package = "FishMap")
+  
+  xfb_x <- NULL # TO DELETE
+  weights_com <- 1 # TO DELETE
+  
+  ## Build Data, Params and Map objects for model fitting
+  data_params_map_random <- fm_build_data_params_map(
+    SE = SE,
+    data_source = data_source,
+    data_obs = data_obs,
+    samp_process = samp_process,
+    b_constraint = b_constraint,
+    cov_samp_process = cov_samp_process,
+    const_spphab = const_spphab,
+    biomass_temporal = biomass_temporal,
+    sampling_temporal = sampling_temporal,
+    anisotropy = anisotropy,
+    lf_link = lf_link,
+    b_com_i = b_com_i,
+    mesh = mesh,
+    time.step_df = time.step_df,
+    loc_x = loc_x,
+    y_com_i = y_com_i,
+    y_sci_i = y_sci_i,
+    cov_x_com = cov_x_com,
+    cov_x_sci = cov_x_sci,
+    xfb_x = xfb_x,
+    c_com_x = c_com_x,
+    t_com_i = t_com_i,
+    weights_com = weights_com,
+    t_sci_i = t_sci_i,
+    spde = spde,
+    Aix_ij_com = Aix_ij_com,
+    Aix_w_com = Aix_w_com,
+    Aix_ij_sci = Aix_ij_sci,
+    Aix_w_sci = Aix_w_sci,
+    cov_x_pred = cov_x_pred,
+    Aix_ij_pred = Aix_ij_pred,
+    Aix_w_pred = Aix_w_pred,
+    W = W,
+    n_survey = n_survey,
+    MeshList_aniso = MeshList_aniso,
+    EM = EM,
+    ref_data = ref_data,
+    month_ref = month_ref,
+    Version = Version
+  )
+  
+  # define global var
+  Data <- data_params_map_random$data
+  Params <- data_params_map_random$params
+  Map <- data_params_map_random$map
+  Random <- data_params_map_random$random
+  
+  # Add link to path
+  if (.Platform$OS.type == "windows"){
+    fixwinpath <- function(){
+      PATH <- Sys.getenv("PATH")
+      PATH <- paste0(R.home(), "/bin/x64;", PATH)
+      PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
+      Sys.setenv(PATH=PATH)
+    }
+    fixwinpath()
+    shell("where g++")
+    shell("where gdb")
+    shell("where Rterm")
+  }
+  
+  ## Model compilation
+  compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
+  dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
+  
+  # finished step 2 -compile model-
+  toc()
+  
+  ## Fit model
+  message("Running step 3 -fit model-")
+  tic("Step 3 -fit model-")
+  
+  # ## Debugging
+  # source("r/function/MakeADFun_windows_debug.R")
+  # MakeADFun_windows_debug(cpp_name = "inst/model",  data=Data, parameters=Params,  random=Random)
+  # gdbsource("inst/model.R",interactive = T) ## Non-interactive
+  # dyn.unload( dynlib( "inst/model" ) )
+  # #-----------
+  
+  obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
+  # next line takes a long time ----
+  obj$fn( obj$par )
+  
+  # Parameters boundary for optimization
+  Lower <- -50
+  Upper <- 50
+  
+  if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
+    
+    Lower <- rep(-50,length(obj$par))
+    Upper <- rep(50,length(obj$par))
+    
+    Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
+    Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
+    
+  }
+  
+  # next line takes a VERY long time ----
+  opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
+  opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
+  
+  report = obj$report() # output values
+  converge=opt$convergence # convergence test
+  # next line takes a VERY long time ----
+  if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
+  
+  dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
+  
+  # Finished step 3 - fit model-
+  toc()
+  
+  # return outputs as named list
+  return(list("time.step_df" = time.step_df,
+              "loc_x" = loc_x,
+              "report" = report,
+              "samp_process" = samp_process,
+              "converge" = converge
+  )
+  )
+  
+}
+```
+
+```{r examples-fm_fit_model, eval=FALSE}
+# run part 2
+fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+fm_model_results <- fm_fit_model(fm_data_inputs)
+```
+
+```{r tests-fm_fit_model}
+test_that("fm_fit_model works", {
+  
+  
+  # You can test your model for small datas or big datas. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
+  
+  test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
+  
+  if(test_resolution == "small"){
+    fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+  }else if (test_resolution == "big") {
+    fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12)
+  }
+  
+
+  
+  # run part2
+  withr::with_seed(1234,{
+    fm_model_results <- fm_fit_model(fm_data_inputs)
+  })
+  
+  
+    # Update expected outputs here
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    # save output depending if we are in flat or in test
+    output_inst_dir <- here::here("inst", "examples") 
+    
+    if (test_resolution == "small") {
+      readr::write_rds(x = fm_model_results,
+                       file = file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds")))
+    }else if (test_resolution == "big") {
+      ## TODO what we need to check
+    }
+    
+  }
+  
+  # check output is saved as rds
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    
+    
+    output_inst_dir <- here::here("inst", "examples")
+    
+    #' @description Test to check if we can save output
+    expect_true(file.exists(file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds"))))
+  }
+  
+  # Check resultats of model 
+  
+  #' @description Testing the result of `fm_fit_model` is a list
+  expect_type(object = fm_model_results,  "list")
+  
+  #' @description Testing names of the list return by `fm_fit_model` 
+  expect_named(
+    object = fm_model_results, 
+    expected = c(
+      "time.step_df", 
+      "loc_x" ,      
+      "report" ,   
+      "samp_process", 
+      "converge" )
+  )
+  
+  
+  #' @description Testing types inside the list return by `fm_fit_model` 
+  expect_s3_class(fm_model_results$time.step_df, "data.frame")
+  expect_s3_class(fm_model_results$loc_x, "data.frame")
+  expect_type(fm_model_results$report, "list")
+  expect_type(fm_model_results$samp_process, "double")
+  expect_type(fm_model_results$converge, "integer")
+  
+  # Testing for small model
+  
+  if(test_resolution == "small"){
+    
+    expected_outputs <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part2_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+    
+    
+    # sort list and data frame elements to avoid order discrepancies
+    resort_all <- function(x) {
+      x <- x[sort(names(x))]
+      
+      result <- lapply(x, function(x) {
+        if (inherits(x, c("data.frame", 'list'))) {
+          x[sort(names(x))]
+        } else{
+          x
+        }
+      })
+      
+      result
+    }
+    
+    resorted_result <- resort_all(fm_model_results)
+    resorted_expected <- resort_all(expected_outputs)
+    
+    # remove name attributes (likely generated by a specific version of {sf})
+    attr(resorted_result$loc_x$long, which = "names") <- NULL
+    attr(resorted_result$loc_x$lati, which = "names") <- NULL
+    attr(resorted_expected$loc_x$long, which = "names") <- NULL
+    attr(resorted_expected$loc_x$lati, which = "names") <- NULL
+    
+    #' @description Testing that the result of `fm_fit_model` is stable
+    expect_equal(
+      object = resorted_result,
+      expected = resorted_expected,
+      tolerance = 10e-6
+    )
+  }
+  
+})
+```
+
+
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
-fusen::inflate(flat_file = "dev/flat_build_data_params.Rmd", vignette_name = "dev-Build data params", check = FALSE)
-
+fusen::inflate(flat_file = "dev/flat_fm_fit_model.Rmd", vignette_name = "Dev - Fit Model", check = FALSE)
 ```
 

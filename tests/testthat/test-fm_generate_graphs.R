@@ -2,11 +2,24 @@
 
 test_that("fm_generate_graphs works", {
   
-  # run part1
-  fm_data_inputs <- fm_load_data()
+  test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
+  
+  # # run part1
+  # fm_data_inputs <- fm_load_data()
   
   # run part2
-  fm_model_results <- fm_fit_model(fm_data_inputs)
+  if(test_resolution == "small"){
+    
+    
+    fm_model_results <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part2_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+  }else if (test_resolution == "big"){
+    # TODO add tests for high resolution
+  }
   
   # run part3
   fm_graph_results <- fm_generate_graphs(fm_model_results)

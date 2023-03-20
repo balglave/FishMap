@@ -59,16 +59,12 @@ fm_data_inputs <- fm_load_data()
 
 This function will fit the model to the observation data. It will compile the model cpp file. It will fit the model to the input data generated from `fm_load_data()` and provide the results as a named list.
 
-    
-
   
 
 ```{r preex-fm_fit_model}
 # run part 2
 fm_model_results <- fm_fit_model(fm_data_inputs)
 ```
-
-  
 
 ## part3: generate output graphs
 
