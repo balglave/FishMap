@@ -1,0 +1,186 @@
+---
+title: "dev - check high resolution model reproducibility with same package version"
+author: "swann floc'hlay"
+date: '2023-03-16'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dev-check-model-reproducibility-highres-same-pkg-version}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Checking reproducibility of FishMap results
+
+ <!-- this vignette is generated from dev/dev_check_model_reproducibility_highres_same_pkg_version.Rmd, make your edit on this original file -->
+
+This notebook gather the analysis performed in order to compare the output of the original FishMap `main.R` script between Client and ThinkR. We will compare the results obtained with identical seeds following the execution of the script `dev/run_main_and_save_output.R`.
+
+Here, we use **high resolution parameters** :
+
+  * `k = 0.75`
+  * `month_start <- 10`
+  * `month_end <- 12`
+
+We use similar **package versions** for Client and ThinkR outputs :
+
+  * Baptiste : `R version 4.2.3` ; `TMB_1.9.2` ; `INLA_22.12.16`
+  * ThinkR [swann] : `R version 4.2.0` ; `TMB_1.9.0` ; `INLA_22.12.16`
+
+## Executing `main.R`
+
+We generate the outputs on ThinkR machine. Make sure your .Renviron variables `FISHMAP_UPDATE_OUTPUTS` and `FISHMAP_OUTPUT_DIR` are correctly set.
+
+```{r  message=FALSE, warning=FALSE, results = 'hide'}
+# Run main.R a second time (model files are already compiled from first run)
+source(here::here("dev", "run_main_and_save_output.R"))
+```
+
+We list the resulting output files.
+
+```{r}
+thinkr1_output_dir <- file.path("~","shared","outputs_fishmap_highres_rerun")
+
+thinkr1_output <- paste0(
+  list.files(
+    path = thinkr1_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to ThinkR's second run output files are :\n {thinkr1_output}")
+```
+
+## Loading Client's output
+
+We now load the outputs generated from Clients (BA) in a temporary folder.
+
+```{r}
+# Create tmp folder to store Client output
+tmp_folder <- tempfile(pattern = "fishmap_highres")
+dir.create(tmp_folder)
+
+# Download and unzip BA highres outputs from Git repo
+ba_zip_file_url <- "https://github.com/balglave/FishMap/files/11011699/outputs_fishmap_highres_updatepkg.zip"
+download.file(
+  url = ba_zip_file_url,
+  destfile = file.path(tmp_folder, "ba_output.zip")
+)
+
+unzip(
+  zipfile = file.path(tmp_folder, "ba_output.zip"),
+  exdir = file.path(tmp_folder, "ba_output")
+)
+
+ba_output_dir <- file.path(tmp_folder, "ba_output", "outputs_fishmap_highres_updatepkg")
+
+ba_output <- paste0(
+  list.files(
+    path = ba_output_dir,
+    full.names = TRUE
+  ),
+  collapse = "\n"
+)
+
+glue::glue("The paths to Baptiste's output files are :\n {ba_output}")
+```
+
+## Contrasting files
+
+Results between ThinkR and Client's are not perfectly identical.
+
+**Important note** : To compare numerical results at two precision levels, we will consecutively set a tolerance in numerical differences to **1e-4** (as used in the other comparison vignettes) and **1e-6**.
+
+**Conclusion** : 
+
+  * We find **no differences** in numerical outputs when we use a numerical tolerance of **1e-4**.
+  * We detect differences in numerical outputs with a tolerance of **1e-6**
+  * We find a non-numerical difference in the `fn` element of the `obj_input.rds` file for both tolerance thresholds
+  * Numerical differences between Client and ThinkR outputs exist but are all inferior to 1e-4.
+
+### Create contrast function
+
+We will use again `{waldo}` within a function to display the differences for each file. We will adapt the `tolerance` parameter to adjust numerical comparison threshold.
+
+```{r}
+# Create a function to explore waldo's output file by file between ThinkR and Baptiste outputs
+
+compare_output_file <- function(file_name, tolerance) {
+  # define client output dir
+  client_output_dir <- ba_output_dir
+
+  # running waldo on one file (thinkR ~ client)
+  message(glue::glue("contrasting output of {file_name} between thinkr and baptiste with a numerical tolerance of {tolerance}"))
+  compare_author <- waldo::compare(
+    x = readRDS(
+      file.path(client_output_dir, file_name)
+    ),
+    y = readRDS(
+      file.path(thinkr1_output_dir, file_name)
+    ),
+    x_arg = "baptiste",
+    y_arg = "thinkr",
+    max_diffs = 100,
+    tolerance = tolerance
+  )
+
+  return(compare_author)
+}
+```
+
+### Contrasting all outputs at `1e-4` numerical tolerance
+
+We first make the comparison for each file with a tolerance of `1e-4`.
+
+```{r}
+compare_output_file(file_name = "converge_output.rds", tolerance = 1e-4)
+compare_output_file(file_name = "opt_output.rds", tolerance = 1e-4)
+compare_output_file(file_name = "report_output.rds", tolerance = 1e-4)
+compare_output_file(file_name = "obj_input.rds", tolerance = 1e-4)
+```
+With a numerical tolerance of `1-e4`, the outputs between ThinkR and Baptiste are identical, with the exception of the `fn` object in `obj_inputs.rds`, which was also reported when contrasting Juliette's outputs. All numerical outputs are identical at **1e-4** numerical tolerance.
+
+### Contrasting `converge_output.rds` output at `1e-6` numerical tolerance
+
+We will now run the same comparison for each file, with a more stringent numerical tolerance of `1e-6`.
+
+```{r}
+compare_output_file(file_name = "converge_output.rds", tolerance = 1e-6)
+```
+
+### Contrasting `opt_output.rds` output at `1e-6` numerical tolerance
+
+```{r}
+compare_output_file(file_name = "opt_output.rds", tolerance = 1e-6)
+```
+
+### Contrasting `report_output.rds` output at `1e-6` numerical tolerance
+
+```{r}
+compare_output_file(file_name = "report_output.rds", tolerance = 1e-6)
+```
+
+### Contrasting `obj_input.rds` output at `1e-6` numerical tolerance
+
+
+```{r}
+compare_output_file(file_name = "obj_input.rds", tolerance = 1e-6)
+```
+
+```{r}
+# delete temporary folder
+unlink(tmp_folder)
+```
+
+
+```{r eval=FALSE}
+# knit the Rmd as a compiled Rmd in vignettes
+knitr::knit(
+  input = here::here("dev/dev_check_model_reproducibility_highres_same_pkg_version.Rmd"),
+  output = here::here("vignettes/dev-check-model-reproducibility-highres-same-pkg-version.Rmd")
+)
+```
