@@ -50,3 +50,39 @@ test_that("fm_generate_graphs works", {
   }
   
 })
+
+test_that("Main functions work together", {
+  
+  # Set up params for the model
+  
+  
+  fm_data_inputs <- fm_load_data(k = 0.25, month_start = 11, month_end = 11)
+  
+  #'@description Testing that fm_data_inputs return a named list for the next function
+  test_list <- is.list(fm_data_inputs)
+  test_name <- length(names(fm_data_inputs)) != 0 
+  
+  expect_true(test_list & test_name)
+  
+  #'@descripton Testing if `fm_fit_model` always work
+  result_fit_model <- try(fm_fit_model(fm_data_inputs), silent = TRUE)
+  
+  expect_true(
+               !inherits(result_fit_model, "try-error"), 
+               label = "`fm_fit_model` generate a error. Please check the core function or the returned objet of `fm_load_data`. Running function"
+  )
+  
+  
+  #'@descripton Testing if `fm_fit_model` always work
+  result_graph <- try(fm_generate_graphs(result_fit_model), silent = TRUE)
+  
+  expect_true(
+               !inherits(result_graph, "try-error"), 
+               label = "`fm_generate_graphs` generate a error. Please check the core function or the returned objet of `fm_fit_model`. Running function"
+  )
+  
+  #'@description testing output of `fm_generate_graphs`
+  expect_type(result_graph, "list")
+  expect_s3_class(result_graph[["pred_plot"]], "ggplot")
+  
+})
