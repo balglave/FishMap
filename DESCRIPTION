@@ -19,6 +19,7 @@ Imports:
     INLA,
     magrittr,
     raster,
+    rgdal,
     sf,
     sp,
     splancs,
@@ -31,7 +32,6 @@ Suggests:
     here,
     knitr,
     readr,
-    rgdal,
     rmarkdown,
     testthat,
     withr
