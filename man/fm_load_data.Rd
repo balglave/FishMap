@@ -5,47 +5,53 @@
 \title{Load and prepare data for model fitting}
 \usage{
 fm_load_data(
-  species = "Solea_solea",
-  fleet = c("OTB_DEF_>=70_0", "OTB_CEP_>=70_0", "OTT_DEF_>=70_0"),
-  survey_data_file = "survey_data.Rdata",
-  vmslogbook_data_file = "vmslogbook_data.Rdata",
-  study_domain_file = "study_domain.Rdata",
-  year_start = 2018,
-  year_end = 2018,
-  month_start = 11,
-  month_end = 11,
-  time_step = "Month",
-  k = 0.25,
-  grid_xmin = -6,
-  grid_xmax = 0,
-  grid_ymin = 42,
-  grid_ymax = 48
+  species,
+  fleet,
+  fitted_data = c("biomass", "presabs"),
+  survey_data_file,
+  vmslogbook_data_file,
+  study_domain_file,
+  year_start,
+  year_end,
+  month_start,
+  month_end,
+  time_step = c("Month", "Quarter"),
+  k,
+  grid_xmin,
+  grid_xmax,
+  grid_ymin,
+  grid_ymax,
+  seed = 29510
 )
 }
 \arguments{
-\item{species}{character Name of the species of interest, match the data folder name}
+\item{species}{character Species of interest}
 
-\item{fleet}{character Vector of conditional operation to filter fleets, the first one will be taken as reference level in the model}
+\item{fleet}{character Fleet chosen according to the species of interest. A fleet is considered to have homogeneous catchability and targeting behavior.}
 
-\item{survey_data_file}{character Name of the Rdata file storing scientific observations}
+\item{fitted_data}{character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`}
 
-\item{vmslogbook_data_file}{character Name of the Rdata file storing vms x logbooks observations}
+\item{survey_data_file}{character File containing the scientific (survey) data}
 
-\item{study_domain_file}{character Name of the Rdata file storing study domain informations}
+\item{vmslogbook_data_file}{character File containing the commercial (vmslogbook) data}
 
-\item{year_start}{integer Lower bound year filter to select data}
+\item{study_domain_file}{character File containing the data describing the study area}
 
-\item{year_end}{integer Upper bound year filter to select data}
+\item{year_start}{integer Starting year}
 
-\item{month_start}{integer Lower bound month filter to select data}
+\item{year_end}{integer Ending year}
 
-\item{month_end}{integer Upper bound month filter to select data}
+\item{month_start}{integer Starting month}
 
-\item{time_step}{character Time intervals, must be Month or Quarter}
+\item{month_end}{integer Ending month}
 
-\item{k}{reduce the mesh size, smaller k reduces the number of knots at which the spatial random effect is computed}
+\item{time_step}{character Time step for the model (either `Month` for monthly time step or `Quarter` for quarterly time step). Default is `Month`}
 
-\item{grid_xmin, grid_xmax, grid_ymin, grid_ymax}{Build regular grid objects to create spatialpolygon based on raster}
+\item{k}{numeric Parameter controlling the number of knots of the mesh. The higher the denser.}
+
+\item{grid_xmin, grid_xmax, grid_ymin, grid_ymax}{numeric Limitation of the grid for the spatial domain}
+
+\item{seed}{integer The seed controlling for random effect. Default is 29510.}
 }
 \value{
 list A named list of all necessary outputs for model fitting (step 2)

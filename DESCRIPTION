@@ -25,15 +25,15 @@ Imports:
     stringr,
     tictoc,
     tidyr,
-    TMB
+    TMB,
+    withr
 Suggests: 
     knitr,
     readr,
     rgdal,
     rmarkdown,
     splancs,
-    testthat,
-    withr
+    testthat
 VignetteBuilder: 
     knitr
 Additional_repositories: https://inla.r-inla-download.org/R/stable

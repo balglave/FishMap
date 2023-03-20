@@ -97,6 +97,9 @@ checkhelper::check_as_cran()
 # Check the package with FishMap execution
 devtools::check()
 
+# Check only tests
+devtools::test()
+
 # Check the package without FishMap execution
 devtools::check(args = c("--no-vignettes"),
                  build_args = c("--no-build-vignettes"))
