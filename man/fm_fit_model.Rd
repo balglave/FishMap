@@ -65,3 +65,8 @@ list A named list of all necessary outputs for generating graphs (step 3)
 \description{
 Compile model and fit to data
 }
+\examples{
+# run part 2
+fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+fm_model_results <- fm_fit_model(fm_data_inputs)
+}
