@@ -14,15 +14,29 @@ test_that("fm_fit_model works", {
     # fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)
   }
   
-
+  
   
   # run part2
   withr::with_seed(1234,{
-    fm_model_results <- fm_fit_model(fm_data_inputs)
+    
+
+  fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
+                                   SE = 1,
+                                   data_source = 1,
+                                   data_obs = 2,
+                                   samp_process = 0,
+                                   b_constraint = 2,
+                                   cov_samp_process = 0,
+                                   biomass_temporal = 1,
+                                   sampling_temporal = 0,
+                                   lf_link = 0,
+                                   ref_data = "com",
+                                   EM = "est_b",
+                                   month_ref = 1)
+  
   })
   
-  
-    # Update expected outputs here
+  # Update expected outputs here
   if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
     # save output depending if we are in flat or in test
     output_inst_dir <- here::here("inst", "examples") 

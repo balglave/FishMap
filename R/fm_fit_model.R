@@ -3,22 +3,21 @@
 #' Compile model and fit to data
 #'
 #' @param fm_data_inputs list Named list obtained from `fm_load_data()`
-#' @param SE integer run ADREPORT - 0: no, 1: yes
-#' @param data_source integer 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model
-#' @param data_obs integer observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal
-#' @param samp_process integer Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process
-#' @param b_constraint integer put constraint on b parameters - 1: b are positive, 2: no constraints
-#' @param const_spphab integer Species-habitat relationship - 1: constant in time
-#' @param cov_samp_process integer covariate in the sampling process - 0: none, 1: covariate in the samplign process
-#' @param biomass_temporal integer Account for temporal correlation in biomass - 0: no, 1: AR1
-#' @param sampling_temporal integer Account for temporal correlation in sampling process - 0: no, 1: AR1
-#' @param anisotropy integer Account for anisotropy
-#' @param lf_link integer link function of the latent field - 0: log (biomass data), 1: logit (presence absence data)
-#' @param ref_data character reference data - "com": commercial (default) or "sci": scientific
-#' @param EM character "est_b": b is estimated, "fix_b": b is fixed
-#' @param month_ref integer reference month (default is 1 for January)
-#' @param compute_sd logical compute SD report (time-consumming)
+#' @param SE  Numeric. Apply bias correction and compute standard errors for key quantities of interest (spatial predictions and total biomass). N.b. can be very time consuming. - 0: no, 1: yes
+#' @param data_source Numeric. Specify the data sources used to fit the model.	1 : integrated model (scientific + commercial data) ; 2 : scientific model ; 3 : commercial model
+#' @param data_obs Numeric. Observation model for biomass.	1 : zero-inflated gamma ; 2 : zero-inflated lognormal ; 3 : lognormal
+#' @param samp_process Numeric. Include sampling process or not.	0 : no sampling process (faster) ; 1 : inhomogeneous Poisson point process
+#' @param b_constraint Numeric. Put constraint on b parameters.	1 : b are positives ; 2 : no constraints
+#' @param cov_samp_process Numeric. Covariates in the sampling process.	0 : none ; 1 : covariates in the sampling process
+#' @param biomass_temporal Numeric. Temporal correlation in biomass.	0 : no ; 1 : first-order autoregressive model (AR1)
+#' @param sampling_temporal Numeric. Temporal correlation in sampling process.	0 : no ; 1 : first-order autoregressive model (AR1)
+#' @param lf_link Numeric. Link function of the latent field.	0 : log (biomass data) ; 1 : logit (presence absence data)
+#' @param ref_data character. Reference data for estimating the interecept of the latent field.	com : commercial (default) ; sci : scientific
+#' @param EM character. Reference data for estimating the intercept of the latent field.	est_b : b is estimated ; fix_b : b is fixed
+#' @param month_ref numeric.	Reference month	1 to 12
+#' @param compute_sd logical	run sdreport().	TRUE ; FALSE
 #' @param Version version for fm_build_data_params_map
+#' @param seed integer The seed controlling for random effect. Default is 29510.
 #'
 #' @importFrom stats nlminb
 #' @importFrom stringr str_detect
@@ -34,170 +33,193 @@
 #' @examples
 #' # run part 2
 #' fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
-#' fm_model_results <- fm_fit_model(fm_data_inputs)
+#' fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
+#'                                  SE = 1,
+#'                                  data_source = 1,
+#'                                  data_obs = 2,
+#'                                  samp_process = 0,
+#'                                  b_constraint = 2,
+#'                                  cov_samp_process = 0,
+#'                                  biomass_temporal = 1,
+#'                                  sampling_temporal = 0,
+#'                                  lf_link = 0,
+#'                                  ref_data = "com",
+#'                                  EM = "est_b",
+#'                                  month_ref = 1)
 fm_fit_model <- function(fm_data_inputs,
-                         SE = 1,
-                         data_source = 1,
-                         data_obs = 2,
-                         samp_process = 0,
-                         b_constraint = 2,
-                         const_spphab = 1,
-                         cov_samp_process = 0,
-                         biomass_temporal = 1,
-                         sampling_temporal = 0,
-                         anisotropy = 0,
-                         lf_link = 0,
-                         ref_data = "com",
-                         EM = "est_b",
-                         month_ref = 1,
+                         SE,
+                         data_source,
+                         data_obs,
+                         samp_process,
+                         b_constraint,
+                         cov_samp_process,
+                         biomass_temporal,
+                         sampling_temporal,
+                         lf_link,
+                         ref_data = c("com", "sci"),
+                         EM = c("est_b","fix_b"),
+                         month_ref,
                          compute_sd = FALSE,
-                         Version = "") {
+                         Version = "",
+                         seed = 29510) {
+  
+  ## Check Params
+  
+  ref_data <- match.arg(ref_data)
+  EM <- match.arg(EM)
+  
+  const_spphab <- 1
+  anisotropy <- 0
+  
   ## Fit model
   #-----------
   message("Running step 2 -compile model-")
   tic("Step 2 -compile model-")
   
-  ## Dependencies from Part1 outputs
-  species <- fm_data_inputs[["species"]]
-  b_com_i <- fm_data_inputs[["b_com_i"]]
-  mesh <- fm_data_inputs[["mesh"]]
-  time.step_df <- fm_data_inputs[["time.step_df"]]
-  loc_x <- fm_data_inputs[["loc_x"]]
-  y_com_i <- fm_data_inputs[["y_com_i"]]
-  y_sci_i <- fm_data_inputs[["y_sci_i"]]
-  cov_x_com <- fm_data_inputs[["cov_x_com"]]
-  cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
-  c_com_x <- fm_data_inputs[["c_com_x"]]
-  t_com_i <- fm_data_inputs[["t_com_i"]]
-  t_sci_i <- fm_data_inputs[["t_sci_i"]]
-  spde <- fm_data_inputs[["spde"]]
-  Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
-  Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
-  Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
-  Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
-  cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
-  Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
-  Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
-  W <- fm_data_inputs[["W"]]
-  n_survey <- fm_data_inputs[["n_survey"]]
-  MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
-  
-  # script location
-  data_folder <- system.file(file.path("original_data",species), package = "FishMap")
-  script_folder <- system.file("original_scripts", package = "FishMap")
-  
-  xfb_x <- NULL # TO DELETE
-  weights_com <- 1 # TO DELETE
-  
-  ## Build Data, Params and Map objects for model fitting
-  data_params_map_random <- fm_build_data_params_map(
-    SE = SE,
-    data_source = data_source,
-    data_obs = data_obs,
-    samp_process = samp_process,
-    b_constraint = b_constraint,
-    cov_samp_process = cov_samp_process,
-    const_spphab = const_spphab,
-    biomass_temporal = biomass_temporal,
-    sampling_temporal = sampling_temporal,
-    anisotropy = anisotropy,
-    lf_link = lf_link,
-    b_com_i = b_com_i,
-    mesh = mesh,
-    time.step_df = time.step_df,
-    loc_x = loc_x,
-    y_com_i = y_com_i,
-    y_sci_i = y_sci_i,
-    cov_x_com = cov_x_com,
-    cov_x_sci = cov_x_sci,
-    xfb_x = xfb_x,
-    c_com_x = c_com_x,
-    t_com_i = t_com_i,
-    weights_com = weights_com,
-    t_sci_i = t_sci_i,
-    spde = spde,
-    Aix_ij_com = Aix_ij_com,
-    Aix_w_com = Aix_w_com,
-    Aix_ij_sci = Aix_ij_sci,
-    Aix_w_sci = Aix_w_sci,
-    cov_x_pred = cov_x_pred,
-    Aix_ij_pred = Aix_ij_pred,
-    Aix_w_pred = Aix_w_pred,
-    W = W,
-    n_survey = n_survey,
-    MeshList_aniso = MeshList_aniso,
-    EM = EM,
-    ref_data = ref_data,
-    month_ref = month_ref,
-    Version = Version
-  )
-  
-  # define global var
-  Data <- data_params_map_random$data
-  Params <- data_params_map_random$params
-  Map <- data_params_map_random$map
-  Random <- data_params_map_random$random
-  
-  # Add link to path
-  if (.Platform$OS.type == "windows"){
-    fixwinpath <- function(){
-      PATH <- Sys.getenv("PATH")
-      PATH <- paste0(R.home(), "/bin/x64;", PATH)
-      PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
-      Sys.setenv(PATH=PATH)
+  withr::local_seed(seed = seed)
+    
+    
+    ## Dependencies from Part1 outputs
+    species <- fm_data_inputs[["species"]]
+    b_com_i <- fm_data_inputs[["b_com_i"]]
+    mesh <- fm_data_inputs[["mesh"]]
+    time.step_df <- fm_data_inputs[["time.step_df"]]
+    loc_x <- fm_data_inputs[["loc_x"]]
+    y_com_i <- fm_data_inputs[["y_com_i"]]
+    y_sci_i <- fm_data_inputs[["y_sci_i"]]
+    cov_x_com <- fm_data_inputs[["cov_x_com"]]
+    cov_x_sci <- fm_data_inputs[["cov_x_sci"]]
+    c_com_x <- fm_data_inputs[["c_com_x"]]
+    t_com_i <- fm_data_inputs[["t_com_i"]]
+    t_sci_i <- fm_data_inputs[["t_sci_i"]]
+    spde <- fm_data_inputs[["spde"]]
+    Aix_ij_com <- fm_data_inputs[["Aix_ij_com"]]
+    Aix_w_com <- fm_data_inputs[["Aix_w_com"]]
+    Aix_ij_sci <- fm_data_inputs[["Aix_ij_sci"]]
+    Aix_w_sci <- fm_data_inputs[["Aix_w_sci"]]
+    cov_x_pred <- fm_data_inputs[["cov_x_pred"]]
+    Aix_ij_pred <- fm_data_inputs[["Aix_ij_pred"]]
+    Aix_w_pred <- fm_data_inputs[["Aix_w_pred"]]
+    W <- fm_data_inputs[["W"]]
+    n_survey <- fm_data_inputs[["n_survey"]]
+    MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
+    
+    # script location
+    data_folder <- system.file(file.path("original_data",species), package = "FishMap")
+    script_folder <- system.file("original_scripts", package = "FishMap")
+    
+    xfb_x <- NULL # TO DELETE
+    weights_com <- 1 # TO DELETE
+    
+    ## Build Data, Params and Map objects for model fitting
+    data_params_map_random <- fm_build_data_params_map(
+      SE = SE,
+      data_source = data_source,
+      data_obs = data_obs,
+      samp_process = samp_process,
+      b_constraint = b_constraint,
+      cov_samp_process = cov_samp_process,
+      const_spphab = const_spphab,
+      biomass_temporal = biomass_temporal,
+      sampling_temporal = sampling_temporal,
+      anisotropy = anisotropy,
+      lf_link = lf_link,
+      b_com_i = b_com_i,
+      mesh = mesh,
+      time.step_df = time.step_df,
+      loc_x = loc_x,
+      y_com_i = y_com_i,
+      y_sci_i = y_sci_i,
+      cov_x_com = cov_x_com,
+      cov_x_sci = cov_x_sci,
+      xfb_x = xfb_x,
+      c_com_x = c_com_x,
+      t_com_i = t_com_i,
+      weights_com = weights_com,
+      t_sci_i = t_sci_i,
+      spde = spde,
+      Aix_ij_com = Aix_ij_com,
+      Aix_w_com = Aix_w_com,
+      Aix_ij_sci = Aix_ij_sci,
+      Aix_w_sci = Aix_w_sci,
+      cov_x_pred = cov_x_pred,
+      Aix_ij_pred = Aix_ij_pred,
+      Aix_w_pred = Aix_w_pred,
+      W = W,
+      n_survey = n_survey,
+      MeshList_aniso = MeshList_aniso,
+      EM = EM,
+      ref_data = ref_data,
+      month_ref = month_ref,
+      Version = Version
+    )
+    
+    # define global var
+    Data <- data_params_map_random$data
+    Params <- data_params_map_random$params
+    Map <- data_params_map_random$map
+    Random <- data_params_map_random$random
+    
+    # Add link to path
+    if (.Platform$OS.type == "windows"){
+      fixwinpath <- function(){
+        PATH <- Sys.getenv("PATH")
+        PATH <- paste0(R.home(), "/bin/x64;", PATH)
+        PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
+        Sys.setenv(PATH=PATH)
+      }
+      fixwinpath()
+      shell("where g++")
+      shell("where gdb")
+      shell("where Rterm")
     }
-    fixwinpath()
-    shell("where g++")
-    shell("where gdb")
-    shell("where Rterm")
-  }
-  
-  ## Model compilation
-  compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
-  dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
-  
-  # finished step 2 -compile model-
-  toc()
-  
-  ## Fit model
-  message("Running step 3 -fit model-")
-  tic("Step 3 -fit model-")
-  
-  # ## Debugging
-  # source("r/function/MakeADFun_windows_debug.R")
-  # MakeADFun_windows_debug(cpp_name = "inst/model",  data=Data, parameters=Params,  random=Random)
-  # gdbsource("inst/model.R",interactive = T) ## Non-interactive
-  # dyn.unload( dynlib( "inst/model" ) )
-  # #-----------
-  
-  obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
-  # next line takes a long time ----
-  obj$fn( obj$par )
-  
-  # Parameters boundary for optimization
-  Lower <- -50
-  Upper <- 50
-  
-  if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
     
-    Lower <- rep(-50,length(obj$par))
-    Upper <- rep(50,length(obj$par))
+    ## Model compilation
+    compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
+    dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
     
-    Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
-    Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
+    # finished step 2 -compile model-
+    toc()
     
-  }
-  
-  # next line takes a VERY long time ----
-  opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
-  opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
-  
-  report = obj$report() # output values
-  converge=opt$convergence # convergence test
-  # next line takes a VERY long time ----
-  if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
-  
-  dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
+    ## Fit model
+    message("Running step 3 -fit model-")
+    tic("Step 3 -fit model-")
+    
+    # ## Debugging
+    # source("r/function/MakeADFun_windows_debug.R")
+    # MakeADFun_windows_debug(cpp_name = "inst/model",  data=Data, parameters=Params,  random=Random)
+    # gdbsource("inst/model.R",interactive = T) ## Non-interactive
+    # dyn.unload( dynlib( "inst/model" ) )
+    # #-----------
+    
+    obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
+    # next line takes a long time ----
+    obj$fn( obj$par )
+    
+    # Parameters boundary for optimization
+    Lower <- -50
+    Upper <- 50
+    
+    if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
+      
+      Lower <- rep(-50,length(obj$par))
+      Upper <- rep(50,length(obj$par))
+      
+      Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
+      Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
+      
+    }
+    
+    # next line takes a VERY long time ----
+    opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
+    opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
+    
+    report = obj$report() # output values
+    converge=opt$convergence # convergence test
+    # next line takes a VERY long time ----
+    if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
+    
+    dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
   
   # Finished step 3 - fit model-
   toc()
