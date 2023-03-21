@@ -99,7 +99,21 @@ test_that("Main functions work together", {
   expect_true(test_list & test_name)
   
   #'@descripton Testing if `fm_fit_model` always work
-  result_fit_model <- try(fm_fit_model(fm_data_inputs), silent = TRUE)
+  result_fit_model <- try(
+    fm_fit_model(fm_data_inputs = fm_data_inputs,
+                 SE = 1,
+                 data_source = 1,
+                 data_obs = 2,
+                 samp_process = 0,
+                 b_constraint = 2,
+                 cov_samp_process = 0,
+                 biomass_temporal = 1,
+                 sampling_temporal = 0,
+                 lf_link = 0,
+                 ref_data = "com",
+                 EM = "est_b",
+                 month_ref = 1), 
+    silent = TRUE)
   
   expect_true(
                !inherits(result_fit_model, "try-error"), 
