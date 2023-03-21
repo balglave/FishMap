@@ -10,7 +10,8 @@ test_that("fm_fit_model works", {
   if(test_resolution == "small"){
     fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
   }else if (test_resolution == "big") {
-    fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12)
+    ## TODO use correct params for line below
+    # fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)
   }
   
 

@@ -2,22 +2,25 @@
 
 #' Load and prepare data for model fitting
 #'
-#' @param species character Name of the species of interest, match the data folder name
-#' @param fleet character Vector of conditional operation to filter fleets, the first one will be taken as reference level in the model
-#' @param survey_data_file character Name of the Rdata file storing scientific observations
-#' @param vmslogbook_data_file  character Name of the Rdata file storing vms x logbooks observations
-#' @param study_domain_file  character Name of the Rdata file storing study domain informations
-#' @param year_start integer Lower bound year filter to select data
-#' @param year_end integer Upper bound year filter to select data
-#' @param month_start integer Lower bound month filter to select data
-#' @param month_end integer Upper bound month filter to select data
-#' @param time_step character Time intervals, must be Month or Quarter 
-#' @param k reduce the mesh size, smaller k reduces the number of knots at which the spatial random effect is computed
-#' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  Build regular grid objects to create spatialpolygon based on raster
-#'
+#' @param species character Species of interest
+#' @param fleet character Fleet chosen according to the species of interest. A fleet is considered to have homogeneous catchability and targeting behavior.
+#' @param fitted_data character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`
+#' @param survey_data_file character File containing the scientific (survey) data
+#' @param vmslogbook_data_file  character File containing the commercial (vmslogbook) data
+#' @param study_domain_file  character File containing the data describing the study area
+#' @param year_start integer Starting year
+#' @param year_end integer Ending year
+#' @param month_start integer Starting month
+#' @param month_end integer Ending month
+#' @param time_step character Time step for the model (either `Month` for monthly time step or `Quarter` for quarterly time step). Default is `Month`
+#' @param k numeric Parameter controlling the number of knots of the mesh. The higher the denser.
+#' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  numeric Limitation of the grid for the spatial domain
+#' @param seed integer The seed controlling for random effect. Default is 29510.
+#' 
 #' @importFrom dplyr ungroup select filter arrange mutate
 #' @importFrom stringr str_detect
 #' @importFrom tictoc tic toc
+#' @importFrom withr local_seed
 # source domain_mesh_spde
 #' @importFrom dplyr mutate select
 #' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
@@ -32,45 +35,49 @@
 #' @importFrom INLA inla.spde.make.A
 #' @importFrom sf st_as_sf st_intersects st_join st_coordinates
 #' @importFrom tidyr pivot_wider
-
-
+#' 
 #' @return list A named list of all necessary outputs for model fitting (step 2)
 #' @export
 #'
-fm_load_data <- function(species = "Solea_solea",
-                         fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
-                         survey_data_file = "survey_data.Rdata",
-                         vmslogbook_data_file = "vmslogbook_data.Rdata",
-                         study_domain_file = "study_domain.Rdata",
-                         year_start = 2018,
-                         year_end = 2018,
-                         month_start = 11,
-                         month_end = 11,
-                         time_step = "Month",
-                         k = 0.25,
-                         grid_xmin = -6,
-                         grid_xmax = 0,
-                         grid_ymin = 42,
-                         grid_ymax = 48
+fm_load_data <- function(species,
+                         fleet,
+                         fitted_data = c("biomass","presabs"),
+                         survey_data_file,
+                         vmslogbook_data_file,
+                         study_domain_file,
+                         year_start,
+                         year_end,
+                         month_start,
+                         month_end,
+                         time_step = c("Month","Quarter"),
+                         k,
+                         grid_xmin,
+                         grid_xmax,
+                         grid_ymin,
+                         grid_ymax,
+                         seed = 29510
                          ) {
   ## Load data
   #-----------
   message("Running step 1 -loading data-")
   tic("Step 1 -loading data-")
   
-  data_folder <- system.file(file.path("original_data",species), package = "FishMap") 
+  # set seed
+  local_seed(seed = seed)
+  
   script_folder <- system.file("original_scripts", package = "FishMap") 
   
-  fitted_data <- "biomass" # "biomass" "presabs"
+  fitted_data <- match.arg(fitted_data)
+  time_step <- match.arg(time_step)
   
   # Scientific data
   n_survey <- 1 # number of surveys
-  load(file.path(data_folder,survey_data_file))
+  load(survey_data_file)
   scientific_observation <- "CPUE" # 'CPUE' or 'Density'
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
   # 'VMS x logbook' data
-  load(file.path(data_folder,vmslogbook_data_file))
+  load(vmslogbook_data_file)
   
   select_aggreg_level <- paste(fleet,collapse = "|")
   vmslogbook_data <- vmslogbook_data %>%
@@ -140,7 +147,7 @@ fm_load_data <- function(species = "Solea_solea",
   k <- k
   Alpha <- 2
   
-  load(file.path(data_folder,study_domain_file))
+  load(study_domain_file)
   
   ## Load domain / mesh / spde object
   source(file.path(script_folder,"domain_mesh_spde.R"), local=TRUE)

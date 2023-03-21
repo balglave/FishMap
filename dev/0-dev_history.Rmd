@@ -81,13 +81,13 @@ usethis::use_build_ignore(c("inst/model.so","inst/model.o"))
 pkgload::load_all()
 
 # Extract all pakg liste in r_script_orig
-extra_pkg <- attachment::att_from_rscripts(path = c("inst/original_scripts", "dev/r_scripts_orig/function/","dev/r_scripts_orig/"))
+#extra_pkg <- attachment::att_from_rscripts(path = c("inst/original_scripts", "dev/r_scripts_orig/function/","dev/r_scripts_orig/"))
 
 # add splancs
-extra_pkg <- c("rgdal")
+#extra_pkg <- c("rgdal")
 
 # Generate documentation and deal with dependencies
-attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)
+#attachment::att_amend_desc(extra.suggests = extra_pkg, must.exist = FALSE)
 #remotes::install_deps(upgrade = "never")
 
 # Check the package with FishMap execution in CRAN conditions
@@ -96,6 +96,9 @@ checkhelper::check_as_cran()
 
 # Check the package with FishMap execution
 devtools::check()
+
+# Check only tests
+devtools::test()
 
 # Check the package without FishMap execution
 devtools::check(args = c("--no-vignettes"),

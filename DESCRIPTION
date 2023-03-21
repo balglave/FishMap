@@ -27,14 +27,14 @@ Imports:
     stringr,
     tictoc,
     tidyr,
-    TMB
+    TMB,
+    withr
 Suggests: 
     here,
     knitr,
     readr,
     rmarkdown,
-    testthat,
-    withr
+    testthat
 VignetteBuilder: 
     knitr
 Additional_repositories: https://inla.r-inla-download.org/R/stable
