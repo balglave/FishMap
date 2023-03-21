@@ -74,22 +74,21 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fm_fit_model</span><span class="op">(</span></span>
 <span>  <span class="va">fm_data_inputs</span>,</span>
-<span>  SE <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  data_source <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  data_obs <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  samp_process <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  b_constraint <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  const_spphab <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cov_samp_process <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  biomass_temporal <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  sampling_temporal <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  anisotropy <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  lf_link <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  ref_data <span class="op">=</span> <span class="st">"com"</span>,</span>
-<span>  EM <span class="op">=</span> <span class="st">"est_b"</span>,</span>
-<span>  month_ref <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">SE</span>,</span>
+<span>  <span class="va">data_source</span>,</span>
+<span>  <span class="va">data_obs</span>,</span>
+<span>  <span class="va">samp_process</span>,</span>
+<span>  <span class="va">b_constraint</span>,</span>
+<span>  <span class="va">cov_samp_process</span>,</span>
+<span>  <span class="va">biomass_temporal</span>,</span>
+<span>  <span class="va">sampling_temporal</span>,</span>
+<span>  <span class="va">lf_link</span>,</span>
+<span>  ref_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"com"</span>, <span class="st">"sci"</span><span class="op">)</span>,</span>
+<span>  EM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"est_b"</span>, <span class="st">"fix_b"</span><span class="op">)</span>,</span>
+<span>  <span class="va">month_ref</span>,</span>
 <span>  compute_sd <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  Version <span class="op">=</span> <span class="st">""</span></span>
+<span>  Version <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fl">29510</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,67 +99,63 @@
 
 
 <dt>SE</dt>
-<dd><p>integer run ADREPORT - 0: no, 1: yes</p></dd>
+<dd><p>Numeric. Apply bias correction and compute standard errors for key quantities of interest (spatial predictions and total biomass). N.b. can be very time consuming. - 0: no, 1: yes</p></dd>
 
 
 <dt>data_source</dt>
-<dd><p>integer 1: integrated model (scientific + commercial data), 2: scientific model, 3: commercial model</p></dd>
+<dd><p>Numeric. Specify the data sources used to fit the model.    1 : integrated model (scientific + commercial data) ; 2 : scientific model ; 3 : commercial model</p></dd>
 
 
 <dt>data_obs</dt>
-<dd><p>integer observation model for biomass - 1: zero_inflated gamma, 2: zero-inflated lognormal, 3: lognormal</p></dd>
+<dd><p>Numeric. Observation model for biomass.    1 : zero-inflated gamma ; 2 : zero-inflated lognormal ; 3 : lognormal</p></dd>
 
 
 <dt>samp_process</dt>
-<dd><p>integer Sampling process - 0: no sampling process, 1: inhomogeneous Poisson point process</p></dd>
+<dd><p>Numeric. Include sampling process or not.    0 : no sampling process (faster) ; 1 : inhomogeneous Poisson point process</p></dd>
 
 
 <dt>b_constraint</dt>
-<dd><p>integer put constraint on b parameters - 1: b are positive, 2: no constraints</p></dd>
-
-
-<dt>const_spphab</dt>
-<dd><p>integer Species-habitat relationship - 1: constant in time</p></dd>
+<dd><p>Numeric. Put constraint on b parameters.    1 : b are positives ; 2 : no constraints</p></dd>
 
 
 <dt>cov_samp_process</dt>
-<dd><p>integer covariate in the sampling process - 0: none, 1: covariate in the samplign process</p></dd>
+<dd><p>Numeric. Covariates in the sampling process.    0 : none ; 1 : covariates in the sampling process</p></dd>
 
 
 <dt>biomass_temporal</dt>
-<dd><p>integer Account for temporal correlation in biomass - 0: no, 1: AR1</p></dd>
+<dd><p>Numeric. Temporal correlation in biomass.    0 : no ; 1 : first-order autoregressive model (AR1)</p></dd>
 
 
 <dt>sampling_temporal</dt>
-<dd><p>integer Account for temporal correlation in sampling process - 0: no, 1: AR1</p></dd>
-
-
-<dt>anisotropy</dt>
-<dd><p>integer Account for anisotropy</p></dd>
+<dd><p>Numeric. Temporal correlation in sampling process.    0 : no ; 1 : first-order autoregressive model (AR1)</p></dd>
 
 
 <dt>lf_link</dt>
-<dd><p>integer link function of the latent field - 0: log (biomass data), 1: logit (presence absence data)</p></dd>
+<dd><p>Numeric. Link function of the latent field.    0 : log (biomass data) ; 1 : logit (presence absence data)</p></dd>
 
 
 <dt>ref_data</dt>
-<dd><p>character reference data - "com": commercial (default) or "sci": scientific</p></dd>
+<dd><p>character. Reference data for estimating the interecept of the latent field.    com : commercial (default) ; sci : scientific</p></dd>
 
 
 <dt>EM</dt>
-<dd><p>character "est_b": b is estimated, "fix_b": b is fixed</p></dd>
+<dd><p>character. Reference data for estimating the intercept of the latent field.    est_b : b is estimated ; fix_b : b is fixed</p></dd>
 
 
 <dt>month_ref</dt>
-<dd><p>integer reference month (default is 1 for January)</p></dd>
+<dd><p>numeric.    Reference month    1 to 12</p></dd>
 
 
 <dt>compute_sd</dt>
-<dd><p>logical compute SD report (time-consumming)</p></dd>
+<dd><p>logical    run sdreport().    TRUE ; FALSE</p></dd>
 
 
 <dt>Version</dt>
 <dd><p>version for fm_build_data_params_map</p></dd>
+
+
+<dt>seed</dt>
+<dd><p>integer The seed controlling for random effect. Default is 29510.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -174,9 +169,21 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># run part 2</span></span></span>
 <span class="r-in"><span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu">fm_fit_model</span><span class="op">(</span><span class="va">fm_data_inputs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu">fm_fit_model</span><span class="op">(</span>fm_data_inputs <span class="op">=</span> <span class="va">fm_data_inputs</span>,</span></span>
+<span class="r-in"><span>                                 SE <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                 data_source <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                 data_obs <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                                 samp_process <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                                 b_constraint <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                                 cov_samp_process <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                                 biomass_temporal <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                 sampling_temporal <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                                 lf_link <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                                 ref_data <span class="op">=</span> <span class="st">"com"</span>,</span></span>
+<span class="r-in"><span>                                 EM <span class="op">=</span> <span class="st">"est_b"</span>,</span></span>
+<span class="r-in"><span>                                 month_ref <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running step 2 -compile model-</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Step 2 -compile model-: 45.449 sec elapsed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Step 2 -compile model-: 44.852 sec elapsed</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running step 3 -fit model-</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     36231.535:  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  1.00000  1.00000  0.00000  0.00000  1.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     34620.699: -0.000611263 0.0111047 -0.0156403 0.0102825 0.124038 0.170300 0.107928 0.219166 0.254485 0.984779  1.02404 0.00480612 0.00127533  1.00142</span>
@@ -298,7 +305,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 117:     33407.566: -1.17997 0.338183 -2.16452 -0.0859889 0.564292 0.646026 0.198945 0.0112172 0.0236574 0.589431 0.954853 0.438127 0.592037  3.69260</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 118:     33407.566: -1.17949 0.337930 -2.16479 -0.0859945 0.564271 0.646033 0.198943 0.0112249 0.0236473 0.589429 0.954853 0.438195 0.592209  3.69255</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Warning: 4 external pointers will be removed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Step 3 -fit model-: 32.74 sec elapsed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Step 3 -fit model-: 33.414 sec elapsed</span>
 </code></pre></div>
     </div>
   </div>
