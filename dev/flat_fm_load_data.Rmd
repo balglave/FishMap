@@ -1,0 +1,478 @@
+---
+title: "flat_fm_load_data.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# `fm_load_data()` : prepare and load model inputs
+
+This function prepares all the necessary output for the model fitting. It will filter and shape the observation data (VMS and scientific). It will generate the spatial mesh for the study domain. All outputs are reported as part of a named list.
+    
+```{r function-fm_load_data}
+#' Load and prepare data for model fitting
+#'
+#' @param species character Species of interest
+#' @param fleet character Fleet chosen according to the species of interest. A fleet is considered to have homogeneous catchability and targeting behavior.
+#' @param fitted_data character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`
+#' @param survey_data_file character File containing the scientific (survey) data
+#' @param vmslogbook_data_file  character File containing the commercial (vmslogbook) data
+#' @param study_domain_file  character File containing the data describing the study area
+#' @param year_start integer Starting year
+#' @param year_end integer Ending year
+#' @param month_start integer Starting month
+#' @param month_end integer Ending month
+#' @param time_step character Time step for the model (either `Month` for monthly time step or `Quarter` for quarterly time step). Default is `Month`
+#' @param k numeric Parameter controlling the number of knots of the mesh. The higher the denser.
+#' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  numeric Limitation of the grid for the spatial domain
+#' @param seed integer The seed controlling for random effect. Default is 29510.
+#' 
+#' @importFrom dplyr ungroup select filter arrange mutate
+#' @importFrom stringr str_detect
+#' @importFrom tictoc tic toc
+#' @importFrom withr local_seed
+# source domain_mesh_spde
+#' @importFrom dplyr mutate select
+#' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom sp SpatialPointsDataFrame CRS
+# source shape_sci_data
+#' @importFrom dplyr mutate inner_join ungroup select
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+# source shape_vms_logbook
+#' @importFrom dplyr inner_join mutate select filter group_by count arrange full_join ungroup
+#' @importFrom INLA inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom tidyr pivot_wider
+#' 
+#' @return list A named list of all necessary outputs for model fitting (step 2)
+#' @export
+#'
+#' @examples
+fm_load_data <- function(species,
+                         fleet,
+                         fitted_data = c("biomass","presabs"),
+                         survey_data_file,
+                         vmslogbook_data_file,
+                         study_domain_file,
+                         year_start,
+                         year_end,
+                         month_start,
+                         month_end,
+                         time_step = c("Month","Quarter"),
+                         k,
+                         grid_xmin,
+                         grid_xmax,
+                         grid_ymin,
+                         grid_ymax,
+                         seed = 29510
+                         ) {
+  ## Load data
+  #-----------
+  message("Running step 1 -loading data-")
+  tic("Step 1 -loading data-")
+  
+  # set seed
+  local_seed(seed = seed)
+  
+  script_folder <- system.file("original_scripts", package = "FishMap") 
+  
+  fitted_data <- match.arg(fitted_data)
+  time_step <- match.arg(time_step)
+  
+  # Scientific data
+  n_survey <- 1 # number of surveys
+  load(survey_data_file)
+  scientific_observation <- "CPUE" # 'CPUE' or 'Density'
+  survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
+  
+  # 'VMS x logbook' data
+  load(vmslogbook_data_file)
+  
+  select_aggreg_level <- paste(fleet,collapse = "|")
+  vmslogbook_data <- vmslogbook_data %>%
+    filter(str_detect(LE_MET_level6,select_aggreg_level))
+  
+  vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
+  
+  vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
+  
+  ## Time series
+  #-------------
+  year_vec <- year_start:year_end
+  month_vec <- month_start:month_end
+
+  if(time_step == "Month"){
+  
+    time.step_df <- expand.grid(month_vec,year_vec)
+    colnames(time.step_df) <- c("Month","Year")
+  
+    time.step_df <- time.step_df %>%
+      arrange(Year,Month) %>%
+      mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
+      mutate(Year_Month = paste0(Year,"_",Month)) %>%
+      mutate(t = 1:nrow(time.step_df))
+    time.step_df$Year <- as.character(time.step_df$Year)
+    time.step_df$Month <- as.character(time.step_df$Month)
+  
+  }else if(time_step == "Quarter"){
+  
+    time.step_df <- expand.grid(1:4,all_years)
+    colnames(time.step_df) <- c("Quarter","Year")
+  
+    time.step_df <- time.step_df %>%
+      arrange(Year,Quarter) %>%
+      mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
+      mutate(Year_Quarter = paste0(Year,"_",Quarter)) %>%
+      mutate(t = 1:nrow(time.step_df))
+    time.step_df$Year <- as.character(time.step_df$Year)
+    time.step_df$Quarter <- as.character(time.step_df$Quarter)
+  
+  }
+  
+  
+  ## Configure spatial domain
+  #--------------------------
+  grid_xmin <- grid_xmin
+  grid_xmax <- grid_xmax
+  grid_ymin <- grid_ymin
+  grid_ymax <- grid_ymax
+  
+  grid_limit <- raster::extent(
+    c(grid_xmin,
+      grid_xmax,
+      grid_ymin,
+      grid_ymax)
+  )
+  
+  grid_projection <- "+proj=longlat +datum=WGS84"
+  
+  resol <- 0.05 # resolution of the discretization grid
+  create_mesh <- "from_shapefile"
+  # from_shapefile: the mesh will be more regular on the grid
+  # from_data: the mesh will be denser in the areas where there are data
+  
+  # Mesh parameterization
+  # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
+  k <- k
+  Alpha <- 2
+  
+  load(study_domain_file)
+  
+  ## Load domain / mesh / spde object
+  source(file.path(script_folder,"domain_mesh_spde.R"), local=TRUE)
+  
+  ## Shape scientific data
+  source(file.path(script_folder,"shape_sci_data_st.R"), local=TRUE)
+  
+  ## Shape commercial data
+  source(file.path(script_folder,"shape_vmslogbook_data_st.R"), local=TRUE)
+  
+  if(fitted_data=="presabs"){
+    y_com_i[which(y_com_i > 0)] <- 1
+    y_sci_i[which(y_sci_i > 0)] <- 1
+    lf_link <- 1 # logit link
+  }
+  
+  
+  ## Covariates
+  #------------
+  # load(file.path(data_folder,"bathy_pred.Rdata"))
+  bathy_pred = rep(0,nrow(loc_x))
+  cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
+  
+  # load(file.path(data_folder,"bathy_com.Rdata"))
+  bathy_com = rep(0,nrow(vmslogbook_data_2))
+  cov_x_com <- matrix(data = bathy_com, ncol = 1)
+  
+  # load(file.path(data_folder,"bathy_sci.Rdata"))
+  bathy_sci = rep(0,nrow(survey_data_2))
+  cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
+
+  # finished step 1 -loading data-
+  toc()
+
+  # return outputs as named list
+  return(list("species" = species,
+              "b_com_i" = b_com_i,
+              "mesh" = mesh,
+              "time.step_df" = time.step_df,
+              "loc_x" = loc_x,
+              "y_com_i" = y_com_i,
+              "y_sci_i" = y_sci_i,
+              "cov_x_com" = cov_x_com,
+              "cov_x_sci" = cov_x_sci,
+              "c_com_x" = c_com_x,
+              "t_com_i" = t_com_i,
+              "t_sci_i" = t_sci_i,
+              "spde" = spde,
+              "Aix_ij_com" = Aix_ij_com,
+              "Aix_w_com" = Aix_w_com,
+              "Aix_ij_sci" = Aix_ij_sci,
+              "Aix_w_sci" = Aix_w_sci,
+              "cov_x_pred"=cov_x_pred,
+              "Aix_ij_pred"=Aix_ij_pred,
+              "Aix_w_pred"=Aix_w_pred,
+              "W"=W,
+              "n_survey" = n_survey,
+              "MeshList_aniso" = MeshList_aniso
+              ))
+}
+```
+  
+```{r examples-fm_load_data, eval = FALSE}
+# run part1
+survey_data_file <- system.file("original_data",
+                                "Solea_solea",
+                                "survey_data.Rdata",
+                                package = "FishMap"
+                                )
+
+vmslogbook_data_file <- system.file("original_data",
+                                "Solea_solea",
+                                "vmslogbook_data.Rdata",
+                                package = "FishMap"
+                                )
+
+study_domain_file <- system.file("original_data",
+                                "Solea_solea",
+                                "study_domain.Rdata",
+                                package = "FishMap"
+                                )
+
+fm_data_inputs <- fm_load_data(species = "Solea_solea",
+                         fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                         fitted_data = "biomass",
+                         survey_data_file = survey_data_file,
+                         vmslogbook_data_file = vmslogbook_data_file,
+                         study_domain_file = study_domain_file,
+                         year_start = 2018,
+                         year_end = 2018,
+                         month_start = 11,
+                         month_end = 11,
+                         time_step = "Month",
+                         k = 0.25,
+                         grid_xmin = -6,
+                         grid_xmax = 0,
+                         grid_ymin = 42,
+                         grid_ymax = 48)
+```
+  
+```{r tests-fm_load_data}
+test_that("fm_load_data works", {
+
+  # You can test your model for small datas or big datas. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
+  
+  test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
+  
+  if(test_resolution == "small"){
+    k = 0.25
+    month_start = 11
+    month_end = 11
+  }else if (test_resolution == "big") {
+    k = 0.75
+    month_start = 10
+    month_end = 12
+  }
+  
+  # Check `fm_load_data` input values
+  
+  #' @description Testing the inputs of `fm_load_data` are correct
+  expect_error(object = fm_load_data(fitted_data = "notagoodinput"),
+               regexp = "'arg' should be one of .biomass., .presabs.")
+  expect_error(object = fm_load_data(time_step = "notagoodinput"),
+               regexp = "'arg' should be one of .Month., .Quarter.")
+  
+  # run part1
+  survey_data_file <- system.file("original_data",
+                                  "Solea_solea",
+                                  "survey_data.Rdata",
+                                  package = "FishMap"
+  )
+  
+  vmslogbook_data_file <- system.file("original_data",
+                                      "Solea_solea",
+                                      "vmslogbook_data.Rdata",
+                                      package = "FishMap"
+  )
+  
+  study_domain_file <- system.file("original_data",
+                                   "Solea_solea",
+                                   "study_domain.Rdata",
+                                   package = "FishMap"
+  )
+  
+  fm_data_inputs <- fm_load_data(species = "Solea_solea",
+                                 fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                                 fitted_data = "biomass",
+                                 survey_data_file = survey_data_file,
+                                 vmslogbook_data_file = vmslogbook_data_file,
+                                 study_domain_file = study_domain_file,
+                                 year_start = 2018,
+                                 year_end = 2018,
+                                 month_start = month_start,
+                                 month_end = month_end,
+                                 time_step = "Month",
+                                 k = k,
+                                 grid_xmin = -6,
+                                 grid_xmax = 0,
+                                 grid_ymin = 42,
+                                 grid_ymax = 48)
+  
+  
+  # Update expected outputs here
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    # save output depending if we are in flat or in test
+    output_inst_dir <- here::here("inst", "examples") 
+    
+    if (test_resolution == "small") {
+      readr::write_rds(x = fm_data_inputs,
+                       file = file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds")))
+    }else if (test_resolution == "big") {
+      ## TODO what we need to check
+    }
+  }
+  
+  # check output is saved as rds
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    
+    output_inst_dir <- here::here("inst", "examples")
+    
+    #' @description Test to check if we can save output
+    expect_true(file.exists(file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds"))))
+  }
+  
+  # Check `fm_load_data` output values
+  
+  #' @description Testing the result of `fm_load_data` is a list
+  expect_type(object = fm_data_inputs,  "list")
+  
+  #' @description Testing names of the list return by `fm_load_data`
+  expect_named(
+    object = fm_data_inputs,
+    expected = c(
+      "species",
+      "b_com_i",
+      "mesh",
+      "time.step_df",
+      "loc_x",
+      "y_com_i",
+      "y_sci_i",
+      "cov_x_com",
+      "cov_x_sci",
+      "c_com_x",
+      "t_com_i",
+      "t_sci_i",
+      "spde",
+      "Aix_ij_com",
+      "Aix_w_com",
+      "Aix_ij_sci",
+      "Aix_w_sci",
+      "cov_x_pred",
+      "Aix_ij_pred",
+      "Aix_w_pred",
+      "W",
+      "n_survey",
+      "MeshList_aniso"
+    )
+  )
+  
+  #' @description Testing types inside the list returned by `fm_load_data`
+  expect_type(fm_data_inputs[["species"]], "character")
+  expect_type(fm_data_inputs[["b_com_i"]], "double")
+  expect_s3_class(fm_data_inputs[["mesh"]], "inla.mesh")
+  expect_s3_class(fm_data_inputs[["time.step_df"]], "data.frame")
+  expect_s3_class(fm_data_inputs[["loc_x"]], "data.frame")
+  expect_type(fm_data_inputs[["y_com_i"]], "double")
+  expect_type(fm_data_inputs[["y_sci_i"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["cov_x_com"]]))
+  expect_true(is.matrix(fm_data_inputs[["cov_x_sci"]]))
+  expect_true(is.array(fm_data_inputs[["c_com_x"]]))
+  expect_type(fm_data_inputs[["t_com_i"]], "integer")
+  expect_type(fm_data_inputs[["t_sci_i"]], "integer")
+  expect_type(fm_data_inputs[["spde"]], "list")
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_com"]]))
+  expect_type(fm_data_inputs[["Aix_w_com"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_sci"]]))
+  expect_type(fm_data_inputs[["Aix_w_sci"]], "double")
+  expect_true(is.matrix(fm_data_inputs[["cov_x_pred"]]))
+  expect_true(is.matrix(fm_data_inputs[["Aix_ij_pred"]]))
+  expect_type(fm_data_inputs[["Aix_w_pred"]], "double")
+  expect_type(fm_data_inputs[["W"]], "double")
+  expect_type(fm_data_inputs[["n_survey"]], "double")
+  expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
+  
+  # retrieve tmp name of mesh dir, which changes for each execution
+  mesh_dir <- dirname(path = fm_data_inputs$mesh$meta$prefix)
+  mesh_aniso_dir <- dirname(path = fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix)
+  
+  #' @description Testing that tmpdir of the mesh exists
+  expect_true(dir.exists(mesh_dir))
+  expect_true(dir.exists(mesh_aniso_dir))
+  
+  # Testing for small model
+  if(test_resolution == "small"){
+    
+    expected_outputs <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part1_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+    
+    # homogenize tmp dir value tested in above test
+    expected_outputs$mesh$meta$prefix <-
+      fm_data_inputs$mesh$meta$prefix
+    expected_outputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix <-
+      fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
+    
+    # sort list and data frame elements to avoid order discrepancies
+    resort_all <- function(x) {
+      x <- x[sort(names(x))]
+      
+      result <- lapply(x, function(x) {
+        if (inherits(x, c("data.frame", 'list'))) {
+          x[sort(names(x))]
+        } else{
+          x
+        }
+      })
+      
+      result
+    }
+    resorted_result <- resort_all(fm_data_inputs)
+    resorted_expected <- resort_all(expected_outputs)
+    
+    # remove name attributes (likely generated by a specific version of {sf})
+    attr(resorted_result$loc_x$long, which = "names") <- NULL
+    attr(resorted_result$loc_x$lati, which = "names") <- NULL
+    attr(resorted_expected$loc_x$long, which = "names") <- NULL
+    attr(resorted_expected$loc_x$lati, which = "names") <- NULL
+    
+    #' @description Testing that the result of `fm_load_data` is stable
+    expect_equal(object = resorted_result,
+                 expected = resorted_expected)
+  }
+  
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_fm_load_data.Rmd", check = FALSE,
+               vignette_name = "Dev - Load Data")
+# To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use everytime needed`
+```
+
