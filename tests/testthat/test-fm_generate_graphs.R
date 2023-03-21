@@ -32,11 +32,11 @@ test_that("fm_generate_graphs works", {
       dir.create(output_dir)
     }
     # save output
-    saveRDS(object = fm_model_results, file = file.path(output_dir, "part3_output.rds"))
+    saveRDS(object = fm_graph_results, file = file.path(output_dir, "part3_output.rds"))
   }
   
   # check output is a list
-  expect_true(object = inherits(x = fm_model_results,
+  expect_true(object = inherits(x = fm_graph_results,
                                 what = "list"))
   
   # check pred_plot output is a ggplot object
@@ -55,8 +55,42 @@ test_that("Main functions work together", {
   
   # Set up params for the model
   
+  # run part1
+  survey_data_file <- system.file("original_data",
+                                  "Solea_solea",
+                                  "survey_data.Rdata",
+                                  package = "FishMap"
+  )
   
-  fm_data_inputs <- fm_load_data(k = 0.25, month_start = 11, month_end = 11)
+  vmslogbook_data_file <- system.file("original_data",
+                                      "Solea_solea",
+                                      "vmslogbook_data.Rdata",
+                                      package = "FishMap"
+  )
+  
+  study_domain_file <- system.file("original_data",
+                                   "Solea_solea",
+                                   "study_domain.Rdata",
+                                   package = "FishMap"
+  )
+  
+  fm_data_inputs <- fm_load_data(species = "Solea_solea",
+                                 fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                                 fitted_data = "biomass",
+                                 survey_data_file = survey_data_file,
+                                 vmslogbook_data_file = vmslogbook_data_file,
+                                 study_domain_file = study_domain_file,
+                                 year_start = 2018,
+                                 year_end = 2018,
+                                 month_start = 11,
+                                 month_end = 11,
+                                 time_step = "Month",
+                                 k = 0.25,
+                                 grid_xmin = -6,
+                                 grid_xmax = 0,
+                                 grid_ymin = 42,
+                                 grid_ymax = 48)
+  
   
   #'@description Testing that fm_data_inputs return a named list for the next function
   test_list <- is.list(fm_data_inputs)

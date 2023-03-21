@@ -20,7 +20,7 @@ test_that("fm_build_data_params_map", {
   month_ref <- 1
   compute_sd <- FALSE
   
-  fm_data_inputs <- fm_load_data()
+  fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
   
   species <- fm_data_inputs[["species"]]
   b_com_i <- fm_data_inputs[["b_com_i"]]
