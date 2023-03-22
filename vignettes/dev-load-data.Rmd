@@ -70,6 +70,26 @@ This fonction will shape the scientific data according to the selected time wind
 
   
 
+## `fm_shape_vms_logbook_data_st()` : Shape 'VMS x logbook' data
+
+    
+
+  
+
+```{r example-fm_shape_vms_logbook_data_st, eval = FALSE}
+#' \dontrun{
+# fm_shape_vms_logbook_data_st(
+#     vmslogbook_data_0 = vmslogbook_data_0,
+#     time.step_df = time.step_df,
+#     grid_projection = grid_projection,
+#     gridpolygon_sf = gridpolygon_sf,
+#     loc_x = loc_x,
+#     mesh = mesh
+# )
+#' }
+```
+
+  
 
 # `fm_load_data()` : prepare and load model inputs
 
