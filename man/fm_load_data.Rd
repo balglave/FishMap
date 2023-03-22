@@ -60,6 +60,7 @@ list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 Load and prepare data for model fitting
 }
 \examples{
+\donttest{
 # run part1
 survey_data_file <- system.file("original_data",
                                 "Solea_solea",
@@ -95,4 +96,5 @@ fm_data_inputs <- fm_load_data(species = "Solea_solea",
                          grid_xmax = 0,
                          grid_ymin = 42,
                          grid_ymax = 48)
+}
 }

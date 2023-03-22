@@ -5,7 +5,7 @@ globalVariables(unique(c(
   "c_com_x", "layer", "loc_x", "mesh", "spde", "survey_data", "survey_data_2", "t_com_i",
   "t_sci_i", "vmslogbook_data_2",
   # part1 subfunction
-  ".", "as", "geometry", "study_domain", "study_domain_sf",
+  ".", "as", "geometry", "study_domain", "study_domain_sf", "Sci.obs_spp",
   # part2
   "Data", "Params", "Random",
   # part3
