@@ -21,20 +21,6 @@
 #' @importFrom stringr str_detect
 #' @importFrom tictoc tic toc
 #' @importFrom withr local_seed
-# source domain_mesh_spde
-#' @importFrom dplyr mutate select
-#' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
-#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
-#' @importFrom sp SpatialPointsDataFrame CRS
-# source shape_sci_data
-#' @importFrom dplyr mutate inner_join ungroup select
-#' @importFrom INLA inla.spde.make.A
-#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
-# source shape_vms_logbook
-#' @importFrom dplyr inner_join mutate select filter group_by count arrange full_join ungroup
-#' @importFrom INLA inla.spde.make.A
-#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
-#' @importFrom tidyr pivot_wider
 #' 
 #' @return list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 #' @export
@@ -199,10 +185,6 @@ fm_load_data <- function(species,
     study_domain_sf = study_domain_sf,
     Alpha = Alpha
   )
-  # extract variable needed for following source files
-  gridpolygon_sf <- domain_mesh_spde_outputs[["gridpolygon_sf"]]
-  mesh <- domain_mesh_spde_outputs[["mesh"]]
-  loc_x <- domain_mesh_spde_outputs[["loc_x"]]
   
   ## Shape scientific data
   sci_data_st_outputs <- fm_shape_sci_data_st(
@@ -214,11 +196,16 @@ fm_load_data <- function(species,
     Sci.obs_spp = Sci.obs_spp,
     mesh = domain_mesh_spde_outputs[["mesh"]]
     )
-  # extract variable needed for following source files
-  survey_data_2 <- sci_data_st_outputs[["survey_data_2"]]
   
   ## Shape commercial data
-  source(file.path(script_folder,"shape_vmslogbook_data_st.R"), local=TRUE)
+  vms_logbook_data_st_outputs <- fm_shape_vms_logbook_data_st(
+    vmslogbook_data_0 = vmslogbook_data_0,
+    time.step_df = time.step_df,
+    grid_projection = grid_projection,
+    gridpolygon_sf = domain_mesh_spde_outputs[["gridpolygon_sf"]],
+    loc_x = domain_mesh_spde_outputs[["loc_x"]],
+    mesh = domain_mesh_spde_outputs[["mesh"]]
+  )
   
   if(fitted_data=="presabs"){
     y_com_i[which(y_com_i > 0)] <- 1
@@ -234,11 +221,11 @@ fm_load_data <- function(species,
   cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
   
   # load(file.path(data_folder,"bathy_com.Rdata"))
-  bathy_com = rep(0,nrow(vmslogbook_data_2))
+  bathy_com = rep(0,nrow(vms_logbook_data_st_outputs[["vmslogbook_data_2"]]))
   cov_x_com <- matrix(data = bathy_com, ncol = 1)
   
   # load(file.path(data_folder,"bathy_sci.Rdata"))
-  bathy_sci = rep(0,nrow(survey_data_2))
+  bathy_sci = rep(0,nrow(sci_data_st_outputs[["survey_data_2"]]))
   cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
 
   # finished step 1 -loading data-
@@ -246,20 +233,20 @@ fm_load_data <- function(species,
 
   # return outputs as named list
   return(list("species" = species,
-              "b_com_i" = b_com_i,
+              "b_com_i" = vms_logbook_data_st_outputs[["b_com_i"]],
               "mesh" = domain_mesh_spde_outputs[["mesh"]],
               "time.step_df" = time.step_df,
-              "loc_x" = loc_x,
-              "y_com_i" = y_com_i,
+              "loc_x" = domain_mesh_spde_outputs[["loc_x"]],
+              "y_com_i" = vms_logbook_data_st_outputs[["y_com_i"]],
               "y_sci_i" = sci_data_st_outputs[["y_sci_i"]],
               "cov_x_com" = cov_x_com,
               "cov_x_sci" = cov_x_sci,
-              "c_com_x" = c_com_x,
-              "t_com_i" = t_com_i,
+              "c_com_x" = vms_logbook_data_st_outputs[["c_com_x"]],
+              "t_com_i" = vms_logbook_data_st_outputs[["t_com_i"]],
               "t_sci_i" = sci_data_st_outputs[["t_sci_i"]],
               "spde" = domain_mesh_spde_outputs[["spde"]],
-              "Aix_ij_com" = Aix_ij_com,
-              "Aix_w_com" = Aix_w_com,
+              "Aix_ij_com" = vms_logbook_data_st_outputs[["Aix_ij_com"]],
+              "Aix_w_com" = vms_logbook_data_st_outputs[["Aix_w_com"]],
               "Aix_ij_sci" = sci_data_st_outputs[["Aix_ij_sci"]],
               "Aix_w_sci" = sci_data_st_outputs[["Aix_w_sci"]],
               "cov_x_pred" = cov_x_pred,
@@ -268,5 +255,6 @@ fm_load_data <- function(species,
               "W" = domain_mesh_spde_outputs[["W"]],
               "n_survey" = n_survey,
               "MeshList_aniso" = domain_mesh_spde_outputs[["MeshList_aniso"]]
-              ))
+              )
+         )
 }
