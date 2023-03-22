@@ -1,0 +1,193 @@
+---
+title: "Dev - How to maintain my tests and-examples.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+The tests and examples in this package are based on the outputs of the various functions in the package. For example, the `fm_fit_model` function needs the output of the `fm_load_data` function. One could, for each example or test, run the `fm_load_data` function upstream to retrieve the outputs and run `fm_fit_model`. The problem is that these functions take a long time to run and so we prefer to store the output of each function for later use.
+
+There are two benefits to this solution:
+
+- Examples and tests are faster (time saving in CI and check)
+- Outputs can be compared with the output of the functions in the unit tests to ensure that the package works.
+
+Two models can be distinguished, a model with little data, which we will call "small", and a model with a lot of data, which we will call "big". These two models oblige us to have different strategies depending on the model. 
+
+We will detail :
+- Where these results are stored
+- How these results are stored
+- Explain the problem with the version of the packages for INLA and TMB and the possible consequences on the test results
+
+
+## Where to store these results
+
+### The 'small' model
+
+We have chosen to store the results of the functions in the `examples` folder. This allows the outputs to be reused in the examples with the following code:
+
+
+```r
+fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+```
+
+These outputs are also reused in tests in the same way.
+
+### The "big" model
+
+The function examples are not based on this model and so the data will not be stored in `examples`.
+
+The results of the model are larger, so only part of it will be stored in `tests/testthat` for unit testing. See the section on how.
+
+## How these results are stored
+
+The strategy for how data is stored is not the same depending on the model. Nevertheless, they are based on the same principle. Two environment variables are defined, each with a specific purpose.
+
+- The environment variable "FISHMAP_TEST_RESOLUTION" can take two values "small" or "big". By default, the value is "small". You will need to explicitly set the value to "big" in a `.Renviron` file. This variable allows unit tests to be run under the right conditions for the chosen model.
+
+- The "FISHMAP_UPDATE_TEST_OUTPUTS" environment variable is used to update the outputs to be tested. If its value is "TRUE" then the outputs will be replaced and everything else will remain the same.
+
+We will therefore detail how this works for both models.
+
+### The "small" model
+
+By default, unit tests are run with this model. They read the results of the necessary functions and execute only the function to be tested. Here is a simplified example of a test implementation for the `fm_fit_model` function (you can find the full example in `tests/testthat/test-fm_fit_model.R`):
+
+
+```r
+# Testing for small model
+  
+test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
+
+  if(test_resolution == "small"){
+    
+    expected_outputs <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part2_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+    
+    #' @description Testing that the result of `fm_fit_model` is stable
+    expect_equal(
+      object = expected_result,
+      expected = expected_outputs,
+      tolerance = 10e-6
+    )
+  }
+```
+
+Explanation of what the code does: 
+
+- It looks at which conditon we should run the test in, model "small" or "big".
+- It reads the outputs of the correct model
+- It compares the new or old results to make sure we have the same results as before the changes.
+
+Here is another example using the output of the `fm_load_data` function:
+
+
+```r
+if(test_resolution == "small"){
+  
+  fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+  
+}else if (test_resolution == "big") {
+  ## TODO use correct params for line below
+  # fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)
+}
+
+# run part2
+withr::with_seed(1234,{
+  
+  
+  fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
+                                   SE = 1,
+                                   data_source = 1,
+                                   data_obs = 2,
+                                   samp_process = 0,
+                                   b_constraint = 2,
+                                   cov_samp_process = 0,
+                                   biomass_temporal = 1,
+                                   sampling_temporal = 0,
+                                   lf_link = 0,
+                                   ref_data = "com",
+                                   EM = "est_b",
+                                   month_ref = 1)
+  
+})
+```
+
+Code explanation:
+
+- Since we are in "small", we read the saved results from the `fm_load_data` function
+- We run the model to be able to compare it later
+
+### The "big" model
+
+The unit tests for the "big" model are not yet implemented. Due to the amount of data, only some of it will need to be stored and in the `tests/testthat` folder as this will only be used for testing.
+
+### Updating outputs
+
+As a dev, you will need to update the outputs if the functions or dependent packages change. To do this, in each function, the unit tests allow you to update the outputs. Here is the procedure to follow: 
+
+> When you launch your tests and if you decide to update the outputs. The comparison of the results, by definition, will always be ok because the output read corresponds to the output you just created.
+
+- Create a .Renviron with :
+
+```
+FISHMAP_UPDATE_TEST_OUTPUTS=TRUE
+```
+
+- Run the unit tests once. Errors may occur due to the order of the unit tests. At this stage, this is not serious.
+- Restart your R session having changed the .Renviron to :
+
+```
+FISHMAP_UPDATE_TEST_OUTPUTS=FALSE
+```
+- Run the unit tests again. There should be no more errors. If this is the case, then changes in your code have not been taken into account.
+
+## If you have a problem with the version of the package for INLA and TMB and the possible consequences for the test results
+
+> While developing the package, we noticed significant differences between the INLA and TMB package versions.
+
+To overcome the problem of the INLA and TMB package versions, we invite you to keep the `DESCRIPTION` file up to date. This file allows you to know which package version is used by the developers. It should evolve over time and versions are not meant to be static. 
+
+If unit tests don't pass because of differences in results, make sure you have the correct package versions for INLA and TMB. You can find the information in the `DESCRIPTION` file with the lines `Config/FishMap/INLA/version` and `Config/FishMap/TMB/version`.
+
+
+Here is the code to update if needed:
+
+
+```r
+  desc_file <- here::here("DESCRIPTION")
+  version_inla <- as.character(utils::packageVersion("INLA"))
+  version_tmb <- as.character(utils::packageVersion("TMB"))
+  the_desc <- desc::desc(file = desc_file)
+  the_desc$set(`Config/FishMap/INLA/version` = version_inla)
+  the_desc$set(`Config/FishMap/TMB/version` = version_tmb)
+  the_desc$write(file = desc_file)
+```
+
+
+
+```r
+# knit the Rmd as a compiled Rmd in vignettes
+knitr::knit(
+  input = here::here("dev/dev_how_to_maintain_my_tests_and_examples.Rmd"),
+  output = here::here("vignettes/dev_how_to_maintain_my_tests_and_examples.Rmd")
+)
+```
+
+```
+## 
+## 
+## processing file: /home/rstudio/FishMap/dev/dev_how_to_maintain_my_tests_and_examples.Rmd
+```
+
+```
+## Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'development', which has been used for the chunk:
+## library(testthat)
+```
+
