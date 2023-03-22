@@ -113,6 +113,7 @@
 <code>fm_build_domain_mesh_spde()</code>: Build spatial domain and
 mesh<a class="anchor" aria-label="anchor" href="#fm_build_domain_mesh_spde-build-spatial-domain-and-mesh"></a>
 </h3>
+<p>This function will construct the mesh of the spatial domain.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' \dontrun{</span></span>
 <span><span class="co">#fm_build_domain_mesh_spde(</span></span>
@@ -128,6 +129,25 @@ mesh<a class="anchor" aria-label="anchor" href="#fm_build_domain_mesh_spde-build
 <span><span class="co">#     )</span></span>
 <span><span class="co">#' }</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="fm_shape_sci_data_st-shape-scientific-data">
+<code>fm_shape_sci_data_st()</code> : Shape scientific data<a class="anchor" aria-label="anchor" href="#fm_shape_sci_data_st-shape-scientific-data"></a>
+</h3>
+<p>This fonction will shape the scientific data according to the
+selected time window and time step.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' \dontrun{</span></span>
+<span><span class="co"># fm_shape_sci_data_st(</span></span>
+<span><span class="co">#   survey_data_0 = survey_data_0,</span></span>
+<span><span class="co">#   time.step_df = time.step_df,</span></span>
+<span><span class="co">#   grid_projection = "+proj=longlat +datum=WGS84",</span></span>
+<span><span class="co">#   gridpolygon_sf = domain_mesh_spde_outputs[["gridpolygon_sf"]],</span></span>
+<span><span class="co">#   scientific_observation = "CPUE",</span></span>
+<span><span class="co">#   Sci.obs_spp = NULL,</span></span>
+<span><span class="co">#   mesh = domain_mesh_spde_outputs[["mesh"]]</span></span>
+<span><span class="co"># )</span></span>
+<span><span class="co">#' }</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="fm_load_data-prepare-and-load-model-inputs">
@@ -137,8 +157,9 @@ mesh<a class="anchor" aria-label="anchor" href="#fm_build_domain_mesh_spde-build
 fitting. It will filter and shape the observation data (VMS and
 scientific). It will generate the spatial mesh for the study domain. All
 outputs are reported as part of a named list.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># run part1</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' \donttest{</span></span>
+<span><span class="co"># run part1</span></span>
 <span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
 <span>                                <span class="st">"Solea_solea"</span>,</span>
 <span>                                <span class="st">"survey_data.Rdata"</span>,</span>
@@ -172,7 +193,8 @@ outputs are reported as part of a named list.</p>
 <span>                         grid_xmin <span class="op">=</span> <span class="op">-</span><span class="fl">6</span>,</span>
 <span>                         grid_xmax <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                         grid_ymin <span class="op">=</span> <span class="fl">42</span>,</span>
-<span>                         grid_ymax <span class="op">=</span> <span class="fl">48</span><span class="op">)</span></span></code></pre></div>
+<span>                         grid_ymax <span class="op">=</span> <span class="fl">48</span><span class="op">)</span></span>
+<span><span class="co">#' }</span></span></code></pre></div>
 </div>
   </div>
 
