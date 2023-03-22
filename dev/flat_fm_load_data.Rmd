@@ -7,12 +7,260 @@ editor_options:
 
 ```{r development, include=FALSE}
 library(testthat)
+library(dplyr)
+library(INLA)
+library(ggplot2)
+library(sf)
+library(stringr)
+library(tidyr)
+library(TMB)
+library(tictoc)
+library(testthat)
+library(withr)
 ```
 
 ```{r development-load}
 # Load already included functions if relevant
 pkgload::load_all(export_all = FALSE)
 ```
+
+# subfunctions of `fm_load_data()`
+
+## `fm_build_domain_mesh_spde()`: Build spatial domain and mesh
+
+```{r function-fm_build_domain_mesh_spde}
+#' Build spatial domain and mesh
+#' 
+#' @importFrom dplyr mutate select
+#' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
+#' @importFrom sf st_as_sf st_intersects st_join st_coordinates
+#' @importFrom sp SpatialPointsDataFrame CRS
+#' @importFrom methods as
+#' 
+#' @inheritParams fm_load_data
+#' @param grid_limit extent object Limits of the grid for the spatial domain
+#' @param resol numeric Resolution of the discretization grid
+#' @param grid_projection character A character string of projection arguments for `sp::CRS()`
+#' @param study_domain list Study_domain object
+#' @param create_mesh character Method for creating mesh (either `from_shapefile` the mesh will be more regular on the grid or `from_data` the mesh will be denser in the areas where there are data). Default is `from_shapefile`
+#' @param k k
+#' @param vmslogbook_data vmslogbook_data Commercial (vmslogbook) data
+#' @param study_domain_sf list Study domain object, used when mesh is created from data
+#' @param Alpha numeric Fractional operator order for `inla.spde2.matern()`
+#' 
+#' @return list A named list
+#' 
+#' @noRd
+fm_build_domain_mesh_spde <- function(
+    grid_limit,
+    resol,
+    grid_projection,
+    study_domain,
+    create_mesh = c("from_shapefile", "from_data"),
+    k,
+    vmslogbook_data,
+    study_domain_sf,
+    Alpha
+){
+  
+  # Check create_mesh value
+  create_mesh <- match.arg(create_mesh)
+  
+  ## Build regular grid objects
+  # Create raster of the grid
+  grid <- raster::raster(grid_limit,res = resol,crs = grid_projection)
+  
+  # Create spatialpolygon based on raster
+  gridpolygon <- raster::rasterToPolygons(grid)
+  gridpolygon$layer <- c(1:length(gridpolygon$layer))
+  gridpolygon_sf <- st_as_sf(gridpolygon)
+  
+  # Create spatial points based on raster
+  raster_to_point <- raster::rasterToPoints(grid)
+  datapoint <- SpatialPointsDataFrame(coords=raster_to_point,
+                                      data=data.frame(layer = 1:nrow(raster_to_point)),
+                                      proj4string=CRS(grid_projection))
+  datapoint_sf <- st_as_sf(datapoint)
+  datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
+  
+  # Cross grid with study domain
+  datapoint_sf_2 <- st_join(datapoint_sf_2,study_domain)
+  datapoint_2 <- datapoint_sf_2 %>%
+    mutate(long = st_coordinates(.)[,1],
+           lati = st_coordinates(.)[,2]) %>%
+    as.data.frame %>%
+    dplyr::select(-geometry)
+  loc_x <- datapoint_2 %>% mutate(cell = 1:nrow(datapoint_2))
+  
+  ## Build mesh
+  # mesh boundary
+  bound <- inla.nonconvex.hull(unique(as.matrix(datapoint_2[,c("long","lati")])),convex=-0.05)
+  bound2 <- inla.nonconvex.hull(unique(as.matrix(datapoint_2[,c("long","lati")])),convex=-0.2)
+  
+  # create mesh
+  if(create_mesh == "from_shapefile"){
+    
+    mesh <- inla.mesh.2d(
+      loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
+      boundary=list(bound,bound2),
+      max.edge=c(1/k, 2/k), ## mandatory
+      cutoff=0.1/k,crs = inla.CRS(projargs = CRS(grid_projection))) ## good to have >0
+    
+  }else if(create_mesh == "from_data"){
+    
+    ptvms_wgs84_sf <- st_as_sf(vmslogbook_data,coords = c("long","lati"),crs=grid_projection)
+    ptvms_wgs84_sf_2 <- ptvms_wgs84_sf[st_intersects(ptvms_wgs84_sf,study_domain_sf) %>% lengths > 0,]
+    ptvms_wgs84_sf_2 <- st_join(ptvms_wgs84_sf_2,study_domain_sf)
+    
+    mesh <- inla.mesh.2d(
+      as.matrix(st_coordinates(ptvms_wgs84_sf_2)), ## provide locations or domain
+      boundary=list(bound,bound2),
+      max.edge=c(1/k, 2/k), ## mandatory
+      cutoff=0.1/k)
+    
+  }
+  
+  ## Anisotropic objects
+  anisotropic_mesh <- mesh
+  Dset = 1:2
+  # Triangle info
+  TV = anisotropic_mesh$graph$tv       # Triangle to vertex indexing
+  V0 = anisotropic_mesh$loc[TV[,1],Dset]   # V = vertices for each triangle
+  V1 = anisotropic_mesh$loc[TV[,2],Dset]
+  V2 = anisotropic_mesh$loc[TV[,3],Dset]
+  E0 = V2 - V1                      # E = edge for each triangle
+  E1 = V0 - V2
+  E2 = V1 - V0
+  Tri_Area = rep(NA, nrow(E0))
+  crossprod_fn = function(Vec1,Vec2) abs(det( rbind(Vec1,Vec2) ))
+  for(i in 1:length(Tri_Area)) Tri_Area[i] = crossprod_fn( E0[i,],E1[i,] )/2   # T = area of each triangle
+  anisotropic_spde = inla.spde2.matern(anisotropic_mesh, alpha=2)
+  MeshList_aniso <- list(anisotropic_spde = anisotropic_spde,
+                         Tri_Area = Tri_Area,
+                         E0 = E0,
+                         E1 = E1,
+                         E2 = E2,
+                         TV = TV)
+  
+  ## SPDE objects
+  spde <- (inla.spde2.matern(mesh, alpha=Alpha)$param.inla)[c("M0","M1","M2")]
+  
+  ## Prediction mesh and related spde objects
+  mesh_pred <- inla.mesh.create( loc_x[,c('long','lati')] )
+  W <- rep(1,nrow(loc_x))
+  W <- c(W,rep(0,mesh_pred$n - nrow(loc_x)))
+  
+  A <- inla.spde.make.A(mesh, loc=as.matrix(loc_x[,c("long","lati")] ))
+  A <- as( A, "dgTMatrix" )
+  Aix_ij_pred <- cbind(A@i,A@j)
+  Aix_ij_pred <- Aix_ij_pred[1:(nrow(loc_x)*3),]
+  Aix_w_pred <- A@x
+  
+  # Return named list as output
+  return(
+    list(
+      "mesh" = mesh,
+      "loc_x" = loc_x,
+      "spde" = spde,
+      "Aix_ij_pred" = Aix_ij_pred,
+      "Aix_w_pred" = Aix_w_pred,
+      "W" = W,
+      "MeshList_aniso" = MeshList_aniso,
+      "gridpolygon_sf" = gridpolygon_sf
+    )
+  )
+}
+```
+
+```{r example-fm_build_domain_mesh_spde, eval = FALSE}
+#' \dontrun{
+#fm_build_domain_mesh_spde(
+#     grid_limit = grid_limit,
+#     resol = resol,
+#     grid_projection = grid_projection,
+#     study_domain = study_domain,
+#     create_mesh = create_mesh,
+#     k = k,
+#     vmslogbook_data = vmslogbook_data,
+#     study_domain_sf = study_domain_sf,
+#     Alpha = Alpha
+#     )
+#' }
+```
+  
+```{r tests-fm_build_domain_mesh_spde}
+test_that("fm_build_domain_mesh_spde works", {
+  
+  ## prepare inputs
+  # vms data - unfiltered
+  vmslogbook_data_file <- system.file("original_data",
+                                      "Solea_solea",
+                                      "vmslogbook_data.Rdata",
+                                      package = "FishMap"
+  )
+  load(vmslogbook_data_file)
+  
+  # filter vms data as done in `fm_load_data()`
+  fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0")
+  select_aggreg_level <- paste(fleet,collapse = "|")
+  vmslogbook_data <- vmslogbook_data %>%
+    filter(str_detect(LE_MET_level6,select_aggreg_level))
+  vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
+  vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
+  
+  # study domain
+  study_domain_file <- system.file("original_data",
+                                   "Solea_solea",
+                                   "study_domain.Rdata",
+                                   package = "FishMap"
+  )
+  load(study_domain_file)
+  
+  # mesh grid
+  grid_limit <- raster::extent(c(-6, 0, 42, 48))
+  
+  ## run function
+  result <- fm_build_domain_mesh_spde(
+    grid_limit = grid_limit,
+    resol = 0.05,
+    grid_projection = "+proj=longlat +datum=WGS84",
+    study_domain = study_domain,
+    create_mesh = "from_shapefile",
+    k = 0.25,
+    vmslogbook_data,
+    study_domain_sf = NULL,
+    Alpha = 2)
+  
+  # test outputs
+  #' @description Testing that fm_build_domain_mesh_spde returns a list
+  expect_type(object = result,
+              type = "list")
+  
+  #' @description Testing names of the list
+  expect_named(object = result,
+               expected = c("mesh",
+                            "loc_x",
+                            "spde",
+                            "Aix_ij_pred",
+                            "Aix_w_pred",
+                            "W",
+                            "MeshList_aniso",
+                            "gridpolygon_sf")
+  )
+  
+  #' @description Testing types inside the list
+  expect_type(result[["mesh"]], "list")
+  expect_type(result[["loc_x"]], "list")
+  expect_type(result[["spde"]], "list")
+  expect_type(result[["Aix_ij_pred"]], "integer")
+  expect_type(result[["Aix_w_pred"]], "double")
+  expect_type(result[["W"]], "double")
+  expect_type(result[["MeshList_aniso"]], "list")
+  expect_type(result[["gridpolygon_sf"]], "list")
+}
+)
+```
+  
 
 # `fm_load_data()` : prepare and load model inputs
 
@@ -55,7 +303,7 @@ This function prepares all the necessary output for the model fitting. It will f
 #' @importFrom sf st_as_sf st_intersects st_join st_coordinates
 #' @importFrom tidyr pivot_wider
 #' 
-#' @return list A named list of all necessary outputs for model fitting (step 2)
+#' @return list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 #' @export
 #'
 #' @examples
@@ -170,7 +418,21 @@ fm_load_data <- function(species,
   load(study_domain_file)
   
   ## Load domain / mesh / spde object
-  source(file.path(script_folder,"domain_mesh_spde.R"), local=TRUE)
+  domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
+    grid_limit = grid_limit,
+    resol = resol,
+    grid_projection = grid_projection,
+    study_domain = study_domain,
+    create_mesh = create_mesh,
+    k = k,
+    vmslogbook_data = vmslogbook_data,
+    study_domain_sf = study_domain_sf,
+    Alpha = Alpha
+  )
+  # exract variable needed for following source files
+  gridpolygon_sf <- domain_mesh_spde_outputs[["gridpolygon_sf"]]
+  mesh <- domain_mesh_spde_outputs[["mesh"]]
+  loc_x <- domain_mesh_spde_outputs[["loc_x"]]
   
   ## Shape scientific data
   source(file.path(script_folder,"shape_sci_data_st.R"), local=TRUE)
@@ -188,7 +450,7 @@ fm_load_data <- function(species,
   ## Covariates
   #------------
   # load(file.path(data_folder,"bathy_pred.Rdata"))
-  bathy_pred = rep(0,nrow(loc_x))
+  bathy_pred = rep(0,nrow(domain_mesh_spde_outputs[["loc_x"]]))
   cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
   
   # load(file.path(data_folder,"bathy_com.Rdata"))
@@ -215,17 +477,17 @@ fm_load_data <- function(species,
               "c_com_x" = c_com_x,
               "t_com_i" = t_com_i,
               "t_sci_i" = t_sci_i,
-              "spde" = spde,
+              "spde" = domain_mesh_spde_outputs[["spde"]],
               "Aix_ij_com" = Aix_ij_com,
               "Aix_w_com" = Aix_w_com,
               "Aix_ij_sci" = Aix_ij_sci,
               "Aix_w_sci" = Aix_w_sci,
-              "cov_x_pred"=cov_x_pred,
-              "Aix_ij_pred"=Aix_ij_pred,
-              "Aix_w_pred"=Aix_w_pred,
-              "W"=W,
+              "cov_x_pred" = cov_x_pred,
+              "Aix_ij_pred" = domain_mesh_spde_outputs[["Aix_ij_pred"]],
+              "Aix_w_pred" = domain_mesh_spde_outputs[["Aix_w_pred"]],
+              "W" = domain_mesh_spde_outputs[["W"]],
               "n_survey" = n_survey,
-              "MeshList_aniso" = MeshList_aniso
+              "MeshList_aniso" = domain_mesh_spde_outputs[["MeshList_aniso"]]
               ))
 }
 ```

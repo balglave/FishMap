@@ -54,7 +54,7 @@ fm_load_data(
 \item{seed}{integer The seed controlling for random effect. Default is 29510.}
 }
 \value{
-list A named list of all necessary outputs for model fitting (step 2)
+list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 }
 \description{
 Load and prepare data for model fitting

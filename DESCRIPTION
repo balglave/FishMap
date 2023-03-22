@@ -18,6 +18,7 @@ Imports:
     ggplot2,
     INLA,
     magrittr,
+    methods,
     raster,
     rgdal,
     sf,

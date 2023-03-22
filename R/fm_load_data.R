@@ -36,7 +36,7 @@
 #' @importFrom sf st_as_sf st_intersects st_join st_coordinates
 #' @importFrom tidyr pivot_wider
 #' 
-#' @return list A named list of all necessary outputs for model fitting (step 2)
+#' @return list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 #' @export
 #'
 #' @examples
@@ -186,7 +186,21 @@ fm_load_data <- function(species,
   load(study_domain_file)
   
   ## Load domain / mesh / spde object
-  source(file.path(script_folder,"domain_mesh_spde.R"), local=TRUE)
+  domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
+    grid_limit = grid_limit,
+    resol = resol,
+    grid_projection = grid_projection,
+    study_domain = study_domain,
+    create_mesh = create_mesh,
+    k = k,
+    vmslogbook_data = vmslogbook_data,
+    study_domain_sf = study_domain_sf,
+    Alpha = Alpha
+  )
+  # exract variable needed for following source files
+  gridpolygon_sf <- domain_mesh_spde_outputs[["gridpolygon_sf"]]
+  mesh <- domain_mesh_spde_outputs[["mesh"]]
+  loc_x <- domain_mesh_spde_outputs[["loc_x"]]
   
   ## Shape scientific data
   source(file.path(script_folder,"shape_sci_data_st.R"), local=TRUE)
@@ -204,7 +218,7 @@ fm_load_data <- function(species,
   ## Covariates
   #------------
   # load(file.path(data_folder,"bathy_pred.Rdata"))
-  bathy_pred = rep(0,nrow(loc_x))
+  bathy_pred = rep(0,nrow(domain_mesh_spde_outputs[["loc_x"]]))
   cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
   
   # load(file.path(data_folder,"bathy_com.Rdata"))
@@ -231,16 +245,16 @@ fm_load_data <- function(species,
               "c_com_x" = c_com_x,
               "t_com_i" = t_com_i,
               "t_sci_i" = t_sci_i,
-              "spde" = spde,
+              "spde" = domain_mesh_spde_outputs[["spde"]],
               "Aix_ij_com" = Aix_ij_com,
               "Aix_w_com" = Aix_w_com,
               "Aix_ij_sci" = Aix_ij_sci,
               "Aix_w_sci" = Aix_w_sci,
-              "cov_x_pred"=cov_x_pred,
-              "Aix_ij_pred"=Aix_ij_pred,
-              "Aix_w_pred"=Aix_w_pred,
-              "W"=W,
+              "cov_x_pred" = cov_x_pred,
+              "Aix_ij_pred" = domain_mesh_spde_outputs[["Aix_ij_pred"]],
+              "Aix_w_pred" = domain_mesh_spde_outputs[["Aix_w_pred"]],
+              "W" = domain_mesh_spde_outputs[["W"]],
               "n_survey" = n_survey,
-              "MeshList_aniso" = MeshList_aniso
+              "MeshList_aniso" = domain_mesh_spde_outputs[["MeshList_aniso"]]
               ))
 }
