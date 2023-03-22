@@ -1,11 +1,11 @@
 ---
-title: "Dev - How to maintain my tests and-examples.Rmd empty"
+title: "Dev - How to maintain my tests and-examples"
 output: html_document
 editor_options: 
   chunk_output_type: console
 ---
 
-```{r development, include=FALSE}
+```{r, include=FALSE}
 library(testthat)
 ```
 
@@ -19,6 +19,7 @@ There are two benefits to this solution:
 Two models can be distinguished, a model with little data, which we will call "small", and a model with a lot of data, which we will call "big". These two models oblige us to have different strategies depending on the model. 
 
 We will detail :
+
 - Where these results are stored
 - How these results are stored
 - Explain the problem with the version of the packages for INLA and TMB and the possible consequences on the test results
@@ -125,7 +126,11 @@ Code explanation:
 
 ### The "big" model
 
-The unit tests for the "big" model are not yet implemented. Due to the amount of data, only some of it will need to be stored and in the `tests/testthat` folder as this will only be used for testing.
+**The unit tests for the "big" model are not yet implemented. So, this is not possible to show a example.**
+
+Due to the amount of data, only some of it will need to be stored in the `tests/testthat` folder as this will only be used for testing. 
+
+Find more information about what we will have to check for the big model on this [comment](https://github.com/balglave/FishMap/issues/47#issuecomment-1470406550)
 
 ### Updating outputs
 
