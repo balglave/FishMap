@@ -3,9 +3,9 @@
 test_that("fm_load_data works", {
 
   # You can test your model for small datas or big datas. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
-
+  
   test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
-
+  
   if(test_resolution == "small"){
     k = 0.25
     month_start = 11
@@ -15,34 +15,34 @@ test_that("fm_load_data works", {
     month_start = 10
     month_end = 12
   }
-
+  
   # Check `fm_load_data` input values
-
+  
   #' @description Testing the inputs of `fm_load_data` are correct
   expect_error(object = fm_load_data(fitted_data = "notagoodinput"),
                regexp = "'arg' should be one of .biomass., .presabs.")
   expect_error(object = fm_load_data(time_step = "notagoodinput"),
                regexp = "'arg' should be one of .Month., .Quarter.")
-
+  
   # run part1
   survey_data_file <- system.file("original_data",
                                   "Solea_solea",
                                   "survey_data.Rdata",
                                   package = "FishMap"
   )
-
+  
   vmslogbook_data_file <- system.file("original_data",
                                       "Solea_solea",
                                       "vmslogbook_data.Rdata",
                                       package = "FishMap"
   )
-
+  
   study_domain_file <- system.file("original_data",
                                    "Solea_solea",
                                    "study_domain.Rdata",
                                    package = "FishMap"
   )
-
+  
   fm_data_inputs <- fm_load_data(species = "Solea_solea",
                                  fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
                                  fitted_data = "biomass",
@@ -59,13 +59,13 @@ test_that("fm_load_data works", {
                                  grid_xmax = 0,
                                  grid_ymin = 42,
                                  grid_ymax = 48)
-
-
+  
+  
   # Update expected outputs here
   if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
     # save output depending if we are in flat or in test
-    output_inst_dir <- here::here("inst", "examples")
-
+    output_inst_dir <- here::here("inst", "examples") 
+    
     if (test_resolution == "small") {
       readr::write_rds(x = fm_data_inputs,
                        file = file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds")))
@@ -73,21 +73,21 @@ test_that("fm_load_data works", {
       ## TODO what we need to check
     }
   }
-
+  
   # check output is saved as rds
   if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
-
+    
     output_inst_dir <- here::here("inst", "examples")
-
+    
     #' @description Test to check if we can save output
     expect_true(file.exists(file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds"))))
   }
-
+  
   # Check `fm_load_data` output values
-
+  
   #' @description Testing the result of `fm_load_data` is a list
   expect_type(object = fm_data_inputs,  "list")
-
+  
   #' @description Testing names of the list return by `fm_load_data`
   expect_named(
     object = fm_data_inputs,
@@ -117,7 +117,7 @@ test_that("fm_load_data works", {
       "MeshList_aniso"
     )
   )
-
+  
   #' @description Testing types inside the list returned by `fm_load_data`
   expect_type(fm_data_inputs[["species"]], "character")
   expect_type(fm_data_inputs[["b_com_i"]], "double")
@@ -142,35 +142,35 @@ test_that("fm_load_data works", {
   expect_type(fm_data_inputs[["W"]], "double")
   expect_type(fm_data_inputs[["n_survey"]], "double")
   expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
-
+  
   # retrieve tmp name of mesh dir, which changes for each execution
   mesh_dir <- dirname(path = fm_data_inputs$mesh$meta$prefix)
   mesh_aniso_dir <- dirname(path = fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix)
-
+  
   #' @description Testing that tmpdir of the mesh exists
   expect_true(dir.exists(mesh_dir))
   expect_true(dir.exists(mesh_aniso_dir))
-
+  
   # Testing for small model
   if(test_resolution == "small"){
-
+    
     expected_outputs <- readr::read_rds(
       system.file(
         "examples",
         paste0("part1_output_", test_resolution , ".rds"),
         package = "FishMap")
     )
-
+    
     # homogenize tmp dir value tested in above test
     expected_outputs$mesh$meta$prefix <-
       fm_data_inputs$mesh$meta$prefix
     expected_outputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix <-
       fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
-
+    
     # sort list and data frame elements to avoid order discrepancies
     resort_all <- function(x) {
       x <- x[sort(names(x))]
-
+      
       result <- lapply(x, function(x) {
         if (inherits(x, c("data.frame", 'list'))) {
           x[sort(names(x))]
@@ -178,21 +178,21 @@ test_that("fm_load_data works", {
           x
         }
       })
-
+      
       result
     }
     resorted_result <- resort_all(fm_data_inputs)
     resorted_expected <- resort_all(expected_outputs)
-
+    
     # remove name attributes (likely generated by a specific version of {sf})
     attr(resorted_result$loc_x$long, which = "names") <- NULL
     attr(resorted_result$loc_x$lati, which = "names") <- NULL
     attr(resorted_expected$loc_x$long, which = "names") <- NULL
     attr(resorted_expected$loc_x$lati, which = "names") <- NULL
-
+    
     #' @description Testing that the result of `fm_load_data` is stable
     expect_equal(object = resorted_result,
                  expected = resorted_expected)
   }
-
+  
 })
