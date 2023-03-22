@@ -40,6 +40,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' # run part1
 #' survey_data_file <- system.file("original_data",
 #'                                 "Solea_solea",
@@ -75,6 +76,7 @@
 #'                          grid_xmax = 0,
 #'                          grid_ymin = 42,
 #'                          grid_ymax = 48)
+#' }
 fm_load_data <- function(species,
                          fleet,
                          fitted_data = c("biomass","presabs"),
@@ -197,13 +199,23 @@ fm_load_data <- function(species,
     study_domain_sf = study_domain_sf,
     Alpha = Alpha
   )
-  # exract variable needed for following source files
+  # extract variable needed for following source files
   gridpolygon_sf <- domain_mesh_spde_outputs[["gridpolygon_sf"]]
   mesh <- domain_mesh_spde_outputs[["mesh"]]
   loc_x <- domain_mesh_spde_outputs[["loc_x"]]
   
   ## Shape scientific data
-  source(file.path(script_folder,"shape_sci_data_st.R"), local=TRUE)
+  sci_data_st_outputs <- fm_shape_sci_data_st(
+    survey_data_0 = survey_data_0,
+    time.step_df = time.step_df,
+    grid_projection = grid_projection,
+    gridpolygon_sf = domain_mesh_spde_outputs[["gridpolygon_sf"]],
+    scientific_observation = scientific_observation,
+    Sci.obs_spp = Sci.obs_spp,
+    mesh = domain_mesh_spde_outputs[["mesh"]]
+    )
+  # extract variable needed for following source files
+  survey_data_2 <- sci_data_st_outputs[["survey_data_2"]]
   
   ## Shape commercial data
   source(file.path(script_folder,"shape_vmslogbook_data_st.R"), local=TRUE)
@@ -235,21 +247,21 @@ fm_load_data <- function(species,
   # return outputs as named list
   return(list("species" = species,
               "b_com_i" = b_com_i,
-              "mesh" = mesh,
+              "mesh" = domain_mesh_spde_outputs[["mesh"]],
               "time.step_df" = time.step_df,
               "loc_x" = loc_x,
               "y_com_i" = y_com_i,
-              "y_sci_i" = y_sci_i,
+              "y_sci_i" = sci_data_st_outputs[["y_sci_i"]],
               "cov_x_com" = cov_x_com,
               "cov_x_sci" = cov_x_sci,
               "c_com_x" = c_com_x,
               "t_com_i" = t_com_i,
-              "t_sci_i" = t_sci_i,
+              "t_sci_i" = sci_data_st_outputs[["t_sci_i"]],
               "spde" = domain_mesh_spde_outputs[["spde"]],
               "Aix_ij_com" = Aix_ij_com,
               "Aix_w_com" = Aix_w_com,
-              "Aix_ij_sci" = Aix_ij_sci,
-              "Aix_w_sci" = Aix_w_sci,
+              "Aix_ij_sci" = sci_data_st_outputs[["Aix_ij_sci"]],
+              "Aix_w_sci" = sci_data_st_outputs[["Aix_w_sci"]],
               "cov_x_pred" = cov_x_pred,
               "Aix_ij_pred" = domain_mesh_spde_outputs[["Aix_ij_pred"]],
               "Aix_w_pred" = domain_mesh_spde_outputs[["Aix_w_pred"]],

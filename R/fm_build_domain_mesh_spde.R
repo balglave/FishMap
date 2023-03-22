@@ -12,11 +12,11 @@
 #' @param grid_limit extent object Limits of the grid for the spatial domain
 #' @param resol numeric Resolution of the discretization grid
 #' @param grid_projection character A character string of projection arguments for `sp::CRS()`
-#' @param study_domain list Study_domain object
+#' @param study_domain sf data.frame Study_domain object
 #' @param create_mesh character Method for creating mesh (either `from_shapefile` the mesh will be more regular on the grid or `from_data` the mesh will be denser in the areas where there are data). Default is `from_shapefile`
 #' @param k k
-#' @param vmslogbook_data vmslogbook_data Commercial (vmslogbook) data
-#' @param study_domain_sf list Study domain object, used when mesh is created from data
+#' @param vmslogbook_data data.frame Commercial (vmslogbook) data
+#' @param study_domain_sf sf data.frame Study domain object, used when mesh is created from data
 #' @param Alpha numeric Fractional operator order for `inla.spde2.matern()`
 #' 
 #' @return list A named list
@@ -46,7 +46,7 @@ fm_build_domain_mesh_spde <- function(
     vmslogbook_data,
     study_domain_sf,
     Alpha
-){
+    ) {
   
   # Check create_mesh value
   create_mesh <- match.arg(create_mesh)

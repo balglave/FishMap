@@ -42,7 +42,7 @@ test_that("fm_build_domain_mesh_spde works", {
     study_domain_sf = NULL,
     Alpha = 2)
   
-  # test outputs
+  ## test outputs
   #' @description Testing that fm_build_domain_mesh_spde returns a list
   expect_type(object = result,
               type = "list")
