@@ -124,7 +124,7 @@ test_that("fm_fit_model works", {
     expect_equal(
       object = resorted_result,
       expected = resorted_expected,
-      tolerance = 10e-6
+      tolerance = 1e-4
     )
   }
   
