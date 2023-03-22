@@ -108,6 +108,7 @@ devtools::check(args = c("--no-vignettes"),
 fusen::add_flat_template("add")
 fusen::add_flat_template("add", flat_name = "fm_fit_model")
 fusen::add_flat_template("add", flat_name = "fm_load_data")
+fusen::add_flat_template("add", flat_name = "how to maintain my tests and examples")
 ```
 
 If you update the package and it results in expected changes to output values, you should update the test files to enable the comparison checks to succeed.
