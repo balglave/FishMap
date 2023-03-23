@@ -1,6 +1,10 @@
 ---
 title: "Dev - How to maintain my tests and-examples"
-output: html_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dev-how-to-maintain-my-tests-and-examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 editor_options: 
   chunk_output_type: console
 ---

@@ -32,7 +32,11 @@
 #'
 #' @examples
 #' # run part 2
-#' fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+#' fm_data_inputs <- readr::read_rds(
+#'   system.file("examples", "part1_output_small.rds",
+#'               package = "FishMap")
+#'   )
+#' 
 #' fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
 #'                                  SE = 1,
 #'                                  data_source = 1,
