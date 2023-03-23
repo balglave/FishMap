@@ -134,9 +134,16 @@ TMB and the possible consequences on the test results</li>
 <h3 id="the-small-model">The ‘small’ model<a class="anchor" aria-label="anchor" href="#the-small-model"></a>
 </h3>
 <p>We have chosen to store the results of the functions in the
-<code>examples</code> folder. This allows the outputs to be reused in
-the examples with the following code:</p>
+<code>inst/examples</code> folder. This allows the outputs to be reused
+in the examples. The content of this <code>inst/</code> folder is
+accessible at the root directory of <code>FishMap</code>, once the
+package is installed or after running the following code inside the
+FishMap project (it simulates the installation of FishMap) :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pkgload</span><span class="fu">::</span><span class="fu"><a href="https://pkgload.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>On ce FishMap is installed, you can access the files with the
+following code:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>These outputs are also reused in tests in the same way.</p>
 </div>
@@ -175,7 +182,7 @@ of the necessary functions and execute only the function to be tested.
 Here is a simplified example of a test implementation for the
 <code>fm_fit_model</code> function (you can find the full example in
 <code>tests/testthat/test-fm_fit_model.R</code>):</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Testing for small model</span></span>
 <span>  </span>
 <span><span class="va">test_resolution</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"FISHMAP_TEST_RESOLUTION"</span>, unset <span class="op">=</span> <span class="st">"small"</span><span class="op">)</span></span>
@@ -206,7 +213,7 @@ results as before the changes.</li>
 </ul>
 <p>Here is another example using the output of the
 <code>fm_load_data</code> function:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"small"</span><span class="op">)</span><span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span>
@@ -257,24 +264,77 @@ model on this <a href="https://github.com/balglave/FishMap/issues/47#issuecommen
 <h3 id="updating-outputs">Updating outputs<a class="anchor" aria-label="anchor" href="#updating-outputs"></a>
 </h3>
 <p>As a dev, you will need to update the outputs if the functions or
-dependent packages change. To do this, in each function, the unit tests
-allow you to update the outputs. Here is the procedure to follow:</p>
+dependent packages change.</p>
 <blockquote>
 <p>When you launch your tests and if you decide to update the outputs.
 The comparison of the results, by definition, will always be ok because
 the output read corresponds to the output you just created.</p>
 </blockquote>
+<p>To do this, in each function, the unit tests allow you to update the
+outputs thanks to the modification of an environment variable named
+<code>FISHMAP_UPDATE_TEST_OUTPUTS</code>. In the code of unit tests, you
+will see code as follows :</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Update expected outputs here</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># save output depending if we are in flat or in test</span></span>
+<span>  <span class="va">output_inst_dir</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"examples"</span><span class="op">)</span> </span>
+<span>  </span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"small"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">write_rds</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fm_model_results</span>,</span>
+<span>                     file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_inst_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"part2_output_"</span>, <span class="va">test_resolution</span> , <span class="st">".rds"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"big"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co">## TODO what we need to check</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># check output is saved as rds</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  </span>
+<span>  <span class="va">output_inst_dir</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"examples"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co">#' @description Test to check if we can save output</span></span>
+<span>  <span class="fu">expect_true</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_inst_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"part2_output_"</span>, <span class="va">test_resolution</span> , <span class="st">".rds"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Code explanation:</p>
 <ul>
-<li>Create a .Renviron with :</li>
+<li>The first part updates the rds file output in the “inst/examples”
+directory.</li>
+<li>The second part verify that the file really exists.</li>
+</ul>
+<p>To update all example &amp; tests files in your package following a
+change in functions code, or package version, here is the procedure to
+follow:</p>
+<ul>
+<li>Modify your <code>.Renviron</code> (you can access it with
+<code>usethis::edit_r_environ()</code>) to add the following line:</li>
 </ul>
 <pre><code><span><span class="va">FISHMAP_UPDATE_TEST_OUTPUTS</span><span class="op">=</span><span class="cn">TRUE</span></span></code></pre>
 <ul>
+<li>Restart your R session. You can verify your <code>.Renviron</code>
+variable has been correctly set with the command
+<code>Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS")</code>. It should return
+<code>TRUE</code> now.</li>
 <li>Run the unit tests once. Errors may occur due to the order of the
 unit tests. At this stage, this is not serious.</li>
+</ul>
+<p>You can run the unit tests from the command line using the
+<a href="https://devtools.r-lib.org/" class="external-link">devtools</a> package with the following command:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>You should see that the output files in <code>inst/examples</code>
+have been updated.</li>
 <li>Restart your R session having changed the .Renviron to :</li>
 </ul>
 <pre><code><span><span class="va">FISHMAP_UPDATE_TEST_OUTPUTS</span><span class="op">=</span><span class="cn">FALSE</span></span></code></pre>
 <ul>
+<li>You can verify your <code>.Renviron</code> variable has been
+correctly reset with the command
+<code>Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS")</code>. It should return
+<code>FALSE</code> now.</li>
 <li>Run the unit tests again. There should be no more errors. If this is
 the case, then changes in your code have not been taken into
 account.</li>
@@ -295,11 +355,13 @@ file allows you to know which package version is used by the developers.
 It should evolve over time and versions are not meant to be static.</p>
 <p>If unit tests don’t pass because of differences in results, make sure
 you have the correct package versions for INLA and TMB. You can find the
-information in the <code>DESCRIPTION</code> file with the lines
-<code>Config/FishMap/INLA/version</code> and
-<code>Config/FishMap/TMB/version</code>.</p>
+information on minimal version required in the <code>DESCRIPTION</code>
+file with the lines <code>Config/FishMap/INLA/version</code> and
+<code>Config/FishMap/TMB/version</code>. You can find your current
+package version with the commands <code>packageVersion("TMB")</code> and
+<code>packageVersion("INLA")</code>.</p>
 <p>Here is the code to update if needed:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="va">desc_file</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"DESCRIPTION"</span><span class="op">)</span></span>
 <span>  <span class="va">version_inla</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"INLA"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">version_tmb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/packageDescription.html" class="external-link">packageVersion</a></span><span class="op">(</span><span class="st">"TMB"</span><span class="op">)</span><span class="op">)</span></span>
@@ -307,12 +369,6 @@ information in the <code>DESCRIPTION</code> file with the lines
 <span>  <span class="va">the_desc</span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>`Config/FishMap/INLA/version` <span class="op">=</span> <span class="va">version_inla</span><span class="op">)</span></span>
 <span>  <span class="va">the_desc</span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>`Config/FishMap/TMB/version` <span class="op">=</span> <span class="va">version_tmb</span><span class="op">)</span></span>
 <span>  <span class="va">the_desc</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>file <span class="op">=</span> <span class="va">desc_file</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># knit the Rmd as a compiled Rmd in vignettes</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">knit</a></span><span class="op">(</span></span>
-<span>  input <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"dev/dev_how_to_maintain_my_tests_and_examples.Rmd"</span><span class="op">)</span>,</span>
-<span>  output <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"vignettes/dev_how_to_maintain_my_tests_and_examples.Rmd"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 
