@@ -1,0 +1,217 @@
+---
+title: "flat_fm_generate_graphs.Rmd empty"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r development, include=FALSE}
+library(testthat)
+```
+
+```{r development-load}
+# Load already included functions if relevant
+pkgload::load_all(export_all = FALSE)
+```
+
+# `fm_generate_graphs()` : generate output graphs
+
+This function will generate graphs of the model predictions. It will use as input the data generated from `fm_fit_model()` and provide the predictive plot within a named list. Is the sampling process is activated (`samp_process = 1`), an additionnal graphic for eta result will be generated.
+
+```{r function-fm_generate_graphs}
+#' generate output graphs
+#' 
+#' @param fm_model_results list Named list obtained from `fm_fit_model()`
+#' 
+#' @importFrom dplyr mutate inner_join
+#' @importFrom ggplot2 ggplot geom_sf aes scale_color_distiller facet_wrap
+#' @importFrom sf st_as_sf
+#' @importFrom stringr str_replace
+#' @importFrom tictoc tic toc
+#' @importFrom tidyr pivot_longer starts_with
+#' @importFrom rgdal projInfo
+#' 
+#' @return list A named list of all generated graphs (step 3)
+#' 
+#' @export
+fm_generate_graphs <- function(fm_model_results) {
+  ## Plot model outputs
+  #--------------------
+  message("Running step 4 -plot graphs-")
+  tic("Step 4 -plot graphs-")
+  
+  ## Dependencies from Part1 factorization
+  loc_x <- fm_model_results[["loc_x"]]
+  time.step_df <- fm_model_results[["time.step_df"]]
+  report <- fm_model_results[["report"]]
+  samp_process <- fm_model_results[["samp_process"]]
+  
+  if (nrow(time.step_df) > 1) {
+    pred_df <-
+      cbind(loc_x[, c("long", "lati")], S_x = report$S_p[1:nrow(loc_x), ]) %>%
+      pivot_longer(cols = starts_with("S_x."),
+                   names_to = "t",
+                   values_to = "S_x") %>%
+      mutate(t = as.numeric(str_replace(t, "S_x.", ""))) %>%
+      inner_join(time.step_df)
+    
+    pred_sf <- st_as_sf(pred_df, coords = c("long", "lati"))
+    
+    pred_plot <- ggplot(pred_sf) +
+      geom_sf(aes(col = S_x)) +
+      scale_color_distiller(palette = "Spectral") +
+      facet_wrap(. ~ Year_Month)
+    
+    
+  } else if (nrow(time.step_df) == 1) {
+    pred_df <-
+      cbind(loc_x[, c("long", "lati")], S_x = report$S_p[1:nrow(loc_x), ])
+    
+    pred_sf <- st_as_sf(pred_df, coords = c("long", "lati"))
+    
+    pred_plot <- ggplot(pred_sf) +
+      geom_sf(aes(col = S_x)) +
+      scale_color_distiller(palette = "Spectral")
+    
+  }
+  
+  plot(pred_plot)
+  
+  # plot eta if sampling is active
+  if (samp_process == 1) {
+    for (i in 1:3) {
+      eta_df <-
+        cbind(loc_x[, c("long", "lati")], eta = report$lambda_p[1:nrow(loc_x), , i]) %>%
+        pivot_longer(
+          cols = starts_with("eta."),
+          names_to = "t",
+          values_to = "eta"
+        ) %>%
+        mutate(t = as.numeric(str_replace(t, "eta.", ""))) %>%
+        inner_join(time.step_df)
+      
+      eta_sf <- st_as_sf(eta_df, coords = c("long", "lati"))
+      
+      eta_plot <- ggplot(eta_sf) +
+        geom_sf(aes(col = log(eta))) +
+        scale_color_distiller(palette = "Spectral") +
+        facet_wrap(. ~ Year_Month)
+      
+      plot(eta_plot)
+    }
+  }
+  
+  # finished step 4 -plot graph-
+  toc()
+  
+  # return outputs as named list
+  output_list <- list("pred_plot" = pred_plot)
+  
+  # return eta plot if sampling is on
+  if (samp_process == 1) {
+    output_list[["eta_plot"]] <- eta_plot
+  }
+  return(output_list)
+  
+}
+```
+
+```{r examples-fm_generate_graphs}
+#' \donttest{
+
+# loading `fm_fit_model()` outputs
+fm_fit_model_outputs <- readr::read_rds(
+  system.file("examples", "part2_output_small.rds",
+              package = "FishMap")
+  )
+
+# run function
+fm_generate_graphs(fm_model_results = fm_fit_model_outputs)
+
+#' }
+```
+
+```{r tests-fm_generate_graphs}
+test_that("fm_generate_graphs works", {
+  
+  test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
+  
+  # load part2
+  if(test_resolution == "small"){
+    
+    
+    fm_model_results <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part2_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+  }else if (test_resolution == "big"){
+    # TODO add tests for high resolution
+  }
+  
+  # run part3
+  fm_graph_results <- fm_generate_graphs(fm_model_results)
+  
+  # Update expected outputs here
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    # save output depending if we are in flat or in test
+    output_inst_dir <- here::here("inst", "examples") 
+    
+    if (test_resolution == "small") {
+      readr::write_rds(x = fm_graph_results,
+                       file = file.path(output_inst_dir, paste0("part3_output_", test_resolution , ".rds")))
+    }else if (test_resolution == "big") {
+      ## TODO what we need to check
+    }
+    
+  }
+  
+  # check output is saved as rds
+  if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+    
+    output_inst_dir <- here::here("inst", "examples")
+    
+    #' @description Test to check if we can save output
+    expect_true(file.exists(file.path(output_inst_dir, paste0("part3_output_", test_resolution , ".rds"))))
+  }
+  
+  # Check resultats of model 
+  
+  #' @description Testing the result of `fm_generate_graphs()` is a list
+  expect_true(object = inherits(x = fm_graph_results,
+                                what = "list"))
+  
+  #' @description Testing class of the list returned by `fm_generate_graphs()` 
+  expect_equal(object = class(fm_graph_results[["pred_plot"]]),
+               expected = c("gg", "ggplot"))
+  
+  # Testing for small model
+  if(test_resolution == "small"){
+    
+    expected_outputs <- readr::read_rds(
+      system.file(
+        "examples",
+        paste0("part3_output_", test_resolution , ".rds"),
+        package = "FishMap")
+    )
+
+    #' @description Testing that the result of `fm_generate_graphs()` is stable
+    expect_equal(
+      object = fm_graph_results,
+      expected = expected_outputs,
+      tolerance = 1e-4
+    )
+  }
+  
+  
+})
+```
+
+
+```{r development-inflate, eval=FALSE}
+# Run but keep eval=FALSE to avoid infinite loop
+# Execute in the console directly
+fusen::inflate(flat_file = "dev/flat_fm_generate_graphs.Rmd", vignette_name = "Dev - Generate Graphs", check = FALSE)
+```
+

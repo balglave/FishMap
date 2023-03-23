@@ -111,20 +111,6 @@ fusen::add_flat_template("add", flat_name = "fm_load_data")
 fusen::add_flat_template("add", flat_name = "how to maintain my tests and examples")
 ```
 
-If you update the package and it results in expected changes to output values, you should update the test files to enable the comparison checks to succeed.
-To do so, you should update the files present in the `inst/expect_outputs` with your updated output files. Make sure your files follow the same naming convention. These files are part of the package, you should avoid using very large files.
-
-```{r}
-# Update expect output files in inst/ folder with local output files
-file_to_update <- c("part1_output0.25.rds")
-output_dir <- Sys.getenv("FISHMAP_OUTPUT_DIR")
-test_dir <- here::here("tests","testthat")
-
-file.copy(from = file.path(output_dir, file_to_update),
-          to = test_dir,
-          overwrite = TRUE)
-```
-
 # Share the package
 
 ```{r}

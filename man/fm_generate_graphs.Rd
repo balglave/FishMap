@@ -15,3 +15,17 @@ list A named list of all generated graphs (step 3)
 \description{
 generate output graphs
 }
+\examples{
+\donttest{
+
+# loading `fm_fit_model()` outputs
+fm_fit_model_outputs <- readr::read_rds(
+  system.file("examples", "part2_output_small.rds",
+              package = "FishMap")
+  )
+
+# run function
+fm_generate_graphs(fm_model_results = fm_fit_model_outputs)
+
+}
+}
