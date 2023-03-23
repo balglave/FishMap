@@ -65,6 +65,9 @@
       <a href="../articles/dev-fit-model.html">Dev - Fit Model</a>
     </li>
     <li>
+      <a href="../articles/dev-generate-graphs.html">Dev - Generate Graphs</a>
+    </li>
+    <li>
       <a href="../articles/dev-load-data.html">Dev - Load Data</a>
     </li>
     <li>
@@ -210,7 +213,11 @@ generated from <code><a href="../reference/fm_load_data.html">fm_load_data()</a>
 named list.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run part 2</span></span>
-<span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>,</span>
+<span>              package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
 <span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fm_fit_model.html">fm_fit_model</a></span><span class="op">(</span>fm_data_inputs <span class="op">=</span> <span class="va">fm_data_inputs</span>,</span>
 <span>                                 SE <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                                 data_source <span class="op">=</span> <span class="fl">1</span>,</span>

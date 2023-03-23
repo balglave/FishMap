@@ -47,6 +47,9 @@
       <a href="../articles/dev-fit-model.html">Dev - Fit Model</a>
     </li>
     <li>
+      <a href="../articles/dev-generate-graphs.html">Dev - Generate Graphs</a>
+    </li>
+    <li>
       <a href="../articles/dev-load-data.html">Dev - Load Data</a>
     </li>
     <li>
@@ -174,7 +177,11 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># run part 2</span></span></span>
-<span class="r-in"><span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>,</span></span>
+<span class="r-in"><span>              package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu">fm_fit_model</span><span class="op">(</span>fm_data_inputs <span class="op">=</span> <span class="va">fm_data_inputs</span>,</span></span>
 <span class="r-in"><span>                                 SE <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                                 data_source <span class="op">=</span> <span class="fl">1</span>,</span></span>
@@ -189,7 +196,7 @@
 <span class="r-in"><span>                                 EM <span class="op">=</span> <span class="st">"est_b"</span>,</span></span>
 <span class="r-in"><span>                                 month_ref <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running step 2 -compile model-</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Step 2 -compile model-: 44.499 sec elapsed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Step 2 -compile model-: 49.722 sec elapsed</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running step 3 -fit model-</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0:     36231.535:  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  1.00000  1.00000  0.00000  0.00000  1.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1:     34620.699: -0.000611263 0.0111047 -0.0156403 0.0102825 0.124038 0.170300 0.107928 0.219166 0.254485 0.984779  1.02404 0.00480612 0.00127533  1.00142</span>
@@ -311,7 +318,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 117:     33407.566: -1.17997 0.338183 -2.16452 -0.0859889 0.564292 0.646026 0.198945 0.0112172 0.0236574 0.589431 0.954853 0.438127 0.592037  3.69260</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 118:     33407.566: -1.17949 0.337930 -2.16479 -0.0859945 0.564271 0.646033 0.198943 0.0112249 0.0236473 0.589429 0.954853 0.438195 0.592209  3.69255</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Warning: 4 external pointers will be removed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Step 3 -fit model-: 32.408 sec elapsed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Step 3 -fit model-: 33.687 sec elapsed</span>
 </code></pre></div>
     </div>
   </div>
