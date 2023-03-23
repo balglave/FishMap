@@ -29,7 +29,13 @@ We will detail :
 
 ### The 'small' model
 
-We have chosen to store the results of the functions in the `examples` folder. This allows the outputs to be reused in the examples with the following code:
+We have chosen to store the results of the functions in the `inst/examples` folder. This allows the outputs to be reused in the examples. The content of this `inst/` folder is accessible at the root directory of `FishMap`, once the package is installed or after running the following code inside the FishMap project (it simulates the installation of FishMap) :
+
+```{r, eval = FALSE}
+pkgload::load_all()
+```
+
+On ce FishMap is installed, you can access the files with the following code:
 
 ```{r, eval=FALSE}
 fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
@@ -134,22 +140,67 @@ Find more information about what we will have to check for the big model on this
 
 ### Updating outputs
 
-As a dev, you will need to update the outputs if the functions or dependent packages change. To do this, in each function, the unit tests allow you to update the outputs. Here is the procedure to follow: 
+As a dev, you will need to update the outputs if the functions or dependent packages change.
 
 > When you launch your tests and if you decide to update the outputs. The comparison of the results, by definition, will always be ok because the output read corresponds to the output you just created.
 
-- Create a .Renviron with :
+To do this, in each function, the unit tests allow you to update the outputs thanks to the modification of an environment variable named `FISHMAP_UPDATE_TEST_OUTPUTS`. In the code of unit tests, you will see code as follows : 
+
+```{r, eval = FALSE}
+# Update expected outputs here
+if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+  # save output depending if we are in flat or in test
+  output_inst_dir <- here::here("inst", "examples") 
+  
+  if (test_resolution == "small") {
+    readr::write_rds(x = fm_model_results,
+                     file = file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds")))
+  }else if (test_resolution == "big") {
+    ## TODO what we need to check
+  }
+  
+}
+
+# check output is saved as rds
+if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
+  
+  
+  output_inst_dir <- here::here("inst", "examples")
+  
+  #' @description Test to check if we can save output
+  expect_true(file.exists(file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds"))))
+}
+```
+
+Code explanation:
+
+- The first part updates the rds file output in the "inst/examples" directory.
+- The second part verify that the file really exists.
+
+To update all example & tests files in your package following a change in functions code, or package version, here is the procedure to follow:
+
+- Modify your `.Renviron` (you can access it with `usethis::edit_r_environ()`) to add the following line:
 
 ```
 FISHMAP_UPDATE_TEST_OUTPUTS=TRUE
 ```
 
+- Restart your R session. You can verify your `.Renviron` variable has been correctly set with the command `Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS")`. It should return `TRUE` now.
 - Run the unit tests once. Errors may occur due to the order of the unit tests. At this stage, this is not serious.
+
+You can run the unit tests from the command line using the `{devtools}` package with the following command:
+
+```{r, eval = FALSE}
+devtools::test()
+```
+
+- You should see that the output files in `inst/examples` have been updated.
 - Restart your R session having changed the .Renviron to :
 
 ```
 FISHMAP_UPDATE_TEST_OUTPUTS=FALSE
 ```
+- You can verify your `.Renviron` variable has been correctly reset with the command `Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS")`. It should return `FALSE` now.
 - Run the unit tests again. There should be no more errors. If this is the case, then changes in your code have not been taken into account.
 
 ## If you have a problem with the version of the package for INLA and TMB and the possible consequences for the test results
@@ -158,7 +209,7 @@ FISHMAP_UPDATE_TEST_OUTPUTS=FALSE
 
 To overcome the problem of the INLA and TMB package versions, we invite you to keep the `DESCRIPTION` file up to date. This file allows you to know which package version is used by the developers. It should evolve over time and versions are not meant to be static. 
 
-If unit tests don't pass because of differences in results, make sure you have the correct package versions for INLA and TMB. You can find the information in the `DESCRIPTION` file with the lines `Config/FishMap/INLA/version` and `Config/FishMap/TMB/version`.
+If unit tests don't pass because of differences in results, make sure you have the correct package versions for INLA and TMB. You can find the information on minimal version required in the `DESCRIPTION` file with the lines `Config/FishMap/INLA/version` and `Config/FishMap/TMB/version`. You can find your current package version with the commands `packageVersion("TMB")` and `packageVersion("INLA")`.
 
 
 Here is the code to update if needed:
@@ -174,7 +225,7 @@ Here is the code to update if needed:
 ```
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
   input = here::here("dev/dev_how_to_maintain_my_tests_and_examples.Rmd"),
