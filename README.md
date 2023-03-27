@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# FishMap
+# FishMap <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
 <!-- badges: start -->
 
@@ -54,7 +54,12 @@ can access them using the command `vignette(package = "FishMap")`.
 
 ## Documentation
 
-Full documentation website on: <https://balglave.github.io/FishMap>
+Full documentation website on: <https://balglave.github.io/FishMap>  
+In particular, you can follow this vignette:
+
+``` r
+vignette("user-running-fishmap", package = "FishMap")
+```
 
 ## Workflow
 
@@ -65,8 +70,63 @@ Full documentation website on: <https://balglave.github.io/FishMap>
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-# library(FishMap)
-## basic example code
+library(FishMap)
+
+# Read internal data as Rdata
+survey_data_file <- system.file("original_data",
+                                "Solea_solea",
+                                "survey_data.Rdata",
+                                package = "FishMap"
+                                )
+
+vmslogbook_data_file <- system.file("original_data",
+                                "Solea_solea",
+                                "vmslogbook_data.Rdata",
+                                package = "FishMap"
+                                )
+
+study_domain_file <- system.file("original_data",
+                                "Solea_solea",
+                                "study_domain.Rdata",
+                                package = "FishMap"
+                                )
+
+
+# prepare and load model inputs
+fm_data_inputs <- fm_load_data(species = "Solea_solea",
+                         fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                         fitted_data = "biomass",
+                         survey_data_file = survey_data_file,
+                         vmslogbook_data_file = vmslogbook_data_file,
+                         study_domain_file = study_domain_file,
+                         year_start = 2018,
+                         year_end = 2018,
+                         month_start = 11,
+                         month_end = 11,
+                         time_step = "Month",
+                         k = 0.25,
+                         grid_xmin = -6,
+                         grid_xmax = 0,
+                         grid_ymin = 42,
+                         grid_ymax = 48)
+
+# Fit the model
+fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
+                                 SE = 1,
+                                 data_source = 1,
+                                 data_obs = 2,
+                                 samp_process = 0,
+                                 b_constraint = 2,
+                                 cov_samp_process = 0,
+                                 biomass_temporal = 1,
+                                 sampling_temporal = 0,
+                                 lf_link = 0,
+                                 ref_data = "com",
+                                 EM = "est_b",
+                                 month_ref = 1)
+
+# Generate figure outputs
+fm_generate_graphs(fm_model_results = fm_model_results)
 ```
 
 ## Code of Conduct
