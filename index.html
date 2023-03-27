@@ -6,6 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spatial-temporal Models For Fish Distributions with TMB • FishMap</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -14,6 +20,7 @@
 <script src="pkgdown.js"></script><meta property="og:title" content="Spatial-temporal Models For Fish Distributions with TMB">
 <meta property="og:description" content="Combine survey and VMS data to model the distribution of fish
     using TMB models.">
+<meta property="og:image" content="https://balglave.github.io/FishMap/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -96,7 +103,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="fishmap">FishMap<a class="anchor" aria-label="anchor" href="#fishmap"></a>
+<div class="page-header"><h1 id="fishmap-">FishMap <img src="reference/figures/logo.png" align="right" alt="" width="120"><a class="anchor" aria-label="anchor" href="#fishmap-"></a>
 </h1></div>
 <!-- badges: start -->
 
@@ -116,7 +123,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"INLA"</span>,repos<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span>,INLA<span class="op">=</span><span class="st">"https://inla.r-inla-download.org/R/stable"</span><span class="op">)</span>, dep<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="fishmap-1">FishMap<a class="anchor" aria-label="anchor" href="#fishmap-1"></a>
+<h3 id="fishmap">FishMap<a class="anchor" aria-label="anchor" href="#fishmap"></a>
 </h3>
 <p>You can install the development version of FishMap from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -136,7 +143,10 @@
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>Full documentation website on: <a href="https://balglave.github.io/FishMap" class="uri">https://balglave.github.io/FishMap</a></p>
+<p>Full documentation website on: <a href="https://balglave.github.io/FishMap" class="uri">https://balglave.github.io/FishMap</a><br>
+In particular, you can follow this vignette:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"user-running-fishmap"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
@@ -147,9 +157,64 @@
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># library(FishMap)</span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">FishMap</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Read internal data as Rdata</span></span>
+<span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                <span class="st">"Solea_solea"</span>,</span>
+<span>                                <span class="st">"survey_data.Rdata"</span>,</span>
+<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span>                                <span class="op">)</span></span>
+<span></span>
+<span><span class="va">vmslogbook_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                <span class="st">"Solea_solea"</span>,</span>
+<span>                                <span class="st">"vmslogbook_data.Rdata"</span>,</span>
+<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span>                                <span class="op">)</span></span>
+<span></span>
+<span><span class="va">study_domain_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                <span class="st">"Solea_solea"</span>,</span>
+<span>                                <span class="st">"study_domain.Rdata"</span>,</span>
+<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span>                                <span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># prepare and load model inputs</span></span>
+<span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fm_load_data.html">fm_load_data</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Solea_solea"</span>,</span>
+<span>                         fleet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OTB_DEF_&gt;=70_0"</span>,<span class="st">"OTB_CEP_&gt;=70_0"</span>,<span class="st">"OTT_DEF_&gt;=70_0"</span><span class="op">)</span>,</span>
+<span>                         fitted_data <span class="op">=</span> <span class="st">"biomass"</span>,</span>
+<span>                         survey_data_file <span class="op">=</span> <span class="va">survey_data_file</span>,</span>
+<span>                         vmslogbook_data_file <span class="op">=</span> <span class="va">vmslogbook_data_file</span>,</span>
+<span>                         study_domain_file <span class="op">=</span> <span class="va">study_domain_file</span>,</span>
+<span>                         year_start <span class="op">=</span> <span class="fl">2018</span>,</span>
+<span>                         year_end <span class="op">=</span> <span class="fl">2018</span>,</span>
+<span>                         month_start <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>                         month_end <span class="op">=</span> <span class="fl">11</span>,</span>
+<span>                         time_step <span class="op">=</span> <span class="st">"Month"</span>,</span>
+<span>                         k <span class="op">=</span> <span class="fl">0.25</span>,</span>
+<span>                         grid_xmin <span class="op">=</span> <span class="op">-</span><span class="fl">6</span>,</span>
+<span>                         grid_xmax <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                         grid_ymin <span class="op">=</span> <span class="fl">42</span>,</span>
+<span>                         grid_ymax <span class="op">=</span> <span class="fl">48</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Fit the model</span></span>
+<span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fm_fit_model.html">fm_fit_model</a></span><span class="op">(</span>fm_data_inputs <span class="op">=</span> <span class="va">fm_data_inputs</span>,</span>
+<span>                                 SE <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                 data_source <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                 data_obs <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                                 samp_process <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                                 b_constraint <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                                 cov_samp_process <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                                 biomass_temporal <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                 sampling_temporal <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                                 lf_link <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>                                 ref_data <span class="op">=</span> <span class="st">"com"</span>,</span>
+<span>                                 EM <span class="op">=</span> <span class="st">"est_b"</span>,</span>
+<span>                                 month_ref <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate figure outputs</span></span>
+<span><span class="fu"><a href="reference/fm_generate_graphs.html">fm_generate_graphs</a></span><span class="op">(</span>fm_model_results <span class="op">=</span> <span class="va">fm_model_results</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
