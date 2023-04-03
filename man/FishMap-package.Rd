@@ -6,6 +6,8 @@
 \alias{FishMap-package}
 \title{FishMap: Spatial-temporal Models For Fish Distributions with 'TMB'}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Combine survey and VMS data to model the distribution of fish using 'TMB' models.
 }
 \author{

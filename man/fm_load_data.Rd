@@ -8,9 +8,9 @@ fm_load_data(
   species,
   fleet,
   fitted_data = c("biomass", "presabs"),
-  survey_data_file,
-  vmslogbook_data_file,
-  study_domain_file,
+  survey_data,
+  vmslogbook_data,
+  study_domain,
   year_start,
   year_end,
   month_start,
@@ -31,11 +31,11 @@ fm_load_data(
 
 \item{fitted_data}{character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`}
 
-\item{survey_data_file}{character File containing the scientific (survey) data}
+\item{survey_data}{data.frame Dataframe containing the scientific (survey) data}
 
-\item{vmslogbook_data_file}{character File containing the commercial (vmslogbook) data}
+\item{vmslogbook_data}{data.frame Dataframe containing the commercial (vmslogbook) data}
 
-\item{study_domain_file}{character File containing the data describing the study area}
+\item{study_domain}{data.frame Dataframe containing the data describing the study area}
 
 \item{year_start}{integer Starting year}
 
@@ -64,28 +64,34 @@ Load and prepare data for model fitting
 # run part1
 survey_data_file <- system.file("original_data",
                                 "Solea_solea",
-                                "survey_data.Rdata",
+                                "survey_data.Rds",
                                 package = "FishMap"
                                 )
+
+survey_data <- readr::read_rds(file = survey_data_file)
 
 vmslogbook_data_file <- system.file("original_data",
                                 "Solea_solea",
-                                "vmslogbook_data.Rdata",
+                                "vmslogbook_data.Rds",
                                 package = "FishMap"
                                 )
 
+vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
+
 study_domain_file <- system.file("original_data",
                                 "Solea_solea",
-                                "study_domain.Rdata",
+                                "study_domain.Rds",
                                 package = "FishMap"
                                 )
+
+study_domain <- readr::read_rds(file = study_domain_file)
 
 fm_data_inputs <- fm_load_data(species = "Solea_solea",
                          fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
                          fitted_data = "biomass",
-                         survey_data_file = survey_data_file,
-                         vmslogbook_data_file = vmslogbook_data_file,
-                         study_domain_file = study_domain_file,
+                         survey_data = survey_data,
+                         vmslogbook_data = vmslogbook_data,
+                         study_domain = study_domain,
                          year_start = 2018,
                          year_end = 2018,
                          month_start = 11,
