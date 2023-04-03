@@ -124,7 +124,8 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kaskr/adcomp/wiki" class="external-link">TMB</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jabiru/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://testthat.r-lib.org" class="external-link">testthat</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="main-r">
 <code>main.R</code><a class="anchor" aria-label="anchor" href="#main-r"></a>
@@ -136,39 +137,521 @@ fitting and graph generation.</p>
 <h3 id="part1-data-preparation">part1: Data preparation<a class="anchor" aria-label="anchor" href="#part1-data-preparation"></a>
 </h3>
 <div class="section level4">
+<h4 id="input-data">input data<a class="anchor" aria-label="anchor" href="#input-data"></a>
+</h4>
+<p>FishMap requires three types of input data :</p>
+<ul>
+<li>survey data</li>
+<li>vms x logbook data</li>
+<li>study domain data</li>
+</ul>
+<p>They should be provided as individual data frames to the
+<code><a href="../reference/fm_load_data.html">fm_load_data()</a></code> function. You can find below the preview of
+example input data frames used in this vignette.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                <span class="st">"Solea_solea"</span>,</span>
+<span>                                <span class="st">"survey_data.Rds"</span>,</span>
+<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">survey_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">survey_data_file</span><span class="op">)</span></span>
+<span><span class="va">survey_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="4%">
+<col width="6%">
+<col width="3%">
+<col width="4%">
+<col width="3%">
+<col width="5%">
+<col width="7%">
+<col width="5%">
+<col width="2%">
+<col width="6%">
+<col width="5%">
+<col width="5%">
+<col width="4%">
+<col width="6%">
+<col width="5%">
+<col width="5%">
+<col width="9%">
+<col width="9%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">layer</th>
+<th align="left">Survey</th>
+<th align="right">Year</th>
+<th align="right">Month</th>
+<th align="left">StNo</th>
+<th align="right">HaulNo</th>
+<th align="right">HaulDur</th>
+<th align="left">Quarter</th>
+<th align="right">Day</th>
+<th align="right">TimeShot</th>
+<th align="left">Stratum</th>
+<th align="left">StatRec</th>
+<th align="right">Depth</th>
+<th align="right">Distance</th>
+<th align="right">long</th>
+<th align="right">lati</th>
+<th align="left">Year_Quarter</th>
+<th align="right">CatchWgt_spp</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">19830</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2017</td>
+<td align="right">11</td>
+<td align="left">BIGO</td>
+<td align="right">1</td>
+<td align="right">0.5000000</td>
+<td align="left">04</td>
+<td align="right">3</td>
+<td align="right">1347</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">69</td>
+<td align="right">4720</td>
+<td align="right">-4.525</td>
+<td align="right">47.875</td>
+<td align="left">2017_04</td>
+<td align="right">5.4737333</td>
+</tr>
+<tr class="even">
+<td align="right">19830</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2018</td>
+<td align="right">11</td>
+<td align="left">BIGO</td>
+<td align="right">8</td>
+<td align="right">0.5000000</td>
+<td align="left">04</td>
+<td align="right">14</td>
+<td align="right">820</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">NA</td>
+<td align="right">4664</td>
+<td align="right">-4.525</td>
+<td align="right">47.875</td>
+<td align="left">2018_04</td>
+<td align="right">1.4612254</td>
+</tr>
+<tr class="odd">
+<td align="right">20081</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2017</td>
+<td align="right">11</td>
+<td align="left">BEME</td>
+<td align="right">3</td>
+<td align="right">0.2333333</td>
+<td align="left">04</td>
+<td align="right">4</td>
+<td align="right">849</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">15</td>
+<td align="right">2393</td>
+<td align="right">-3.975</td>
+<td align="right">47.825</td>
+<td align="left">2017_04</td>
+<td align="right">0.2672393</td>
+</tr>
+<tr class="even">
+<td align="right">20081</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2018</td>
+<td align="right">11</td>
+<td align="left">BEME</td>
+<td align="right">1</td>
+<td align="right">0.2500000</td>
+<td align="left">04</td>
+<td align="right">10</td>
+<td align="right">1124</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">16</td>
+<td align="right">2489</td>
+<td align="right">-3.975</td>
+<td align="right">47.825</td>
+<td align="left">2018_04</td>
+<td align="right">0.0338412</td>
+</tr>
+<tr class="odd">
+<td align="right">20313</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2017</td>
+<td align="right">11</td>
+<td align="left">PEMA</td>
+<td align="right">4</td>
+<td align="right">0.5000000</td>
+<td align="left">04</td>
+<td align="right">4</td>
+<td align="right">1113</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">63</td>
+<td align="right">4687</td>
+<td align="right">-4.375</td>
+<td align="right">47.775</td>
+<td align="left">2017_04</td>
+<td align="right">5.2887857</td>
+</tr>
+<tr class="even">
+<td align="right">20313</td>
+<td align="left">BTS-VIII</td>
+<td align="right">2018</td>
+<td align="right">11</td>
+<td align="left">PEMA</td>
+<td align="right">9</td>
+<td align="right">0.5000000</td>
+<td align="left">04</td>
+<td align="right">14</td>
+<td align="right">1008</td>
+<td align="left">N</td>
+<td align="left">24E5</td>
+<td align="right">250</td>
+<td align="right">4540</td>
+<td align="right">-4.375</td>
+<td align="right">47.775</td>
+<td align="left">2018_04</td>
+<td align="right">2.0623380</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">vmslogbook_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                    <span class="st">"Solea_solea"</span>,</span>
+<span>                                    <span class="st">"vmslogbook_data.Rds"</span>,</span>
+<span>                                    package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">vmslogbook_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">vmslogbook_data_file</span><span class="op">)</span></span>
+<span><span class="va">vmslogbook_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="3%">
+<col width="3%">
+<col width="5%">
+<col width="5%">
+<col width="3%">
+<col width="3%">
+<col width="4%">
+<col width="7%">
+<col width="4%">
+<col width="3%">
+<col width="4%">
+<col width="1%">
+<col width="2%">
+<col width="3%">
+<col width="2%">
+<col width="5%">
+<col width="4%">
+<col width="6%">
+<col width="3%">
+<col width="6%">
+<col width="2%">
+<col width="6%">
+<col width="4%">
+<col width="1%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">layer</th>
+<th align="left">VE_REF</th>
+<th align="left">SI_DATE</th>
+<th align="right">Ifr_Fleet</th>
+<th align="right">VE_LEN</th>
+<th align="left">VE_KW</th>
+<th align="left">LE_GEAR</th>
+<th align="left">LE_MET_level6</th>
+<th align="right">long</th>
+<th align="right">lati</th>
+<th align="left">MET</th>
+<th align="right">HF</th>
+<th align="right">year</th>
+<th align="left">Month</th>
+<th align="left">Year</th>
+<th align="left">Year_Month</th>
+<th align="left">Quarter</th>
+<th align="left">Year_Quarter</th>
+<th align="right">LE_KG</th>
+<th align="right">LE_KG_mature</th>
+<th align="right">CPUE</th>
+<th align="right">CPUE_mature</th>
+<th align="right">CPUE_spp</th>
+<th align="right">f</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">569</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-10.575</td>
+<td align="right">51.875</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">1086</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-10.725</td>
+<td align="right">51.775</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">1602</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-10.925</td>
+<td align="right">51.675</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">2119</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-11.075</td>
+<td align="right">51.575</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">2895</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-11.275</td>
+<td align="right">51.425</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">3412</td>
+<td align="left">18157</td>
+<td align="left">10/07/2017</td>
+<td align="right">2</td>
+<td align="right">NA</td>
+<td align="left">478.0</td>
+<td align="left">OTB</td>
+<td align="left">OTB_DEF_&gt;=70_0</td>
+<td align="right">-11.425</td>
+<td align="right">51.325</td>
+<td align="left">OTB_DEF</td>
+<td align="right">1</td>
+<td align="right">2017</td>
+<td align="left">07</td>
+<td align="left">2017</td>
+<td align="left">2017_07</td>
+<td align="left">03</td>
+<td align="left">2017_03</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">study_domain_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
+<span>                                 <span class="st">"Solea_solea"</span>,</span>
+<span>                                 <span class="st">"study_domain.Rds"</span>,</span>
+<span>                                 package <span class="op">=</span> <span class="st">"FishMap"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">study_domain</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">study_domain_file</span><span class="op">)</span></span>
+<span><span class="va">study_domain</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="3%">
+<col width="5%">
+<col width="12%">
+<col width="18%">
+<col width="12%">
+<col width="7%">
+<col width="5%">
+<col width="34%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">ID</th>
+<th align="left">ZONE</th>
+<th align="right">STRATE_BAT</th>
+<th align="left">SURFACE</th>
+<th align="right">SURFACE_MI</th>
+<th align="left">STRATE</th>
+<th align="right">prof</th>
+<th align="left">geometry</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">1</td>
+<td align="left">8201691989.5538</td>
+<td align="right">2391.2308</td>
+<td align="left">Gn1</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-4.736794 4…</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">2</td>
+<td align="left">11771068809.3136</td>
+<td align="right">3431.8945</td>
+<td align="left">Gn2</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-5.098735 4…</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">3</td>
+<td align="left">17327206591.5471</td>
+<td align="right">5051.8051</td>
+<td align="left">Gn3</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-5.098735 4…</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">4</td>
+<td align="left">18854029923.0492</td>
+<td align="right">5496.9556</td>
+<td align="left">Gn4</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-2.610457 4…</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">5</td>
+<td align="left">1612118624.86359</td>
+<td align="right">470.0186</td>
+<td align="left">Gn5</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-5.725294 4…</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="left">Gn</td>
+<td align="right">6</td>
+<td align="left">1090197796.63664</td>
+<td align="right">317.8508</td>
+<td align="left">Gn6</td>
+<td align="right">NA</td>
+<td align="left">MULTIPOLYGON (((-5.740776 4…</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level4">
 <h4 id="fm_load_data-prepare-and-load-model-inputs">
 <code>fm_load_data()</code> : prepare and load model inputs<a class="anchor" aria-label="anchor" href="#fm_load_data-prepare-and-load-model-inputs"></a>
 </h4>
-<p>This function Prepare all the necessary output for the model fitting.
-It will filter and shape the observation data (VMS and scientific). It
-will generate the spatial mesh for the study domain. All outputs are
-reported as part of a named list.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># run part 1</span></span>
-<span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
-<span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"survey_data.Rdata"</span>,</span>
-<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
-<span>                                <span class="op">)</span></span>
-<span></span>
-<span><span class="va">vmslogbook_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
-<span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"vmslogbook_data.Rdata"</span>,</span>
-<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
-<span>                                <span class="op">)</span></span>
-<span></span>
-<span><span class="va">study_domain_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
-<span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"study_domain.Rdata"</span>,</span>
-<span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
-<span>                                <span class="op">)</span></span>
-<span></span>
+<p>This function prepares all the necessary output for the model
+fitting. It will filter and shape the observation data (VMS and
+scientific). It will generate the spatial mesh for the study domain. All
+outputs are reported as part of a named list.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># run part1</span></span>
 <span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fm_load_data.html">fm_load_data</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Solea_solea"</span>,</span>
 <span>                         fleet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OTB_DEF_&gt;=70_0"</span>,<span class="st">"OTB_CEP_&gt;=70_0"</span>,<span class="st">"OTT_DEF_&gt;=70_0"</span><span class="op">)</span>,</span>
 <span>                         fitted_data <span class="op">=</span> <span class="st">"biomass"</span>,</span>
-<span>                         survey_data_file <span class="op">=</span> <span class="va">survey_data_file</span>,</span>
-<span>                         vmslogbook_data_file <span class="op">=</span> <span class="va">vmslogbook_data_file</span>,</span>
-<span>                         study_domain_file <span class="op">=</span> <span class="va">study_domain_file</span>,</span>
+<span>                         survey_data <span class="op">=</span> <span class="va">survey_data</span>,</span>
+<span>                         vmslogbook_data <span class="op">=</span> <span class="va">vmslogbook_data</span>,</span>
+<span>                         study_domain <span class="op">=</span> <span class="va">study_domain</span>,</span>
 <span>                         year_start <span class="op">=</span> <span class="fl">2018</span>,</span>
 <span>                         year_end <span class="op">=</span> <span class="fl">2018</span>,</span>
 <span>                         month_start <span class="op">=</span> <span class="fl">11</span>,</span>
@@ -186,7 +669,7 @@ reported as part of a named list.</p>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(layer, cell)`</span></span>
-<span><span class="co">#&gt; Step 1 -loading data-: 12.811 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; Step 1 -loading data-: 13.584 sec elapsed</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -200,7 +683,7 @@ reported as part of a named list.</p>
 compile the model cpp file. It will fit the model to the input data
 generated from <code><a href="../reference/fm_load_data.html">fm_load_data()</a></code> and provide the results as a
 named list.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run part 2</span></span>
 <span><span class="va">fm_model_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fm_fit_model.html">fm_fit_model</a></span><span class="op">(</span>fm_data_inputs <span class="op">=</span> <span class="va">fm_data_inputs</span>,</span>
 <span>                                 SE <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -216,7 +699,7 @@ named list.</p>
 <span>                                 EM <span class="op">=</span> <span class="st">"est_b"</span>,</span>
 <span>                                 month_ref <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running step 2 -compile model-</span></span>
-<span><span class="co">#&gt; Step 2 -compile model-: 0.027 sec elapsed</span></span>
+<span><span class="co">#&gt; Step 2 -compile model-: 0.031 sec elapsed</span></span>
 <span><span class="co">#&gt; Running step 3 -fit model-</span></span>
 <span><span class="co">#&gt;   0:     36231.535:  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  0.00000  1.00000  1.00000  0.00000  0.00000  1.00000</span></span>
 <span><span class="co">#&gt;   1:     34620.699: -0.000611263 0.0111047 -0.0156403 0.0102825 0.124038 0.170300 0.107928 0.219166 0.254485 0.984779  1.02404 0.00480612 0.00127533  1.00142</span></span>
@@ -337,8 +820,8 @@ named list.</p>
 <span><span class="co">#&gt; 116:     33407.566: -1.18066 0.337686 -2.16519 -0.0860470 0.564253 0.646033 0.198956 0.0112283 0.0236450 0.589414 0.954833 0.438146 0.592671  3.69202</span></span>
 <span><span class="co">#&gt; 117:     33407.566: -1.17997 0.338183 -2.16452 -0.0859889 0.564292 0.646026 0.198945 0.0112172 0.0236574 0.589431 0.954853 0.438127 0.592037  3.69260</span></span>
 <span><span class="co">#&gt; 118:     33407.566: -1.17949 0.337930 -2.16479 -0.0859945 0.564271 0.646033 0.198943 0.0112249 0.0236473 0.589429 0.954853 0.438195 0.592209  3.69255</span></span>
-<span><span class="co">#&gt; Warning: 4 external pointers will be removed</span></span>
-<span><span class="co">#&gt; Step 3 -fit model-: 33.244 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: 5 external pointers will be removed</span></span>
+<span><span class="co">#&gt; Step 3 -fit model-: 36.164 sec elapsed</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -353,12 +836,12 @@ use as input the data generated from <code><a href="../reference/fm_fit_model.ht
 provide the predictive plot within a named list. Is the sampling process
 is activated (<code>samp_process = 1</code>), an additionnal graphic for
 eta result will be generated.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># run part 3</span></span>
 <span><span class="fu"><a href="../reference/fm_generate_graphs.html">fm_generate_graphs</a></span><span class="op">(</span>fm_model_results <span class="op">=</span> <span class="va">fm_model_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Running step 4 -plot graphs-</span></span></code></pre></div>
 <p><img src="user-running-fishmap_files/figure-html/preex-fm_generate_graphs-1.png" width="700"></p>
-<pre><code><span><span class="co">#&gt; Step 4 -plot graphs-: 0.322 sec elapsed</span></span>
+<pre><code><span><span class="co">#&gt; Step 4 -plot graphs-: 0.431 sec elapsed</span></span>
 <span><span class="co">#&gt; $pred_plot</span></span></code></pre>
 <p><img src="user-running-fishmap_files/figure-html/preex-fm_generate_graphs-2.png" width="700"></p>
 </div>

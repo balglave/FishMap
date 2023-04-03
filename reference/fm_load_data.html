@@ -85,9 +85,9 @@
 <span>  <span class="va">species</span>,</span>
 <span>  <span class="va">fleet</span>,</span>
 <span>  fitted_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"biomass"</span>, <span class="st">"presabs"</span><span class="op">)</span>,</span>
-<span>  <span class="va">survey_data_file</span>,</span>
-<span>  <span class="va">vmslogbook_data_file</span>,</span>
-<span>  <span class="va">study_domain_file</span>,</span>
+<span>  <span class="va">survey_data</span>,</span>
+<span>  <span class="va">vmslogbook_data</span>,</span>
+<span>  <span class="va">study_domain</span>,</span>
 <span>  <span class="va">year_start</span>,</span>
 <span>  <span class="va">year_end</span>,</span>
 <span>  <span class="va">month_start</span>,</span>
@@ -116,16 +116,16 @@
 <dd><p>character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`</p></dd>
 
 
-<dt>survey_data_file</dt>
-<dd><p>character File containing the scientific (survey) data</p></dd>
+<dt>survey_data</dt>
+<dd><p>data.frame Dataframe containing the scientific (survey) data</p></dd>
 
 
-<dt>vmslogbook_data_file</dt>
-<dd><p>character File containing the commercial (vmslogbook) data</p></dd>
+<dt>vmslogbook_data</dt>
+<dd><p>data.frame Dataframe containing the commercial (vmslogbook) data</p></dd>
 
 
-<dt>study_domain_file</dt>
-<dd><p>character File containing the data describing the study area</p></dd>
+<dt>study_domain</dt>
+<dd><p>data.frame Dataframe containing the data describing the study area</p></dd>
 
 
 <dt>year_start</dt>
@@ -173,28 +173,34 @@
 <span class="r-in"><span><span class="co"># run part1</span></span></span>
 <span class="r-in"><span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span></span>
 <span class="r-in"><span>                                <span class="st">"Solea_solea"</span>,</span></span>
-<span class="r-in"><span>                                <span class="st">"survey_data.Rdata"</span>,</span></span>
+<span class="r-in"><span>                                <span class="st">"survey_data.Rds"</span>,</span></span>
 <span class="r-in"><span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span></span>
 <span class="r-in"><span>                                <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">survey_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">survey_data_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">vmslogbook_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span></span>
 <span class="r-in"><span>                                <span class="st">"Solea_solea"</span>,</span></span>
-<span class="r-in"><span>                                <span class="st">"vmslogbook_data.Rdata"</span>,</span></span>
+<span class="r-in"><span>                                <span class="st">"vmslogbook_data.Rds"</span>,</span></span>
 <span class="r-in"><span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span></span>
 <span class="r-in"><span>                                <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">vmslogbook_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">vmslogbook_data_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">study_domain_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span></span>
 <span class="r-in"><span>                                <span class="st">"Solea_solea"</span>,</span></span>
-<span class="r-in"><span>                                <span class="st">"study_domain.Rdata"</span>,</span></span>
+<span class="r-in"><span>                                <span class="st">"study_domain.Rds"</span>,</span></span>
 <span class="r-in"><span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span></span>
 <span class="r-in"><span>                                <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">study_domain</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">study_domain_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">fm_load_data</span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Solea_solea"</span>,</span></span>
 <span class="r-in"><span>                         fleet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OTB_DEF_&gt;=70_0"</span>,<span class="st">"OTB_CEP_&gt;=70_0"</span>,<span class="st">"OTT_DEF_&gt;=70_0"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         fitted_data <span class="op">=</span> <span class="st">"biomass"</span>,</span></span>
-<span class="r-in"><span>                         survey_data_file <span class="op">=</span> <span class="va">survey_data_file</span>,</span></span>
-<span class="r-in"><span>                         vmslogbook_data_file <span class="op">=</span> <span class="va">vmslogbook_data_file</span>,</span></span>
-<span class="r-in"><span>                         study_domain_file <span class="op">=</span> <span class="va">study_domain_file</span>,</span></span>
+<span class="r-in"><span>                         survey_data <span class="op">=</span> <span class="va">survey_data</span>,</span></span>
+<span class="r-in"><span>                         vmslogbook_data <span class="op">=</span> <span class="va">vmslogbook_data</span>,</span></span>
+<span class="r-in"><span>                         study_domain <span class="op">=</span> <span class="va">study_domain</span>,</span></span>
 <span class="r-in"><span>                         year_start <span class="op">=</span> <span class="fl">2018</span>,</span></span>
 <span class="r-in"><span>                         year_end <span class="op">=</span> <span class="fl">2018</span>,</span></span>
 <span class="r-in"><span>                         month_start <span class="op">=</span> <span class="fl">11</span>,</span></span>
@@ -212,7 +218,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(layer, cell)`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(layer, cell)`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(layer, cell)`</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Step 1 -loading data-: 13.19 sec elapsed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Step 1 -loading data-: 14.003 sec elapsed</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
