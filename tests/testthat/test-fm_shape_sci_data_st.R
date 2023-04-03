@@ -6,10 +6,10 @@ test_that("fm_shape_sci_data_st works", {
   # vms data - unfiltered
   vmslogbook_data_file <- system.file("original_data",
                                       "Solea_solea",
-                                      "vmslogbook_data.Rdata",
+                                      "vmslogbook_data.Rds",
                                       package = "FishMap"
   )
-  load(vmslogbook_data_file)
+  vmslogbook_data <- readr::read_rds(vmslogbook_data_file)
   
   # filter vms data as done in `fm_load_data()`
   fleet <- c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0")
@@ -22,10 +22,10 @@ test_that("fm_shape_sci_data_st works", {
   # study domain
   study_domain_file <- system.file("original_data",
                                    "Solea_solea",
-                                   "study_domain.Rdata",
+                                   "study_domain.Rds",
                                    package = "FishMap"
   )
-  load(study_domain_file)
+  study_domain <- readr::read_rds(study_domain_file)
 
   # mesh grid
   grid_limit <- raster::extent(c(-6, 0, 42, 48))
@@ -45,10 +45,10 @@ test_that("fm_shape_sci_data_st works", {
   # survey data
   survey_data_file <- system.file("original_data",
                                 "Solea_solea",
-                                "survey_data.Rdata",
+                                "survey_data.Rds",
                                 package = "FishMap"
                                 )
-  load(survey_data_file)
+  survey_data <- readr::read_rds(survey_data_file)
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
   # time df

@@ -5,9 +5,9 @@
 #' @param species character Species of interest
 #' @param fleet character Fleet chosen according to the species of interest. A fleet is considered to have homogeneous catchability and targeting behavior.
 #' @param fitted_data character Type of the data to be fitted to the model (either `biomass` for biomass data - positive-continuous data - or `presabs` for presence-absence data). Default is `biomass`
-#' @param survey_data_file character File containing the scientific (survey) data
-#' @param vmslogbook_data_file  character File containing the commercial (vmslogbook) data
-#' @param study_domain_file  character File containing the data describing the study area
+#' @param survey_data data.frame Dataframe containing the scientific (survey) data
+#' @param vmslogbook_data  data.frame Dataframe containing the commercial (vmslogbook) data
+#' @param study_domain  data.frame Dataframe containing the data describing the study area
 #' @param year_start integer Starting year
 #' @param year_end integer Ending year
 #' @param month_start integer Starting month
@@ -30,28 +30,34 @@
 #' # run part1
 #' survey_data_file <- system.file("original_data",
 #'                                 "Solea_solea",
-#'                                 "survey_data.Rdata",
+#'                                 "survey_data.Rds",
 #'                                 package = "FishMap"
 #'                                 )
+#' 
+#' survey_data <- readr::read_rds(file = survey_data_file)
 #' 
 #' vmslogbook_data_file <- system.file("original_data",
 #'                                 "Solea_solea",
-#'                                 "vmslogbook_data.Rdata",
+#'                                 "vmslogbook_data.Rds",
 #'                                 package = "FishMap"
 #'                                 )
 #' 
+#' vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
+#' 
 #' study_domain_file <- system.file("original_data",
 #'                                 "Solea_solea",
-#'                                 "study_domain.Rdata",
+#'                                 "study_domain.Rds",
 #'                                 package = "FishMap"
 #'                                 )
+#' 
+#' study_domain <- readr::read_rds(file = study_domain_file)
 #' 
 #' fm_data_inputs <- fm_load_data(species = "Solea_solea",
 #'                          fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
 #'                          fitted_data = "biomass",
-#'                          survey_data_file = survey_data_file,
-#'                          vmslogbook_data_file = vmslogbook_data_file,
-#'                          study_domain_file = study_domain_file,
+#'                          survey_data = survey_data,
+#'                          vmslogbook_data = vmslogbook_data,
+#'                          study_domain = study_domain,
 #'                          year_start = 2018,
 #'                          year_end = 2018,
 #'                          month_start = 11,
@@ -66,9 +72,9 @@
 fm_load_data <- function(species,
                          fleet,
                          fitted_data = c("biomass","presabs"),
-                         survey_data_file,
-                         vmslogbook_data_file,
-                         study_domain_file,
+                         survey_data,
+                         vmslogbook_data,
+                         study_domain,
                          year_start,
                          year_end,
                          month_start,
@@ -89,20 +95,16 @@ fm_load_data <- function(species,
   # set seed
   local_seed(seed = seed)
   
-  script_folder <- system.file("original_scripts", package = "FishMap") 
-  
+  # check input values
   fitted_data <- match.arg(fitted_data)
   time_step <- match.arg(time_step)
   
   # Scientific data
   n_survey <- 1 # number of surveys
-  load(survey_data_file)
   scientific_observation <- "CPUE" # 'CPUE' or 'Density'
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
   # 'VMS x logbook' data
-  load(vmslogbook_data_file)
-  
   select_aggreg_level <- paste(fleet,collapse = "|")
   vmslogbook_data <- vmslogbook_data %>%
     filter(str_detect(LE_MET_level6,select_aggreg_level))
@@ -170,8 +172,6 @@ fm_load_data <- function(species,
   # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
   k <- k
   Alpha <- 2
-  
-  load(study_domain_file)
   
   ## Load domain / mesh / spde object
   domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(

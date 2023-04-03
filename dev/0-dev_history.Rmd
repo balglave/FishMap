@@ -72,6 +72,14 @@ usethis::use_github_action("test-coverage")
 
 # ignore data and model files in build
 usethis::use_build_ignore(c("inst/model.so","inst/model.o"))
+
+# convert Rdata input to Rds files
+load(vmslogbook_data_file)
+readr::write_rds(x = vmslogbook_data, file = "inst/original_data/Solea_solea/vmslogbook_data.Rds")
+load(study_domain_file)
+readr::write_rds(x = study_domain, file = "inst/original_data/Solea_solea/study_domain.Rds")
+load(survey_data_file)
+readr::write_rds(x = survey_data, file = "inst/original_data/Solea_solea/survey_data.Rds")
 ```
 
 ## Use everytime needed
