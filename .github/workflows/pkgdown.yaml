@@ -39,7 +39,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Add reports
-        run: source("dev/dev_deliverables_script.R")
+        run: Rscript -e 'dev/dev_deliverables_script.R'
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
