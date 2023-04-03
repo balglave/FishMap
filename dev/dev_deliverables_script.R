@@ -2,8 +2,7 @@ unlink("pkgdown/assets", recursive = TRUE)
 dir.create("pkgdown/assets", recursive = TRUE)
 
 if (!requireNamespace("covr", quietly = TRUE)) install.packages("covr", dependencies = TRUE)
-if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-if (!requireNamespace("testdown", quietly = TRUE)) remotes::install_github("ThinkR-open/testdown", dependencies = TRUE)
+if (!requireNamespace("testdown", quietly = TRUE)) install.packages('testdown', repos = c('https://thinkr-open.r-universe.dev', 'https://cloud.r-project.org'))
 
 # Create covr book and add it to pkgdown ----
 covr::report(file = "pkgdown/assets/coverage.html", browse = FALSE)
