@@ -128,7 +128,7 @@
 <p>You can install the development version of FishMap from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"balglave/FishMap"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"balglave/FishMap"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
@@ -136,7 +136,7 @@
 <p>You can install the development version of FishMap together with the vignettes with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"balglave/FishMap"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"balglave/FishMap"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Installing with <code>build_vignettes = TRUE</code> will allow you to access the vignettes locally. Once you have installed FishMap with vignettes, you can access them using the command <code>vignette(package = "FishMap")</code>.</p>
 </div>
 </div>
@@ -160,33 +160,39 @@ In particular, you can follow this vignette:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">FishMap</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Read internal data as Rdata</span></span>
+<span><span class="co"># Read internal data as Rds files</span></span>
 <span><span class="va">survey_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
 <span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"survey_data.Rdata"</span>,</span>
+<span>                                <span class="st">"survey_data.Rds"</span>,</span>
 <span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
 <span>                                <span class="op">)</span></span>
+<span></span>
+<span><span class="va">survey_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">survey_data_file</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">vmslogbook_data_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
 <span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"vmslogbook_data.Rdata"</span>,</span>
+<span>                                <span class="st">"vmslogbook_data.Rds"</span>,</span>
 <span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
 <span>                                <span class="op">)</span></span>
 <span></span>
+<span><span class="va">vmslogbook_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">vmslogbook_data_file</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">study_domain_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"original_data"</span>,</span>
 <span>                                <span class="st">"Solea_solea"</span>,</span>
-<span>                                <span class="st">"study_domain.Rdata"</span>,</span>
+<span>                                <span class="st">"study_domain.Rds"</span>,</span>
 <span>                                package <span class="op">=</span> <span class="st">"FishMap"</span></span>
 <span>                                <span class="op">)</span></span>
+<span></span>
+<span><span class="va">study_domain</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">study_domain_file</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="co"># prepare and load model inputs</span></span>
 <span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fm_load_data.html">fm_load_data</a></span><span class="op">(</span>species <span class="op">=</span> <span class="st">"Solea_solea"</span>,</span>
 <span>                         fleet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"OTB_DEF_&gt;=70_0"</span>,<span class="st">"OTB_CEP_&gt;=70_0"</span>,<span class="st">"OTT_DEF_&gt;=70_0"</span><span class="op">)</span>,</span>
 <span>                         fitted_data <span class="op">=</span> <span class="st">"biomass"</span>,</span>
-<span>                         survey_data_file <span class="op">=</span> <span class="va">survey_data_file</span>,</span>
-<span>                         vmslogbook_data_file <span class="op">=</span> <span class="va">vmslogbook_data_file</span>,</span>
-<span>                         study_domain_file <span class="op">=</span> <span class="va">study_domain_file</span>,</span>
+<span>                         survey_data <span class="op">=</span> <span class="va">survey_data</span>,</span>
+<span>                         vmslogbook_data <span class="op">=</span> <span class="va">vmslogbook_data</span>,</span>
+<span>                         study_domain <span class="op">=</span> <span class="va">study_domain</span>,</span>
 <span>                         year_start <span class="op">=</span> <span class="fl">2018</span>,</span>
 <span>                         year_end <span class="op">=</span> <span class="fl">2018</span>,</span>
 <span>                         month_start <span class="op">=</span> <span class="fl">11</span>,</span>

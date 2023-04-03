@@ -319,7 +319,7 @@ change in functions code, or package version, here is the procedure to
 follow:</p>
 <ul>
 <li>Modify your <code>.Renviron</code> (you can access it with
-<code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>) to add the following line:</li>
+<code>usethis::edit_r_environ()</code>) to add the following line:</li>
 </ul>
 <pre><code><span><span class="va">FISHMAP_UPDATE_TEST_OUTPUTS</span><span class="op">=</span><span class="cn">TRUE</span></span></code></pre>
 <ul>
@@ -333,7 +333,7 @@ unit tests. At this stage, this is not serious.</li>
 <p>You can run the unit tests from the command line using the
 <a href="https://devtools.r-lib.org/" class="external-link">devtools</a> package with the following command:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">test</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>You should see that the output files in <code>inst/examples</code>
 have been updated.</li>

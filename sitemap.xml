@@ -49,9 +49,6 @@
     <loc>https://balglave.github.io/FishMap/authors.html</loc>
   </url>
   <url>
-    <loc>https://balglave.github.io/FishMap/coverage.html</loc>
-  </url>
-  <url>
     <loc>https://balglave.github.io/FishMap/index.html</loc>
   </url>
   <url>
@@ -77,56 +74,5 @@
   </url>
   <url>
     <loc>https://balglave.github.io/FishMap/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/404.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/aggregated-failures-and-errors.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/aggregated-skipped.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/aggregated-warnings.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/global-results-for-package-fishmap.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/how-to-read-this-report.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/index.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_build_data_params_map.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_build_domain_mesh_spde.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_fit_model.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_generate_graphs.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_load_data.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_shape_sci_data_st.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-fm_shape_vms_logbook_data_st.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-main-r-part3-generate-output-graphs.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/test-start.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/testdown/testdown-report-for-fishmap.html</loc>
   </url>
 </urlset>
