@@ -22,7 +22,7 @@
 
 
 
-<meta name="date" content="2023-04-03" />
+<meta name="date" content="2023-04-04" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -150,7 +150,7 @@
 <td align="left">test_that(“Main functions work together”, { # Set up params for the model # run part1 survey_data_file &lt;- system.file(“original_data”, “Solea_solea”, “survey_data.Rds”, package = “FishMap” ) survey_data &lt;- readr::read_rds(file = survey_data_file) vmslogbook_data_file &lt;- system.file(“original_data”, “Solea_solea”, “vmslogbook_data.Rds”, package = “FishMap” ) vmslogbook_data &lt;- readr::read_rds(file = vmslogbook_data_file) study_domain_file &lt;- system.file(“original_data”, “Solea_solea”, “study_domain.Rds”, package = “FishMap” ) study_domain &lt;- readr::read_rds(file = study_domain_file) fm_data_inputs &lt;- fm_load_data(species = “Solea_solea”, fleet = c(“OTB_DEF_&gt;=70_0”,“OTB_CEP_&gt;=70_0”,“OTT_DEF_&gt;=70_0”), fitted_data = “biomass”, survey_data = survey_data, vmslogbook_data = vmslogbook_data, study_domain = study_domain, year_start = 2018, year_end = 2018, month_start = 11, month_end = 11, time_step = “Month”, k = 0.25, grid_xmin = -6, grid_xmax = 0, grid_ymin = 42, grid_ymax = 48) #‘<span class="citation">@description</span> Testing that fm_data_inputs return a named list for the next function test_list &lt;- is.list(fm_data_inputs) test_name &lt;- length(names(fm_data_inputs)) != 0 expect_true(test_list &amp; test_name) #’<span class="citation">@descripton</span> Testing if <code>fm_fit_model</code> always work result_fit_model &lt;- try( fm_fit_model(fm_data_inputs = fm_data_inputs, SE = 1, data_source = 1, data_obs = 2, samp_process = 0, b_constraint = 2, cov_samp_process = 0, biomass_temporal = 1, sampling_temporal = 0, lf_link = 0, ref_data = “com”, EM = “est_b”, month_ref = 1), silent = TRUE) expect_true( !inherits(result_fit_model, “try-error”), label = “<code>fm_fit_model</code> generate a error. Please check the core function or the returned objet of <code>fm_load_data</code>. Running function” ) #‘<span class="citation">@descripton</span> Testing if <code>fm_fit_model</code> always work result_graph &lt;- try(fm_generate_graphs(result_fit_model), silent = TRUE) expect_true( !inherits(result_graph, “try-error”), label = “<code>fm_generate_graphs</code> generate a error. Please check the core function or the returned objet of <code>fm_fit_model</code>. Running function” ) #’<span class="citation">@description</span> testing output of <code>fm_generate_graphs</code> expect_type(result_graph, “list”) expect_s3_class(result_graph[[“pred_plot”]], “ggplot”) })</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#3</td>
-<td align="left">2023-04-03 13:56:44</td>
+<td align="left">2023-04-04 13:43:39</td>
 </tr>
 <tr class="even">
 <td align="left">Main functions work together</td>
@@ -158,7 +158,7 @@
 <td align="left">expect_true(test_list &amp; test_name)</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#54</td>
-<td align="left">2023-04-03 13:56:44</td>
+<td align="left">2023-04-04 13:43:39</td>
 </tr>
 <tr class="odd">
 <td align="left">Main functions work together</td>
@@ -166,7 +166,7 @@
 <td align="left">expect_true(test_list &amp; test_name)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#54</td>
-<td align="left">2023-04-03 13:56:44</td>
+<td align="left">2023-04-04 13:43:39</td>
 </tr>
 <tr class="even">
 <td align="left">Main functions work together</td>
@@ -174,7 +174,7 @@
 <td align="left">expect_true( !inherits(result_fit_model, “try-error”), label = “<code>fm_fit_model</code> generate a error. Please check the core function or the returned objet of <code>fm_load_data</code>. Running function” )</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#73</td>
-<td align="left">2023-04-03 13:57:21</td>
+<td align="left">2023-04-04 13:44:11</td>
 </tr>
 <tr class="odd">
 <td align="left">Main functions work together</td>
@@ -182,7 +182,7 @@
 <td align="left">expect_true( !inherits(result_fit_model, “try-error”), label = “<code>fm_fit_model</code> generate a error. Please check the core function or the returned objet of <code>fm_load_data</code>. Running function” )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#73</td>
-<td align="left">2023-04-03 13:57:21</td>
+<td align="left">2023-04-04 13:44:11</td>
 </tr>
 <tr class="even">
 <td align="left">Main functions work together</td>
@@ -190,7 +190,7 @@
 <td align="left">expect_true( !inherits(result_graph, “try-error”), label = “<code>fm_generate_graphs</code> generate a error. Please check the core function or the returned objet of <code>fm_fit_model</code>. Running function” )</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#82</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 <tr class="odd">
 <td align="left">Main functions work together</td>
@@ -198,7 +198,7 @@
 <td align="left">expect_true( !inherits(result_graph, “try-error”), label = “<code>fm_generate_graphs</code> generate a error. Please check the core function or the returned objet of <code>fm_fit_model</code>. Running function” )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#82</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 <tr class="even">
 <td align="left">Main functions work together</td>
@@ -206,7 +206,7 @@
 <td align="left">expect_type(result_graph, “list”)</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#88</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 <tr class="odd">
 <td align="left">Main functions work together</td>
@@ -214,7 +214,7 @@
 <td align="left">expect_type(result_graph, “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#88</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 <tr class="even">
 <td align="left">Main functions work together</td>
@@ -222,7 +222,7 @@
 <td align="left">expect_s3_class(result_graph[[“pred_plot”]], “ggplot”)</td>
 <td align="left"><span title="The code of this expectation returned a warning.">⚠️ <font color='orange'>Warning</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#89</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 <tr class="odd">
 <td align="left">Main functions work together</td>
@@ -230,7 +230,7 @@
 <td align="left">expect_s3_class(result_graph[[“pred_plot”]], “ggplot”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-main-r-part3-generate-output-graphs.R#89</td>
-<td align="left">2023-04-03 13:57:22</td>
+<td align="left">2023-04-04 13:44:12</td>
 </tr>
 </tbody>
 </table>
