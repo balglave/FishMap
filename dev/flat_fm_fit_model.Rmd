@@ -841,20 +841,6 @@ fm_fit_model <- function(fm_data_inputs,
     Map <- data_params_map_random$map
     Random <- data_params_map_random$random
     
-    # Add link to path
-    if (.Platform$OS.type == "windows"){
-      fixwinpath <- function(){
-        PATH <- Sys.getenv("PATH")
-        PATH <- paste0(R.home(), "/bin/x64;", PATH)
-        PATH <- paste0("c:/Rtools/mingw64/bin;", PATH)
-        Sys.setenv(PATH=PATH)
-      }
-      fixwinpath()
-      shell("where g++")
-      shell("where gdb")
-      shell("where Rterm")
-    }
-    
     ## Model compilation
     compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
     dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
