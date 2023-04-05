@@ -68,6 +68,22 @@ In particular, you can follow this vignette:
 vignette("user-running-fishmap", package = "FishMap")
 ```
 
+#### Unit tests in the package :
+
+Writing unit tests is an essential practice in software development that can greatly improve the quality and maintainability of your code. Here are some of the key reasons why writing unit tests is important:
+
+- Ensuring correctness: Unit tests help ensure that your code works as intended and meets the requirements of the system. By writing tests that cover a wide range of scenarios and edge cases, you can catch bugs and errors before they become bigger problems down the line.
+
+- Facilitating code changes: Unit tests can also help you make changes to your code with confidence. By having a comprehensive suite of tests that can quickly validate changes, you can refactor and optimize your codebase without fear of introducing new bugs or breaking existing functionality.
+
+- Saving time and money: Catching bugs early in the development process can save time and money in the long run. By reducing the time spent on debugging and fixing issues, you can focus more on delivering new features and improvements to your application.
+
+- Promoting code quality: Writing tests can also encourage good coding practices, such as writing modular and reusable code. By breaking down your code into smaller, testable units, you can make your code more flexible and maintainable over time.
+
+Overall, unit testing is a critical practice that can improve the quality, maintainability, and reliability of your software. By investing time and effort into writing good tests, you can ensure that your code works as intended and can adapt to changing requirements and user needs.
+
+You'll find under this [link](https://balglave.github.io/FishMap/testdown/testdown-report-for-fishmap.html), the testdown report that describe the tests implemented for this package and you will find in this [vignette](https://balglave.github.io/FishMap/articles/dev_how_to_maintain_my_tests_and_examples.html) the technical choices made for the realization of these tests. 
+
 ## Workflow
 
 ```{r echo=FALSE}
