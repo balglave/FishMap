@@ -16,12 +16,12 @@
 #' @param k numeric Parameter controlling the number of knots of the mesh. The higher the denser.
 #' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  numeric Limitation of the grid for the spatial domain
 #' @param seed integer The seed controlling for random effect. Default is 29510.
-#' 
+#'
 #' @importFrom dplyr ungroup select filter arrange mutate
 #' @importFrom stringr str_detect
 #' @importFrom tictoc tic toc
 #' @importFrom withr local_seed
-#' 
+#'
 #' @return list A named list of all necessary outputs for model fitting (`fm_fit_model()`)
 #' @export
 #'
@@ -33,25 +33,25 @@
 #'                                 "survey_data.Rds",
 #'                                 package = "FishMap"
 #' )
-#' 
+#'
 #' survey_data <- readr::read_rds(file = survey_data_file)
-#' 
+#'
 #' vmslogbook_data_file <- system.file("original_data",
 #'                                     "Solea_solea",
 #'                                     "vmslogbook_data.Rds",
 #'                                     package = "FishMap"
 #' )
-#' 
+#'
 #' vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
-#' 
+#'
 #' study_domain_file <- system.file("original_data",
 #'                                  "Solea_solea",
 #'                                  "study_domain.Rds",
 #'                                  package = "FishMap"
 #' )
-#' 
+#'
 #' study_domain <- readr::read_rds(file = study_domain_file)
-#' 
+#'
 #' fm_data_inputs <- fm_load_data(species = "Solea_solea",
 #'                                fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
 #'                                fitted_data = "biomass",
@@ -91,38 +91,38 @@ fm_load_data <- function(species,
   #-----------
   message("Running step 1 -loading data-")
   tic("Step 1 -loading data-")
-  
+
   # set seed
   local_seed(seed = seed)
-  
+
   # check input values
   fitted_data <- match.arg(fitted_data)
   time_step <- match.arg(time_step)
-  
+
   # Scientific data
   n_survey <- 1 # number of surveys
   scientific_observation <- "CPUE" # 'CPUE' or 'Density'
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
-  
+
   # 'VMS x logbook' data
   select_aggreg_level <- paste(fleet,collapse = "|")
   vmslogbook_data <- vmslogbook_data %>%
     filter(str_detect(LE_MET_level6,select_aggreg_level))
-  
+
   vmslogbook_data$LE_MET_level6 <- factor(as.character(vmslogbook_data$LE_MET_level6),levels = fleet)
-  
+
   vmslogbook_data_0 <- vmslogbook_data %>% ungroup %>% dplyr::select(-layer)
-  
+
   ## Time series
   #-------------
   year_vec <- year_start:year_end
   month_vec <- month_start:month_end
-  
+
   if(time_step == "Month"){
-    
+
     time.step_df <- expand.grid(month_vec,year_vec)
     colnames(time.step_df) <- c("Month","Year")
-    
+
     time.step_df <- time.step_df %>%
       arrange(Year,Month) %>%
       mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
@@ -130,12 +130,12 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Month <- as.character(time.step_df$Month)
-    
+
   }else if(time_step == "Quarter"){
-    
-    time.step_df <- expand.grid(1:4,all_years)
+
+    time.step_df <- expand.grid(1:4,year_vec)
     colnames(time.step_df) <- c("Quarter","Year")
-    
+
     time.step_df <- time.step_df %>%
       arrange(Year,Quarter) %>%
       mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
@@ -143,36 +143,36 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Quarter <- as.character(time.step_df$Quarter)
-    
+
   }
-  
-  
+
+
   ## Configure spatial domain
   #--------------------------
   grid_xmin <- grid_xmin
   grid_xmax <- grid_xmax
   grid_ymin <- grid_ymin
   grid_ymax <- grid_ymax
-  
+
   grid_limit <- raster::extent(
     c(grid_xmin,
       grid_xmax,
       grid_ymin,
       grid_ymax)
   )
-  
+
   grid_projection <- "+proj=longlat +datum=WGS84"
-  
+
   resol <- 0.05 # resolution of the discretization grid
   create_mesh <- "from_shapefile"
   # from_shapefile: the mesh will be more regular on the grid
   # from_data: the mesh will be denser in the areas where there are data
-  
+
   # Mesh parameterization
   # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
   k <- k
   Alpha <- 2
-  
+
   ## Load domain / mesh / spde object
   domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
     grid_limit = grid_limit,
@@ -185,7 +185,7 @@ fm_load_data <- function(species,
     study_domain_sf = study_domain_sf,
     Alpha = Alpha
   )
-  
+
   ## Shape scientific data
   sci_data_st_outputs <- fm_shape_sci_data_st(
     survey_data_0 = survey_data_0,
@@ -196,7 +196,7 @@ fm_load_data <- function(species,
     Sci.obs_spp = Sci.obs_spp,
     mesh = domain_mesh_spde_outputs[["mesh"]]
   )
-  
+
   ## Shape commercial data
   vms_logbook_data_st_outputs <- fm_shape_vms_logbook_data_st(
     vmslogbook_data_0 = vmslogbook_data_0,
@@ -206,31 +206,25 @@ fm_load_data <- function(species,
     loc_x = domain_mesh_spde_outputs[["loc_x"]],
     mesh = domain_mesh_spde_outputs[["mesh"]]
   )
-  
-  if(fitted_data=="presabs"){
-    y_com_i[which(y_com_i > 0)] <- 1
-    y_sci_i[which(y_sci_i > 0)] <- 1
-    lf_link <- 1 # logit link
-  }
-  
-  
+
+
   ## Covariates
   #------------
   # load(file.path(data_folder,"bathy_pred.Rdata"))
   bathy_pred = rep(0,nrow(domain_mesh_spde_outputs[["loc_x"]]))
   cov_x_pred <- matrix(data = bathy_pred, ncol = 1)
-  
+
   # load(file.path(data_folder,"bathy_com.Rdata"))
   bathy_com = rep(0,nrow(vms_logbook_data_st_outputs[["vmslogbook_data_2"]]))
   cov_x_com <- matrix(data = bathy_com, ncol = 1)
-  
+
   # load(file.path(data_folder,"bathy_sci.Rdata"))
   bathy_sci = rep(0,nrow(sci_data_st_outputs[["survey_data_2"]]))
   cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
-  
+
   # finished step 1 -loading data-
   toc()
-  
+
   # return outputs as named list
   return(list("species" = species,
               "b_com_i" = vms_logbook_data_st_outputs[["b_com_i"]],
