@@ -112,8 +112,8 @@
 <h2>Summary<a href="test-fm_fit_model.html#summary-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ul>
 <li><p><strong>Number of test(s)</strong> : 2</p></li>
-<li><p><strong>Number of expectation(s)</strong> : 18</p></li>
-<li><p><strong>Number of successful expectation(s)</strong> : 8</p></li>
+<li><p><strong>Number of expectation(s)</strong> : 19</p></li>
+<li><p><strong>Number of successful expectation(s)</strong> : 9</p></li>
 <li><p><strong>Number of failed expectation(s)</strong> : 0</p></li>
 <li><p><strong>Number of errored expectation(s)</strong> : 0</p></li>
 <li><p><strong>Number of expectations with warning(s)</strong> : 0</p></li>
@@ -127,8 +127,8 @@
 <colgroup>
 <col width="7%" />
 <col width="12%" />
-<col width="27%" />
-<col width="42%" />
+<col width="28%" />
+<col width="41%" />
 <col width="5%" />
 <col width="4%" />
 </colgroup>
@@ -148,7 +148,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left"># Update expected outputs here</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#41</td>
+<td align="left">test-fm_fit_model.R#44</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -156,7 +156,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expect_true(file.exists(file.path(output_inst_dir, paste0(“part2_output_”, test_resolution , “.rds”))))</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#66</td>
+<td align="left">test-fm_fit_model.R#69</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -164,7 +164,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expect_true(file.exists(file.path(“data”, paste0(“part2_output_”, test_resolution , “.rds”))))</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#69</td>
+<td align="left">test-fm_fit_model.R#72</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -172,23 +172,23 @@
 <td align="left">Testing the result of <code>fm_fit_model</code> is a list</td>
 <td align="left">expect_type(object = fm_model_results, “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#77</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#80</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left">Testing names of the list return by <code>fm_fit_model</code></td>
-<td align="left">expect_named( object = fm_model_results, expected = c( “time.step_df”, “loc_x” , “report” , “samp_process”, “converge” ) )</td>
+<td align="left">expect_named( object = fm_model_results, expected = c( “time.step_df”, “loc_x” , “report” , “samp_process”, “converge”, “SD”) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#80</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#83</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="even">
 <td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected = c(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#82</td>
+<td align="left">test-fm_fit_model.R#85</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -196,95 +196,103 @@
 <td align="left">Testing types inside the list return by <code>fm_fit_model</code></td>
 <td align="left">expect_s3_class(fm_model_results$time.step_df, “data.frame”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#92</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#96</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="even">
 <td align="left">fm_fit_model works</td>
 <td align="left">Testing types inside the list return by <code>fm_fit_model</code></td>
 <td align="left">expect_s3_class(fm_model_results$loc_x, “data.frame”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#93</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#97</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_model_results$report, “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#94</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#98</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="even">
 <td align="left">fm_fit_model works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_model_results$samp_process, “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#95</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#99</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_model_results$converge, “integer”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#96</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#100</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="even">
 <td align="left">fm_fit_model works</td>
-<td align="left">NA (was skipped)</td>
-<td align="left">expected_outputs &lt;- readr::read_rds(</td>
-<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#102</td>
-<td align="left">NA (was skipped)</td>
+<td align="left"></td>
+<td align="left">expect_s3_class(fm_model_results$SD, “sdreport”)</td>
+<td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
+<td align="left">test-fm_fit_model.R#101</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected_outputs &lt;- readr::read_rds(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#109</td>
+<td align="left">test-fm_fit_model.R#108</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
+<td align="left">fm_fit_model works</td>
+<td align="left">NA (was skipped)</td>
+<td align="left">expected_outputs &lt;- readr::read_rds(</td>
+<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
+<td align="left">test-fm_fit_model.R#115</td>
+<td align="left">NA (was skipped)</td>
+</tr>
+<tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">resorted_expected &lt;- resort_all(expected_outputs)</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#131</td>
+<td align="left">test-fm_fit_model.R#137</td>
 <td align="left">NA (was skipped)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">attr(resorted_expected$loc_x$long, which = “names”) &lt;- NULL</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#136</td>
-<td align="left">NA (was skipped)</td>
-</tr>
-<tr class="even">
-<td align="left">fm_fit_model works</td>
-<td align="left">NA (was skipped)</td>
-<td align="left">attr(resorted_expected$loc_x$lati, which = “names”) &lt;- NULL</td>
-<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#137</td>
+<td align="left">test-fm_fit_model.R#142</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_fit_model works</td>
+<td align="left">NA (was skipped)</td>
+<td align="left">attr(resorted_expected$loc_x$lati, which = “names”) &lt;- NULL</td>
+<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
+<td align="left">test-fm_fit_model.R#143</td>
+<td align="left">NA (was skipped)</td>
+</tr>
+<tr class="even">
+<td align="left">fm_fit_model works</td>
 <td align="left">Testing that the result of <code>fm_fit_model</code> is stable</td>
 <td align="left">expect_equal( object = resorted_result, expected = resorted_expected, tolerance = 1e-4 )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_fit_model.R#140</td>
-<td align="left">2023-04-12 13:06:19</td>
+<td align="left">test-fm_fit_model.R#146</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected = resorted_expected,</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_fit_model.R#142</td>
+<td align="left">test-fm_fit_model.R#148</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 </tbody>

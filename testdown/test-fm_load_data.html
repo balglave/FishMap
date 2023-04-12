@@ -149,7 +149,7 @@
 <td align="left">expect_error(object = fm_load_data(fitted_data = “notagoodinput”), regexp = “‘arg’ should be one of .biomass., .presabs.”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-fm_load_data.R#22</td>
-<td align="left">2023-04-12 13:06:20</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
@@ -157,7 +157,7 @@
 <td align="left">expect_error(object = fm_load_data(time_step = “notagoodinput”), regexp = “‘arg’ should be one of .Month., .Quarter.”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-fm_load_data.R#24</td>
-<td align="left">2023-04-12 13:06:20</td>
+<td align="left">2023-04-12 16:44:28</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
@@ -172,7 +172,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expect_true(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#93</td>
+<td align="left">test-fm_load_data.R#94</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -180,7 +180,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expect_true(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#102</td>
+<td align="left">test-fm_load_data.R#103</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -188,23 +188,23 @@
 <td align="left">Testing the result of <code>fm_load_data</code> is a list</td>
 <td align="left">expect_type(object = fm_data_inputs, “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#115</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#116</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left">Testing names of the list return by <code>fm_load_data</code></td>
 <td align="left">expect_named( object = fm_data_inputs, expected = c( “species”, “b_com_i”, “mesh”, “time.step_df”, “loc_x”, “y_com_i”, “y_sci_i”, “cov_x_com”, “cov_x_sci”, “c_com_x”, “t_com_i”, “t_sci_i”, “spde”, “Aix_ij_com”, “Aix_w_com”, “Aix_ij_sci”, “Aix_w_sci”, “cov_x_pred”, “Aix_ij_pred”, “Aix_w_pred”, “W”, “n_survey”, “MeshList_aniso” ) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#118</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#119</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected = c(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#120</td>
+<td align="left">test-fm_load_data.R#121</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -212,207 +212,207 @@
 <td align="left">Testing types inside the list returned by <code>fm_load_data</code></td>
 <td align="left">expect_type(fm_data_inputs[[“species”]], “character”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#148</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#149</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left">Testing types inside the list returned by <code>fm_load_data</code></td>
 <td align="left">expect_type(fm_data_inputs[[“b_com_i”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#149</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#150</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_s3_class(fm_data_inputs[[“mesh”]], “inla.mesh”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#150</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#151</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_s3_class(fm_data_inputs[[“time.step_df”]], “data.frame”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#151</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#152</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_s3_class(fm_data_inputs[[“loc_x”]], “data.frame”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#152</td>
-<td align="left">2023-04-12 13:06:33</td>
+<td align="left">test-fm_load_data.R#153</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“y_com_i”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#153</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#154</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“y_sci_i”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#154</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#155</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“cov_x_com”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#155</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#156</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“cov_x_sci”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#156</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#157</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.array(fm_data_inputs[[“c_com_x”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#157</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#158</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“t_com_i”]], “integer”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#158</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#159</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“t_sci_i”]], “integer”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#159</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#160</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“spde”]], “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#160</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#161</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“Aix_ij_com”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#161</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#162</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“Aix_w_com”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#162</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#163</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“Aix_ij_sci”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#163</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#164</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“Aix_w_sci”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#164</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#165</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“cov_x_pred”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#165</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#166</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_true(is.matrix(fm_data_inputs[[“Aix_ij_pred”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#166</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#167</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“Aix_w_pred”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#167</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#168</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“W”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#168</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#169</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“n_survey”]], “double”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#169</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#170</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left"></td>
 <td align="left">expect_type(fm_data_inputs[[“MeshList_aniso”]], “list”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#170</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#171</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left">Testing that tmpdir of the mesh exists</td>
 <td align="left">expect_true(dir.exists(mesh_dir))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#177</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#178</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="odd">
 <td align="left">fm_load_data works</td>
 <td align="left">Testing that tmpdir of the mesh exists</td>
 <td align="left">expect_true(dir.exists(mesh_aniso_dir))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#178</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#179</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected_outputs &lt;- readr::read_rds(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#183</td>
+<td align="left">test-fm_load_data.R#184</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -420,7 +420,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expected_outputs &lt;- readr::read_rds(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#190</td>
+<td align="left">test-fm_load_data.R#191</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -428,7 +428,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expected_outputs$mesh$meta$prefix &lt;-</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#196</td>
+<td align="left">test-fm_load_data.R#197</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -436,7 +436,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expected_outputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix &lt;-</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#198</td>
+<td align="left">test-fm_load_data.R#199</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -444,7 +444,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">resorted_expected &lt;- resort_all(expected_outputs)</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#216</td>
+<td align="left">test-fm_load_data.R#217</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -452,7 +452,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">attr(resorted_expected$loc_x$long, which = “names”) &lt;- NULL</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#221</td>
+<td align="left">test-fm_load_data.R#222</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -460,7 +460,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">attr(resorted_expected$loc_x$lati, which = “names”) &lt;- NULL</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#222</td>
+<td align="left">test-fm_load_data.R#223</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
@@ -468,15 +468,15 @@
 <td align="left">Testing that the result of <code>fm_load_data</code> is stable</td>
 <td align="left">expect_equal(object = resorted_result, expected = resorted_expected)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_load_data.R#225</td>
-<td align="left">2023-04-12 13:06:34</td>
+<td align="left">test-fm_load_data.R#226</td>
+<td align="left">2023-04-12 16:44:41</td>
 </tr>
 <tr class="even">
 <td align="left">fm_load_data works</td>
 <td align="left">NA (was skipped)</td>
 <td align="left">expected = resorted_expected)</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_load_data.R#226</td>
+<td align="left">test-fm_load_data.R#227</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 </tbody>
