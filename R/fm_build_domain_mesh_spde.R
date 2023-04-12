@@ -16,7 +16,6 @@
 #' @param create_mesh character Method for creating mesh (either `from_shapefile` the mesh will be more regular on the grid or `from_data` the mesh will be denser in the areas where there are data). Default is `from_shapefile`
 #' @param k k
 #' @param vmslogbook_data data.frame Commercial (vmslogbook) data
-#' @param study_domain_sf sf data.frame Study domain object, used when mesh is created from data
 #' @param Alpha numeric Fractional operator order for `inla.spde2.matern()`
 #'
 #' @return list A named list
@@ -32,7 +31,6 @@
 #' #     create_mesh = create_mesh,
 #' #     k = k,
 #' #     vmslogbook_data = vmslogbook_data,
-#' #     study_domain_sf = study_domain_sf,
 #' #     Alpha = Alpha
 #' #     )
 #' }
@@ -44,7 +42,6 @@ fm_build_domain_mesh_spde <- function(
     create_mesh = c("from_shapefile", "from_data"),
     k,
     vmslogbook_data,
-    study_domain_sf,
     Alpha
 ) {
 
