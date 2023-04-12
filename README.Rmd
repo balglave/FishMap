@@ -27,7 +27,7 @@ The goal of FishMap is to ...
 ### Dependencies
 
 You must [install INLA](https://www.r-inla.org/download-install).
-Checkout [INLA doc](https://www.r-inla.org/download-install) to upgrade INLA.
+Checkout [INLA doc](https://www.r-inla.org/download-install) to upgrade INLA. Your INLA version should satisfy the minimal required version for running FishMap (`r desc::desc(file = here::here("DESCRIPTION"))$get_field("Config/FishMap/INLA/version")`).
 
 ```{r, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -36,6 +36,13 @@ BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
 
 install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 ```
+
+You must [install TMB](https://github.com/kaskr/adcomp/wiki/Download). The installation of TMB requires compiler tools. If you are installing from Windows machine, make sure that your [Rtools installation is matching your R-version](https://github.com/kaskr/adcomp/wiki/Download#windows---installing-required-tools). Your TMB version should satisfy the minimal required version for running FishMap (`r desc::desc(file = here::here("DESCRIPTION"))$get_field("Config/FishMap/TMB/version")`).
+
+```{r, eval = FALSE}
+install.packages("TMB")
+```
+
 
 
 ### FishMap
@@ -85,6 +92,8 @@ Overall, unit testing is a critical practice that can improve the quality, maint
 You'll find under this [link](https://balglave.github.io/FishMap/testdown/testdown-report-for-fishmap.html), the testdown report that describe the tests implemented for this package and you will find in this [vignette](https://balglave.github.io/FishMap/articles/dev_how_to_maintain_my_tests_and_examples.html) the technical choices made for the realization of these tests. 
 
 ## Workflow
+
+This workflow is intended for developers, it summaries the structure of the package. For each flat file in the `dev/` folder, you have a set of defined functions as well as the list of files generated from the flat file when running the `fusen::inflate()` command.
 
 ```{r echo=FALSE}
 knitr::include_graphics("man/figures/FishMap_user.png")

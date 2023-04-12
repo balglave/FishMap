@@ -18,7 +18,8 @@ The goal of FishMap is to …
 
 You must [install INLA](https://www.r-inla.org/download-install).
 Checkout [INLA doc](https://www.r-inla.org/download-install) to upgrade
-INLA.
+INLA. Your INLA version should satisfy the minimal required version for
+running FishMap (22.12.16).
 
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -26,6 +27,18 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install(c("graph", "Rgraphviz"), dep=TRUE)
 
 install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+```
+
+You must [install TMB](https://github.com/kaskr/adcomp/wiki/Download).
+The installation of TMB requires compiler tools. If you are installing
+from Windows machine, make sure that your [Rtools installation is
+matching your
+R-version](https://github.com/kaskr/adcomp/wiki/Download#windows---installing-required-tools).
+Your TMB version should satisfy the minimal required version for running
+FishMap (1.9.2).
+
+``` r
+install.packages("TMB")
 ```
 
 ### FishMap
@@ -101,6 +114,11 @@ and you will find in this
 the technical choices made for the realization of these tests.
 
 ## Workflow
+
+This workflow is intended for developers, it summaries the structure of
+the package. For each flat file in the `dev/` folder, you have a set of
+defined functions as well as the list of files generated from the flat
+file when running the `fusen::inflate()` command.
 
 <img src="man/figures/FishMap_user.png" width="100%" />
 
