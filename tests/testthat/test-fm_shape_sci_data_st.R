@@ -26,7 +26,7 @@ test_that("fm_shape_sci_data_st works", {
                                    package = "FishMap"
   )
   study_domain <- readr::read_rds(study_domain_file)
-
+  
   # mesh grid
   grid_limit <- raster::extent(c(-6, 0, 42, 48))
   
@@ -44,10 +44,10 @@ test_that("fm_shape_sci_data_st works", {
   
   # survey data
   survey_data_file <- system.file("original_data",
-                                "Solea_solea",
-                                "survey_data.Rds",
-                                package = "FishMap"
-                                )
+                                  "Solea_solea",
+                                  "survey_data.Rds",
+                                  package = "FishMap"
+  )
   survey_data <- readr::read_rds(survey_data_file)
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
@@ -63,7 +63,7 @@ test_that("fm_shape_sci_data_st works", {
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Month <- as.character(time.step_df$Month)
-    
+  
   ## run function
   result <- fm_shape_sci_data_st(
     survey_data_0 = survey_data_0,
@@ -73,7 +73,7 @@ test_that("fm_shape_sci_data_st works", {
     scientific_observation = "CPUE",
     Sci.obs_spp = NULL,
     mesh = domain_mesh_spde_outputs[["mesh"]]
-    )
+  )
   
   ## test outputs
   #' @description Testing that fm_shape_sci_data_st returns a list
@@ -87,8 +87,8 @@ test_that("fm_shape_sci_data_st works", {
                             "Aix_ij_sci",
                             "Aix_w_sci",
                             "survey_data_2"
-                            )
                )
+  )
   
   #' @description Testing types inside the list
   expect_type(result[["y_sci_i"]], "double")
@@ -96,5 +96,5 @@ test_that("fm_shape_sci_data_st works", {
   expect_type(result[["Aix_ij_sci"]], "integer")
   expect_type(result[["Aix_w_sci"]], "double")
   expect_type(result[["survey_data_2"]], "list")
-
+  
 })
