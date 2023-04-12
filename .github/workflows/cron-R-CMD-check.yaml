@@ -1,5 +1,4 @@
-name: R Check with cron once a month
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+ # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
@@ -9,7 +8,7 @@ on:
   schedule:
     - cron:  '00 00 12 * *'
 
-name: R-CMD-check
+name: R Check with cron once a month
 
 jobs:
   R-CMD-check:
