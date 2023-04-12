@@ -26,7 +26,7 @@
 #  source build_data_params_map
 #' @importFrom INLA inla.as.dgTMatrix
 #' @importFrom stringr str_detect
-#'
+#' 
 #' @return list A named list of all necessary outputs for generating graphs (step 3)
 #' @export
 #'
@@ -36,7 +36,7 @@
 #'   system.file("examples", "part1_output_small.rds",
 #'               package = "FishMap")
 #'   )
-#'
+#' 
 #' fm_model_results <- fm_fit_model(fm_data_inputs = fm_data_inputs,
 #'                                  SE = 1,
 #'                                  data_source = 1,
@@ -66,23 +66,23 @@ fm_fit_model <- function(fm_data_inputs,
                          compute_sd = FALSE,
                          Version = "",
                          seed = 29510) {
-
+  
   ## Check Params
-
+  
   ref_data <- match.arg(ref_data)
   EM <- match.arg(EM)
-
+  
   const_spphab <- 1
   anisotropy <- 0
-
+  
   ## Fit model
   #-----------
   message("Running step 2 -compile model-")
   tic("Step 2 -compile model-")
-
+  
   withr::local_seed(seed = seed)
-
-
+    
+    
     ## Dependencies from Part1 outputs
     species <- fm_data_inputs[["species"]]
     b_com_i <- fm_data_inputs[["b_com_i"]]
@@ -107,14 +107,14 @@ fm_fit_model <- function(fm_data_inputs,
     W <- fm_data_inputs[["W"]]
     n_survey <- fm_data_inputs[["n_survey"]]
     MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
-
+    
     # script location
     data_folder <- system.file(file.path("original_data",species), package = "FishMap")
     script_folder <- system.file("original_scripts", package = "FishMap")
-
+    
     xfb_x <- NULL # TO DELETE
     weights_com <- 1 # TO DELETE
-
+    
     ## Build Data, Params and Map objects for model fitting
     data_params_map_random <- fm_build_data_params_map(
       SE = SE,
@@ -157,63 +157,63 @@ fm_fit_model <- function(fm_data_inputs,
       month_ref = month_ref,
       Version = Version
     )
-
+    
     # define global var
     Data <- data_params_map_random$data
     Params <- data_params_map_random$params
     Map <- data_params_map_random$map
     Random <- data_params_map_random$random
-
+    
     ## Model compilation
     compile(system.file("model.cpp", package = "FishMap"),"-O1 -g",DLLFLAGS="")
     dyn.load( dynlib(file.path(system.file(package = "FishMap"),"model") ))
-
+    
     # finished step 2 -compile model-
     toc()
-
+    
     ## Fit model
     message("Running step 3 -fit model-")
     tic("Step 3 -fit model-")
-
+    
     # ## Debugging
     # source("r/function/MakeADFun_windows_debug.R")
     # MakeADFun_windows_debug(cpp_name = "inst/model",  data=Data, parameters=Params,  random=Random)
     # gdbsource("inst/model.R",interactive = T) ## Non-interactive
     # dyn.unload( dynlib( "inst/model" ) )
     # #-----------
-
+    
     obj = MakeADFun( data=Data, parameters=Params,  random=Random, map = Map, silent = TRUE,hessian = TRUE )
     # next line takes a long time ----
     obj$fn( obj$par )
-
+    
     # Parameters boundary for optimization
     Lower <- -50
     Upper <- 50
-
+    
     if(T %in% str_detect(names(obj$par),"rho_")){ # constraints on the bounds of rho
-
+      
       Lower <- rep(-50,length(obj$par))
       Upper <- rep(50,length(obj$par))
-
+      
       Lower[which(str_detect(names(obj$par),"rho_"))] <- -0.99
       Upper[which(str_detect(names(obj$par),"rho_"))] <- 0.99
-
+      
     }
-
+    
     # next line takes a VERY long time ----
     opt = nlminb( start=obj$par, objective=obj$fn, gradient=obj$gr, lower=Lower, upper=Upper, control=list(trace=1, maxit=200))
     opt[["diagnostics"]] = data.frame( "Param"=names(obj$par), "Lower"=-Inf, "Est"=opt$par, "Upper"=Inf, "gradient"=obj$gr(opt$par) )
-
+    
     report = obj$report() # output values
     converge=opt$convergence # convergence test
     # next line takes a VERY long time ----
     if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
-
+    
     dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
-
+  
   # Finished step 3 - fit model-
   toc()
-
+  
   # return outputs as named list
   return(list("time.step_df" = time.step_df,
               "loc_x" = loc_x,
@@ -222,5 +222,5 @@ fm_fit_model <- function(fm_data_inputs,
               "converge" = converge
   )
   )
-
+  
 }

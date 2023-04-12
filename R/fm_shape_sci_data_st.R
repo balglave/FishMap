@@ -37,7 +37,7 @@ fm_shape_sci_data_st <- function(
     scientific_observation = c("CPUE", "Density"),
     Sci.obs_spp,
     mesh
-    ) {
+) {
   ## Shape date columns
   survey_data_0$Month <- as.character(survey_data_0$Month)
   survey_data_0$Year <- as.character(survey_data_0$Year)
@@ -50,8 +50,8 @@ fm_shape_sci_data_st <- function(
   
   ## Convert commercial data into sf object to intersect with gridpolygon
   survey_data_sf <- st_as_sf(survey_data_1,
-                            coords = c("long","lati"),
-                            crs = grid_projection) %>%
+                             coords = c("long","lati"),
+                             crs = grid_projection) %>%
     ungroup()
   
   ## Discretize scientific data

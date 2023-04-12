@@ -35,7 +35,7 @@ fm_shape_vms_logbook_data_st <- function(
     gridpolygon_sf,
     loc_x,
     mesh
-    ) {
+) {
   
   ## Join commercial data with time dataframe
   vmslogbook_data_1 <- vmslogbook_data_0 %>%
@@ -70,9 +70,9 @@ fm_shape_vms_logbook_data_st <- function(
                            length(unique(vmslogbook_data_2$f))))
   
   for(f_i in 1:length(unique(vmslogbook_data_2$f))){
-  
+    
     for(t_i in 1:length(unique(vmslogbook_data_2$t))){
-  
+      
       df_c_com_x <- vmslogbook_data_2 %>%
         filter(f == f_i & t == t_i) %>%
         dplyr::select("layer","t") %>%
@@ -86,9 +86,9 @@ fm_shape_vms_logbook_data_st <- function(
         ungroup() %>%
         dplyr::select(-cell,-layer)
       c_com_x[,t_i,f_i] <- as.matrix(df_c_com_x)
-  
+      
     }
-  
+    
   }
   
   c_com_x[is.na(c_com_x)] <- 0

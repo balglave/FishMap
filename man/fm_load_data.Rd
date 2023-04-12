@@ -66,41 +66,41 @@ survey_data_file <- system.file("original_data",
                                 "Solea_solea",
                                 "survey_data.Rds",
                                 package = "FishMap"
-                                )
+)
 
 survey_data <- readr::read_rds(file = survey_data_file)
 
 vmslogbook_data_file <- system.file("original_data",
-                                "Solea_solea",
-                                "vmslogbook_data.Rds",
-                                package = "FishMap"
-                                )
+                                    "Solea_solea",
+                                    "vmslogbook_data.Rds",
+                                    package = "FishMap"
+)
 
 vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
 
 study_domain_file <- system.file("original_data",
-                                "Solea_solea",
-                                "study_domain.Rds",
-                                package = "FishMap"
-                                )
+                                 "Solea_solea",
+                                 "study_domain.Rds",
+                                 package = "FishMap"
+)
 
 study_domain <- readr::read_rds(file = study_domain_file)
 
 fm_data_inputs <- fm_load_data(species = "Solea_solea",
-                         fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
-                         fitted_data = "biomass",
-                         survey_data = survey_data,
-                         vmslogbook_data = vmslogbook_data,
-                         study_domain = study_domain,
-                         year_start = 2018,
-                         year_end = 2018,
-                         month_start = 11,
-                         month_end = 11,
-                         time_step = "Month",
-                         k = 0.25,
-                         grid_xmin = -6,
-                         grid_xmax = 0,
-                         grid_ymin = 42,
-                         grid_ymax = 48)
+                               fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                               fitted_data = "biomass",
+                               survey_data = survey_data,
+                               vmslogbook_data = vmslogbook_data,
+                               study_domain = study_domain,
+                               year_start = 2018,
+                               year_end = 2018,
+                               month_start = 11,
+                               month_end = 11,
+                               time_step = "Month",
+                               k = 0.25,
+                               grid_xmin = -6,
+                               grid_xmax = 0,
+                               grid_ymin = 42,
+                               grid_ymax = 48)
 }
 }

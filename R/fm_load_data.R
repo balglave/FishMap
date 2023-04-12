@@ -32,42 +32,42 @@
 #'                                 "Solea_solea",
 #'                                 "survey_data.Rds",
 #'                                 package = "FishMap"
-#'                                 )
+#' )
 #' 
 #' survey_data <- readr::read_rds(file = survey_data_file)
 #' 
 #' vmslogbook_data_file <- system.file("original_data",
-#'                                 "Solea_solea",
-#'                                 "vmslogbook_data.Rds",
-#'                                 package = "FishMap"
-#'                                 )
+#'                                     "Solea_solea",
+#'                                     "vmslogbook_data.Rds",
+#'                                     package = "FishMap"
+#' )
 #' 
 #' vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
 #' 
 #' study_domain_file <- system.file("original_data",
-#'                                 "Solea_solea",
-#'                                 "study_domain.Rds",
-#'                                 package = "FishMap"
-#'                                 )
+#'                                  "Solea_solea",
+#'                                  "study_domain.Rds",
+#'                                  package = "FishMap"
+#' )
 #' 
 #' study_domain <- readr::read_rds(file = study_domain_file)
 #' 
 #' fm_data_inputs <- fm_load_data(species = "Solea_solea",
-#'                          fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
-#'                          fitted_data = "biomass",
-#'                          survey_data = survey_data,
-#'                          vmslogbook_data = vmslogbook_data,
-#'                          study_domain = study_domain,
-#'                          year_start = 2018,
-#'                          year_end = 2018,
-#'                          month_start = 11,
-#'                          month_end = 11,
-#'                          time_step = "Month",
-#'                          k = 0.25,
-#'                          grid_xmin = -6,
-#'                          grid_xmax = 0,
-#'                          grid_ymin = 42,
-#'                          grid_ymax = 48)
+#'                                fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+#'                                fitted_data = "biomass",
+#'                                survey_data = survey_data,
+#'                                vmslogbook_data = vmslogbook_data,
+#'                                study_domain = study_domain,
+#'                                year_start = 2018,
+#'                                year_end = 2018,
+#'                                month_start = 11,
+#'                                month_end = 11,
+#'                                time_step = "Month",
+#'                                k = 0.25,
+#'                                grid_xmin = -6,
+#'                                grid_xmax = 0,
+#'                                grid_ymin = 42,
+#'                                grid_ymax = 48)
 #' }
 fm_load_data <- function(species,
                          fleet,
@@ -86,7 +86,7 @@ fm_load_data <- function(species,
                          grid_ymin,
                          grid_ymax,
                          seed = 29510
-                         ) {
+) {
   ## Load data
   #-----------
   message("Running step 1 -loading data-")
@@ -117,12 +117,12 @@ fm_load_data <- function(species,
   #-------------
   year_vec <- year_start:year_end
   month_vec <- month_start:month_end
-
-  if(time_step == "Month"){
   
+  if(time_step == "Month"){
+    
     time.step_df <- expand.grid(month_vec,year_vec)
     colnames(time.step_df) <- c("Month","Year")
-  
+    
     time.step_df <- time.step_df %>%
       arrange(Year,Month) %>%
       mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
@@ -130,12 +130,12 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Month <- as.character(time.step_df$Month)
-  
+    
   }else if(time_step == "Quarter"){
-  
+    
     time.step_df <- expand.grid(1:4,all_years)
     colnames(time.step_df) <- c("Quarter","Year")
-  
+    
     time.step_df <- time.step_df %>%
       arrange(Year,Quarter) %>%
       mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
@@ -143,7 +143,7 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Quarter <- as.character(time.step_df$Quarter)
-  
+    
   }
   
   
@@ -195,7 +195,7 @@ fm_load_data <- function(species,
     scientific_observation = scientific_observation,
     Sci.obs_spp = Sci.obs_spp,
     mesh = domain_mesh_spde_outputs[["mesh"]]
-    )
+  )
   
   ## Shape commercial data
   vms_logbook_data_st_outputs <- fm_shape_vms_logbook_data_st(
@@ -227,10 +227,10 @@ fm_load_data <- function(species,
   # load(file.path(data_folder,"bathy_sci.Rdata"))
   bathy_sci = rep(0,nrow(sci_data_st_outputs[["survey_data_2"]]))
   cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
-
+  
   # finished step 1 -loading data-
   toc()
-
+  
   # return outputs as named list
   return(list("species" = species,
               "b_com_i" = vms_logbook_data_st_outputs[["b_com_i"]],
@@ -255,6 +255,6 @@ fm_load_data <- function(species,
               "W" = domain_mesh_spde_outputs[["W"]],
               "n_survey" = n_survey,
               "MeshList_aniso" = domain_mesh_spde_outputs[["MeshList_aniso"]]
-              )
-         )
+  )
+  )
 }

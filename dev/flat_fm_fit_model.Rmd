@@ -937,7 +937,9 @@ test_that("fm_fit_model works", {
     fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
   }else if (test_resolution == "big") {
     ## TODO use correct params for line below
-    # fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)
+    fm_data_inputs <- readr::read_rds(
+      file.path("data", "part1_output_big.rds")
+      )
   }
   
   
@@ -972,6 +974,8 @@ test_that("fm_fit_model works", {
                        file = file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds")))
     }else if (test_resolution == "big") {
       ## TODO what we need to check
+      readr::write_rds(x = fm_model_results,
+                       file = file.path("data", paste0("part2_output_", test_resolution , ".rds")))
     }
     
   }
@@ -982,9 +986,16 @@ test_that("fm_fit_model works", {
     
     output_inst_dir <- here::here("inst", "examples")
     
-    #' @description Test to check if we can save output
+    if (test_resolution == "small") {
+      
+    #' @description Test to check if we can save output small
     expect_true(file.exists(file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds"))))
-  }
+    }else if (test_resolution == "big") {
+    #' @description Test to check if we can save output big
+      expect_true(file.exists(file.path("data", paste0("part2_output_", test_resolution , ".rds"))))
+    }
+    
+    }
   
   # Check resultats of model 
   
@@ -1020,6 +1031,11 @@ test_that("fm_fit_model works", {
         paste0("part2_output_", test_resolution , ".rds"),
         package = "FishMap")
     )
+  }else if(test_resolution == "big"){
+    expected_outputs <- readr::read_rds(
+      file.path("data", paste0("part2_output_", test_resolution , ".rds"))
+      )
+  }
     
     
     # sort list and data frame elements to avoid order discrepancies
@@ -1052,7 +1068,6 @@ test_that("fm_fit_model works", {
       expected = resorted_expected,
       tolerance = 1e-4
     )
-  }
   
 })
 ```

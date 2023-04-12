@@ -46,7 +46,7 @@ fm_build_domain_mesh_spde <- function(
     vmslogbook_data,
     study_domain_sf,
     Alpha
-    ) {
+) {
   
   # Check create_mesh value
   create_mesh <- match.arg(create_mesh)

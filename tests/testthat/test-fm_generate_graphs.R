@@ -15,7 +15,13 @@ test_that("fm_generate_graphs works", {
         package = "FishMap")
     )
   }else if (test_resolution == "big"){
-    # TODO add tests for high resolution
+    
+    fm_model_results <- readr::read_rds(
+      file.path(
+        "data", 
+        paste0("part2_output_", test_resolution , ".rds")
+      )
+    )
   }
   
   # run part3
@@ -31,6 +37,12 @@ test_that("fm_generate_graphs works", {
                        file = file.path(output_inst_dir, paste0("part3_output_", test_resolution , ".rds")))
     }else if (test_resolution == "big") {
       ## TODO what we need to check
+      readr::write_rds(x = fm_graph_results,
+                       file = file.path(
+                         "data", 
+                         paste0("part3_output_", test_resolution , ".rds")
+                       )
+      )
     }
     
   }
@@ -40,8 +52,19 @@ test_that("fm_generate_graphs works", {
     
     output_inst_dir <- here::here("inst", "examples")
     
-    #' @description Test to check if we can save output
-    expect_true(file.exists(file.path(output_inst_dir, paste0("part3_output_", test_resolution , ".rds"))))
+    if (test_resolution == "small") {
+      #' @description Test to check if we can save output small
+      expect_true(file.exists(file.path(output_inst_dir, paste0("part3_output_", test_resolution , ".rds"))))
+    }else if (test_resolution == "big") {
+      #' @description Test to check if we can save output big
+      expect_true(file.exists(file.path(
+        "data", 
+        paste0("part3_output_", test_resolution , ".rds")
+      )
+      )
+      )
+    }
+    
   }
   
   # Check resultats of model 
@@ -63,7 +86,7 @@ test_that("fm_generate_graphs works", {
         paste0("part3_output_", test_resolution , ".rds"),
         package = "FishMap")
     )
-
+    
     # Testing that the result of `fm_generate_graphs()` is stable
     # Currently not working in CI
     # expect_equal(

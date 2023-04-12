@@ -63,7 +63,7 @@ fm_build_domain_mesh_spde <- function(
     vmslogbook_data,
     study_domain_sf,
     Alpha
-    ) {
+) {
   
   # Check create_mesh value
   create_mesh <- match.arg(create_mesh)
@@ -189,7 +189,7 @@ fm_build_domain_mesh_spde <- function(
 #     )
 #' }
 ```
-  
+
 ```{r tests-fm_build_domain_mesh_spde}
 test_that("fm_build_domain_mesh_spde works", {
   
@@ -266,7 +266,7 @@ test_that("fm_build_domain_mesh_spde works", {
 ## `fm_shape_sci_data_st()` : Shape scientific data
 
 This fonction will shape the scientific data according to the selected time window and time step.
-    
+
 ```{r function-fm_shape_sci_data_st}
 #' Shape scientific data
 #' 
@@ -293,7 +293,7 @@ fm_shape_sci_data_st <- function(
     scientific_observation = c("CPUE", "Density"),
     Sci.obs_spp,
     mesh
-    ) {
+) {
   ## Shape date columns
   survey_data_0$Month <- as.character(survey_data_0$Month)
   survey_data_0$Year <- as.character(survey_data_0$Year)
@@ -306,8 +306,8 @@ fm_shape_sci_data_st <- function(
   
   ## Convert commercial data into sf object to intersect with gridpolygon
   survey_data_sf <- st_as_sf(survey_data_1,
-                            coords = c("long","lati"),
-                            crs = grid_projection) %>%
+                             coords = c("long","lati"),
+                             crs = grid_projection) %>%
     ungroup()
   
   ## Discretize scientific data
@@ -342,7 +342,7 @@ fm_shape_sci_data_st <- function(
   )
 }
 ```
-  
+
 ```{r example-fm_shape_sci_data_st, eval = FALSE}
 #' \dontrun{
 # fm_shape_sci_data_st(
@@ -356,7 +356,7 @@ fm_shape_sci_data_st <- function(
 # )
 #' }
 ```
-  
+
 ```{r tests-fm_shape_sci_data_st}
 test_that("fm_shape_sci_data_st works", {
   
@@ -384,7 +384,7 @@ test_that("fm_shape_sci_data_st works", {
                                    package = "FishMap"
   )
   study_domain <- readr::read_rds(study_domain_file)
-
+  
   # mesh grid
   grid_limit <- raster::extent(c(-6, 0, 42, 48))
   
@@ -402,10 +402,10 @@ test_that("fm_shape_sci_data_st works", {
   
   # survey data
   survey_data_file <- system.file("original_data",
-                                "Solea_solea",
-                                "survey_data.Rds",
-                                package = "FishMap"
-                                )
+                                  "Solea_solea",
+                                  "survey_data.Rds",
+                                  package = "FishMap"
+  )
   survey_data <- readr::read_rds(survey_data_file)
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
@@ -421,7 +421,7 @@ test_that("fm_shape_sci_data_st works", {
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Month <- as.character(time.step_df$Month)
-    
+  
   ## run function
   result <- fm_shape_sci_data_st(
     survey_data_0 = survey_data_0,
@@ -431,7 +431,7 @@ test_that("fm_shape_sci_data_st works", {
     scientific_observation = "CPUE",
     Sci.obs_spp = NULL,
     mesh = domain_mesh_spde_outputs[["mesh"]]
-    )
+  )
   
   ## test outputs
   #' @description Testing that fm_shape_sci_data_st returns a list
@@ -445,8 +445,8 @@ test_that("fm_shape_sci_data_st works", {
                             "Aix_ij_sci",
                             "Aix_w_sci",
                             "survey_data_2"
-                            )
                )
+  )
   
   #' @description Testing types inside the list
   expect_type(result[["y_sci_i"]], "double")
@@ -454,12 +454,12 @@ test_that("fm_shape_sci_data_st works", {
   expect_type(result[["Aix_ij_sci"]], "integer")
   expect_type(result[["Aix_w_sci"]], "double")
   expect_type(result[["survey_data_2"]], "list")
-
+  
 })
 ```
-  
+
 ## `fm_shape_vms_logbook_data_st()` : Shape 'VMS x logbook' data
-    
+
 ```{r function-fm_shape_vms_logbook_data_st}
 #' Shape 'VMS x logbook' data
 #' 
@@ -485,7 +485,7 @@ fm_shape_vms_logbook_data_st <- function(
     gridpolygon_sf,
     loc_x,
     mesh
-    ) {
+) {
   
   ## Join commercial data with time dataframe
   vmslogbook_data_1 <- vmslogbook_data_0 %>%
@@ -520,9 +520,9 @@ fm_shape_vms_logbook_data_st <- function(
                            length(unique(vmslogbook_data_2$f))))
   
   for(f_i in 1:length(unique(vmslogbook_data_2$f))){
-  
+    
     for(t_i in 1:length(unique(vmslogbook_data_2$t))){
-  
+      
       df_c_com_x <- vmslogbook_data_2 %>%
         filter(f == f_i & t == t_i) %>%
         dplyr::select("layer","t") %>%
@@ -536,9 +536,9 @@ fm_shape_vms_logbook_data_st <- function(
         ungroup() %>%
         dplyr::select(-cell,-layer)
       c_com_x[,t_i,f_i] <- as.matrix(df_c_com_x)
-  
+      
     }
-  
+    
   }
   
   c_com_x[is.na(c_com_x)] <- 0
@@ -563,7 +563,7 @@ fm_shape_vms_logbook_data_st <- function(
   )
 }
 ```
-  
+
 ```{r example-fm_shape_vms_logbook_data_st, eval = FALSE}
 #' \dontrun{
 # fm_shape_vms_logbook_data_st(
@@ -576,10 +576,10 @@ fm_shape_vms_logbook_data_st <- function(
 # )
 #' }
 ```
-  
+
 ```{r tests-fm_shape_vms_logbook_data_st}
 test_that("fm_shape_vms_logbook_data_st works", {
-
+  
   ## prepare inputs
   # vms data - unfiltered
   vmslogbook_data_file <- system.file("original_data",
@@ -604,7 +604,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
                                    package = "FishMap"
   )
   study_domain <- readr::read_rds(study_domain_file)
-
+  
   # mesh grid
   grid_limit <- raster::extent(c(-6, 0, 42, 48))
   
@@ -632,7 +632,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
     mutate(t = 1:nrow(time.step_df))
   time.step_df$Year <- as.character(time.step_df$Year)
   time.step_df$Month <- as.character(time.step_df$Month)
-    
+  
   ## run function
   result <- fm_shape_vms_logbook_data_st(
     vmslogbook_data_0 = vmslogbook_data_0,
@@ -641,7 +641,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
     gridpolygon_sf = domain_mesh_spde_outputs[["gridpolygon_sf"]],
     loc_x = domain_mesh_spde_outputs[["loc_x"]],
     mesh = domain_mesh_spde_outputs[["mesh"]]
-)
+  )
   
   ## test outputs
   #' @description Testing that fm_shape_sci_data_st returns a list
@@ -657,8 +657,8 @@ test_that("fm_shape_vms_logbook_data_st works", {
                             "Aix_ij_com",
                             "Aix_w_com", 
                             "vmslogbook_data_2"
-                            )
                )
+  )
   
   #' @description Testing types inside the list
   expect_type(result[["b_com_i"]], "double")
@@ -668,7 +668,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
   expect_type(result[["Aix_ij_com"]], "integer")
   expect_type(result[["Aix_w_com"]], "double")
   expect_type(result[["vmslogbook_data_2"]], "list")
-
+  
 })
 ```
 
@@ -676,7 +676,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
 # `fm_load_data()` : prepare and load model inputs
 
 This function prepares all the necessary output for the model fitting. It will filter and shape the observation data (VMS and scientific). It will generate the spatial mesh for the study domain. All outputs are reported as part of a named list.
-    
+
 ```{r function-fm_load_data}
 #' Load and prepare data for model fitting
 #'
@@ -721,7 +721,7 @@ fm_load_data <- function(species,
                          grid_ymin,
                          grid_ymax,
                          seed = 29510
-                         ) {
+) {
   ## Load data
   #-----------
   message("Running step 1 -loading data-")
@@ -752,12 +752,12 @@ fm_load_data <- function(species,
   #-------------
   year_vec <- year_start:year_end
   month_vec <- month_start:month_end
-
-  if(time_step == "Month"){
   
+  if(time_step == "Month"){
+    
     time.step_df <- expand.grid(month_vec,year_vec)
     colnames(time.step_df) <- c("Month","Year")
-  
+    
     time.step_df <- time.step_df %>%
       arrange(Year,Month) %>%
       mutate(Month = ifelse(Month < 10,paste0("0",Month),Month)) %>%
@@ -765,12 +765,12 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Month <- as.character(time.step_df$Month)
-  
+    
   }else if(time_step == "Quarter"){
-  
+    
     time.step_df <- expand.grid(1:4,all_years)
     colnames(time.step_df) <- c("Quarter","Year")
-  
+    
     time.step_df <- time.step_df %>%
       arrange(Year,Quarter) %>%
       mutate(Quarter = ifelse(Quarter < 10,paste0("0",Quarter),Quarter)) %>%
@@ -778,7 +778,7 @@ fm_load_data <- function(species,
       mutate(t = 1:nrow(time.step_df))
     time.step_df$Year <- as.character(time.step_df$Year)
     time.step_df$Quarter <- as.character(time.step_df$Quarter)
-  
+    
   }
   
   
@@ -830,7 +830,7 @@ fm_load_data <- function(species,
     scientific_observation = scientific_observation,
     Sci.obs_spp = Sci.obs_spp,
     mesh = domain_mesh_spde_outputs[["mesh"]]
-    )
+  )
   
   ## Shape commercial data
   vms_logbook_data_st_outputs <- fm_shape_vms_logbook_data_st(
@@ -862,10 +862,10 @@ fm_load_data <- function(species,
   # load(file.path(data_folder,"bathy_sci.Rdata"))
   bathy_sci = rep(0,nrow(sci_data_st_outputs[["survey_data_2"]]))
   cov_x_sci <- matrix(data = bathy_sci, ncol = 1)
-
+  
   # finished step 1 -loading data-
   toc()
-
+  
   # return outputs as named list
   return(list("species" = species,
               "b_com_i" = vms_logbook_data_st_outputs[["b_com_i"]],
@@ -890,11 +890,11 @@ fm_load_data <- function(species,
               "W" = domain_mesh_spde_outputs[["W"]],
               "n_survey" = n_survey,
               "MeshList_aniso" = domain_mesh_spde_outputs[["MeshList_aniso"]]
-              )
-         )
+  )
+  )
 }
 ```
-  
+
 ```{r examples-fm_load_data, eval = FALSE}
 #' \donttest{
 # run part1
@@ -902,48 +902,48 @@ survey_data_file <- system.file("original_data",
                                 "Solea_solea",
                                 "survey_data.Rds",
                                 package = "FishMap"
-                                )
+)
 
 survey_data <- readr::read_rds(file = survey_data_file)
 
 vmslogbook_data_file <- system.file("original_data",
-                                "Solea_solea",
-                                "vmslogbook_data.Rds",
-                                package = "FishMap"
-                                )
+                                    "Solea_solea",
+                                    "vmslogbook_data.Rds",
+                                    package = "FishMap"
+)
 
 vmslogbook_data <- readr::read_rds(file = vmslogbook_data_file)
 
 study_domain_file <- system.file("original_data",
-                                "Solea_solea",
-                                "study_domain.Rds",
-                                package = "FishMap"
-                                )
+                                 "Solea_solea",
+                                 "study_domain.Rds",
+                                 package = "FishMap"
+)
 
 study_domain <- readr::read_rds(file = study_domain_file)
 
 fm_data_inputs <- fm_load_data(species = "Solea_solea",
-                         fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
-                         fitted_data = "biomass",
-                         survey_data = survey_data,
-                         vmslogbook_data = vmslogbook_data,
-                         study_domain = study_domain,
-                         year_start = 2018,
-                         year_end = 2018,
-                         month_start = 11,
-                         month_end = 11,
-                         time_step = "Month",
-                         k = 0.25,
-                         grid_xmin = -6,
-                         grid_xmax = 0,
-                         grid_ymin = 42,
-                         grid_ymax = 48)
+                               fleet = c("OTB_DEF_>=70_0","OTB_CEP_>=70_0","OTT_DEF_>=70_0"),
+                               fitted_data = "biomass",
+                               survey_data = survey_data,
+                               vmslogbook_data = vmslogbook_data,
+                               study_domain = study_domain,
+                               year_start = 2018,
+                               year_end = 2018,
+                               month_start = 11,
+                               month_end = 11,
+                               time_step = "Month",
+                               k = 0.25,
+                               grid_xmin = -6,
+                               grid_xmax = 0,
+                               grid_ymin = 42,
+                               grid_ymax = 48)
 #' }
 ```
-  
+
 ```{r tests-fm_load_data}
 test_that("fm_load_data works", {
-
+  
   # You can test your model for small datas or big datas. You must run the tests locally with FISHMAP_UPDATE_OUTPUTS env at TRUE to store the rds file.
   
   test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
@@ -1018,7 +1018,9 @@ test_that("fm_load_data works", {
       readr::write_rds(x = fm_data_inputs,
                        file = file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds")))
     }else if (test_resolution == "big") {
-      ## TODO what we need to check
+      
+      readr::write_rds(x = fm_data_inputs,
+                       file = file.path("data", paste0("part1_output_", test_resolution , ".rds")))
     }
   }
   
@@ -1027,8 +1029,26 @@ test_that("fm_load_data works", {
     
     output_inst_dir <- here::here("inst", "examples")
     
-    #' @description Test to check if we can save output
-    expect_true(file.exists(file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds"))))
+    if (test_resolution == "small") {
+      
+      #' @description Test to check if we can save output for small
+      expect_true(
+        file.exists(
+          file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds"))
+        )
+      )
+      
+    }else if (test_resolution == "big") {
+      
+      #' @description Test to check if we can save output for big
+      expect_true(
+        file.exists(
+          file.path("data", paste0("part1_output_", test_resolution , ".rds"))
+        )
+      )
+      
+    }
+    
   }
   
   # Check `fm_load_data` output values
@@ -1108,6 +1128,11 @@ test_that("fm_load_data works", {
         paste0("part1_output_", test_resolution , ".rds"),
         package = "FishMap")
     )
+  }else if(test_resolution == "big"){
+    expected_outputs <- readr::read_rds(
+      file.path("data", paste0("part1_output_", test_resolution , ".rds"))
+      )
+    }
     
     # homogenize tmp dir value tested in above test
     expected_outputs$mesh$meta$prefix <-
@@ -1141,7 +1166,7 @@ test_that("fm_load_data works", {
     #' @description Testing that the result of `fm_load_data` is stable
     expect_equal(object = resorted_result,
                  expected = resorted_expected)
-  }
+
   
 })
 ```
