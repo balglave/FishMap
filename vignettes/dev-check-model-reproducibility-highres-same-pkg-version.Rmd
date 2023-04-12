@@ -1,10 +1,10 @@
 ---
-title: "dev - check high resolution model reproducibility with same package version"
+title: "archive - check high resolution model reproducibility with same package version"
 author: "swann floc'hlay"
 date: '2023-03-16'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-check-model-reproducibility-highres-same-pkg-version}
+  %\VignetteIndexEntry{archive-check-model-reproducibility-highres-same-pkg-version}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

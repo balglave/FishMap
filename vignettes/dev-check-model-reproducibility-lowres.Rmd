@@ -1,10 +1,10 @@
 ---
-title: "dev - check low resolution model reproducibility"
+title: "archive - check low resolution model reproducibility"
 author: "swann floc'hlay"
 date: '2023-03-09'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-check-model-reproducibility-lowres}
+  %\VignetteIndexEntry{archive-check-model-reproducibility-lowres}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

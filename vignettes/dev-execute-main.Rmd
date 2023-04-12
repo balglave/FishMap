@@ -1,8 +1,8 @@
 ---
-title: "dev - execute main"
+title: "archive - execute main"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-execute-main}
+  %\VignetteIndexEntry{archive-execute-main}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
