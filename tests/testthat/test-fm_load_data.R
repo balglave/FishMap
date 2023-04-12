@@ -73,6 +73,7 @@ test_that("fm_load_data works", {
     output_inst_dir <- here::here("inst", "examples") 
     
     if (test_resolution == "small") {
+      # save output data in example dir
       readr::write_rds(x = fm_data_inputs,
                        file = file.path(output_inst_dir, paste0("part1_output_", test_resolution , ".rds")))
     }else if (test_resolution == "big") {

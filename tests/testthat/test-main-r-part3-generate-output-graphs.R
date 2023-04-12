@@ -3,6 +3,9 @@
 test_that("Main functions work together", {
   
   # Set up params for the model
+  # use samp_process = 1 in model fit
+  # use month_start = 10 and month_end = 12
+  # these parameters allow eta plot generation
   
   # run part1
   survey_data_file <- system.file("original_data",
@@ -37,8 +40,8 @@ test_that("Main functions work together", {
                                  study_domain = study_domain,
                                  year_start = 2018,
                                  year_end = 2018,
-                                 month_start = 11,
-                                 month_end = 11,
+                                 month_start = 10,
+                                 month_end = 12,
                                  time_step = "Month",
                                  k = 0.25,
                                  grid_xmin = -6,
@@ -59,7 +62,7 @@ test_that("Main functions work together", {
                  SE = 1,
                  data_source = 1,
                  data_obs = 2,
-                 samp_process = 0,
+                 samp_process = 1,
                  b_constraint = 2,
                  cov_samp_process = 0,
                  biomass_temporal = 1,
@@ -87,5 +90,6 @@ test_that("Main functions work together", {
   #'@description testing output of `fm_generate_graphs`
   expect_type(result_graph, "list")
   expect_s3_class(result_graph[["pred_plot"]], "ggplot")
-  
+  expect_s3_class(result_graph[["eta_plot"]], "ggplot")
+
 })

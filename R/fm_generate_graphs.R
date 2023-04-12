@@ -73,6 +73,7 @@ fm_generate_graphs <- function(fm_model_results) {
   
   # plot eta if sampling is active
   if (samp_process == 1) {
+    
     for (i in 1:3) {
       eta_df <-
         cbind(loc_x[, c("long", "lati")], eta = report$lambda_p[1:nrow(loc_x), , i]) %>%

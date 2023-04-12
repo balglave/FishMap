@@ -67,34 +67,34 @@ test_that("fm_generate_graphs works", {
     
   }
   
-  # Check resultats of model 
+  # Check results of model 
   
   #' @description Testing the result of `fm_generate_graphs()` is a list
   expect_true(object = inherits(x = fm_graph_results,
                                 what = "list"))
   
-  #' @description Testing class of the list returned by `fm_generate_graphs()` 
-  expect_equal(object = class(fm_graph_results[["pred_plot"]]),
-               expected = c("gg", "ggplot"))
+  #' @description Testing class of the pred plot returned by `fm_generate_graphs()` 
+  expect_s3_class(
+    object = fm_graph_results[["pred_plot"]],
+    class = c("gg", "ggplot")
+    )
   
   # Testing for small model
   if(test_resolution == "small"){
-    
-    expected_outputs <- readr::read_rds(
-      system.file(
-        "examples",
-        paste0("part3_output_", test_resolution , ".rds"),
-        package = "FishMap")
-    )
-    
     # Testing that the result of `fm_generate_graphs()` is stable
     # Currently not working in CI
+    # expected_outputs <- readr::read_rds(
+    #   system.file(
+    #     "examples",
+    #     paste0("part3_output_", test_resolution , ".rds"),
+    #     package = "FishMap")
+    # )
+    # 
     # expect_equal(
     #   object = fm_graph_results,
     #   expected = expected_outputs,
     #   tolerance = 1e-4
     # )
   }
-  
-  
+
 })
