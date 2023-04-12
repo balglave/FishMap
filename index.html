@@ -58,16 +58,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/dev-check-model-reproducibility-highres-same-pkg-version.html">dev - check high resolution model reproducibility with same package version</a>
+      <a href="articles/dev-check-model-reproducibility-highres-same-pkg-version.html">archive - check high resolution model reproducibility with same package version</a>
     </li>
     <li>
-      <a href="articles/dev-check-model-reproducibility-highres.html">dev - check high resolution model reproducibility</a>
+      <a href="articles/dev-check-model-reproducibility-highres.html">archive - check high resolution model reproducibility</a>
     </li>
     <li>
-      <a href="articles/dev-check-model-reproducibility-lowres.html">dev - check low resolution model reproducibility</a>
+      <a href="articles/dev-check-model-reproducibility-lowres.html">archive - check low resolution model reproducibility</a>
     </li>
     <li>
-      <a href="articles/dev-execute-main.html">dev - execute main</a>
+      <a href="articles/dev-execute-main.html">archive - execute main</a>
     </li>
     <li>
       <a href="articles/dev-fit-model.html">Dev - Fit Model</a>
@@ -82,7 +82,7 @@
       <a href="articles/dev_how_to_maintain_my_tests_and_examples.html">Dev - How to maintain my tests and-examples</a>
     </li>
     <li>
-      <a href="articles/user-running-fishmap.html">user - running fishmap</a>
+      <a href="articles/user-running-fishmap.html">User - running fishmap</a>
     </li>
   </ul>
 </li>
@@ -114,19 +114,22 @@
 <div class="section level3">
 <h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
 </h3>
-<p>You must <a href="https://www.r-inla.org/download-install" class="external-link">install INLA</a>. Checkout <a href="https://www.r-inla.org/download-install" class="external-link">INLA doc</a> to upgrade INLA.</p>
+<p>You must <a href="https://www.r-inla.org/download-install" class="external-link">install INLA</a>. Checkout <a href="https://www.r-inla.org/download-install" class="external-link">INLA doc</a> to upgrade INLA. Your INLA version should satisfy the minimal required version for running FishMap (22.12.16).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"graph"</span>, <span class="st">"Rgraphviz"</span><span class="op">)</span>, dep<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"INLA"</span>,repos<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"repos"</span><span class="op">)</span>,INLA<span class="op">=</span><span class="st">"https://inla.r-inla-download.org/R/stable"</span><span class="op">)</span>, dep<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>You must <a href="https://github.com/kaskr/adcomp/wiki/Download" class="external-link">install TMB</a>. The installation of TMB requires compiler tools. If you are installing from Windows machine, make sure that your <a href="https://github.com/kaskr/adcomp/wiki/Download#windows---installing-required-tools" class="external-link">Rtools installation is matching your R-version</a>. Your TMB version should satisfy the minimal required version for running FishMap (1.9.2).</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"TMB"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="fishmap">FishMap<a class="anchor" aria-label="anchor" href="#fishmap"></a>
 </h3>
 <p>You can install the development version of FishMap from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"balglave/FishMap"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -134,7 +137,7 @@
 <h3 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h3>
 <p>You can install the development version of FishMap together with the vignettes with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"balglave/FishMap"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Installing with <code>build_vignettes = TRUE</code> will allow you to access the vignettes locally. Once you have installed FishMap with vignettes, you can access them using the command <code>vignette(package = "FishMap")</code>.</p>
@@ -145,7 +148,7 @@
 </h2>
 <p>Full documentation website on: <a href="https://balglave.github.io/FishMap" class="uri">https://balglave.github.io/FishMap</a><br>
 In particular, you can follow this vignette:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"user-running-fishmap"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="unit-tests-in-the-package-">Unit tests in the package :<a class="anchor" aria-label="anchor" href="#unit-tests-in-the-package-"></a>
@@ -164,13 +167,14 @@ In particular, you can follow this vignette:</p>
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
 </h2>
+<p>This workflow is intended for developers, it summaries the structure of the package. For each flat file in the <code>dev/</code> folder, you have a set of defined functions as well as the list of files generated from the flat file when running the <code>fusen::inflate()</code> command.</p>
 <p><img src="reference/figures/FishMap_user.png" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">FishMap</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Read internal data as Rds files</span></span>
