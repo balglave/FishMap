@@ -108,9 +108,6 @@ fm_fit_model <- function(fm_data_inputs,
     n_survey <- fm_data_inputs[["n_survey"]]
     MeshList_aniso <- fm_data_inputs[["MeshList_aniso"]]
     
-    # script location
-    data_folder <- system.file(file.path("original_data",species), package = "FishMap")
-    script_folder <- system.file("original_scripts", package = "FishMap")
     
     xfb_x <- NULL # TO DELETE
     weights_com <- 1 # TO DELETE
@@ -207,7 +204,11 @@ fm_fit_model <- function(fm_data_inputs,
     report = obj$report() # output values
     converge=opt$convergence # convergence test
     # next line takes a VERY long time ----
-    if(compute_sd) SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
+    if(compute_sd) {
+      SD = sdreport(obj,bias.correct=FALSE,ignore.parm.uncertainty=TRUE) # compute standard deviation
+    } else {
+      SD = NULL
+    }
     
     dyn.unload( dynlib( file.path(system.file(package = "FishMap"),"model")))
   
@@ -219,7 +220,8 @@ fm_fit_model <- function(fm_data_inputs,
               "loc_x" = loc_x,
               "report" = report,
               "samp_process" = samp_process,
-              "converge" = converge
+              "converge" = converge,
+              "SD" = SD
   )
   )
   

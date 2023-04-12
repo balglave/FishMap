@@ -8,7 +8,9 @@ test_that("fm_fit_model works", {
   test_resolution <- Sys.getenv("FISHMAP_TEST_RESOLUTION", unset = "small")
   
   if(test_resolution == "small"){
-    fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
+    fm_data_inputs <- readr::read_rds(
+      system.file("examples", "part1_output_small.rds", package = "FishMap")
+      )
   }else if (test_resolution == "big") {
     ## TODO use correct params for line below
     fm_data_inputs <- readr::read_rds(
@@ -34,7 +36,8 @@ test_that("fm_fit_model works", {
                                    lf_link = 0,
                                    ref_data = "com",
                                    EM = "est_b",
-                                   month_ref = 1)
+                                   month_ref = 1,
+                                   compute_sd = TRUE)
   
   })
   
@@ -44,11 +47,12 @@ test_that("fm_fit_model works", {
     output_inst_dir <- here::here("inst", "examples") 
     
     if (test_resolution == "small") {
-      readr::write_rds(x = fm_model_results,
+      # save all output except sdreport (large file)
+      readr::write_rds(x = fm_model_results[names(fm_model_results) != "SD"],
                        file = file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds")))
     }else if (test_resolution == "big") {
       ## TODO what we need to check
-      readr::write_rds(x = fm_model_results,
+      readr::write_rds(x = fm_model_results[names(fm_model_results) != "SD"],
                        file = file.path("data", paste0("part2_output_", test_resolution , ".rds")))
     }
     
@@ -56,7 +60,6 @@ test_that("fm_fit_model works", {
   
   # check output is saved as rds
   if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
-    
     
     output_inst_dir <- here::here("inst", "examples")
     
@@ -71,7 +74,7 @@ test_that("fm_fit_model works", {
     
     }
   
-  # Check resultats of model 
+  # Check results of model 
   
   #' @description Testing the result of `fm_fit_model` is a list
   expect_type(object = fm_model_results,  "list")
@@ -84,7 +87,8 @@ test_that("fm_fit_model works", {
       "loc_x" ,      
       "report" ,   
       "samp_process", 
-      "converge" )
+      "converge",
+      "SD")
   )
   
   
@@ -94,8 +98,10 @@ test_that("fm_fit_model works", {
   expect_type(fm_model_results$report, "list")
   expect_type(fm_model_results$samp_process, "double")
   expect_type(fm_model_results$converge, "integer")
+  expect_s3_class(fm_model_results$SD, "sdreport")
   
-  # Testing for small model
+  # Testing for small model (without sd report)
+  fm_model_results <- fm_model_results[names(fm_model_results) != "SD"]
   
   if(test_resolution == "small"){
     
