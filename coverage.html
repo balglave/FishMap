@@ -106,8 +106,8 @@ table.table-condensed {
       </ul>
       <div class="tab-content" data-tabsetid="covr">
         <div class="tab-pane active" title="Files" data-value="Files" id="tab-covr-1">
-          <div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-da6adba5e77379ae3309" style="width:100%;height:500px;"></div>
-          <script type="application/json" data-for="htmlwidget-da6adba5e77379ae3309">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">R/fm_generate_graphs.R<\/a>","<a href=\"#\">R/fm_build_data_params_map.R<\/a>","<a href=\"#\">R/fm_build_domain_mesh_spde.R<\/a>","<a href=\"#\">R/fm_load_data.R<\/a>","<a href=\"#\">R/fm_fit_model.R<\/a>","<a href=\"#\">R/fm_shape_sci_data_st.R<\/a>","<a href=\"#\">R/fm_shape_vms_logbook_data_st.R<\/a>"],[110,566,157,260,226,87,114],[48,291,73,108,104,31,47],[20,155,64,95,99,30,47],[28,136,9,13,5,1,0],["1","2","4","2","2","3","5"],["41.67%","53.26%","87.67%","87.96%","95.19%","96.77%","100.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}","selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
+          <div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-d40bc51cbcd18c540d1f" style="width:100%;height:500px;"></div>
+          <script type="application/json" data-for="htmlwidget-d40bc51cbcd18c540d1f">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">R/fm_generate_graphs.R<\/a>","<a href=\"#\">R/fm_build_data_params_map.R<\/a>","<a href=\"#\">R/fm_build_domain_mesh_spde.R<\/a>","<a href=\"#\">R/fm_load_data.R<\/a>","<a href=\"#\">R/fm_fit_model.R<\/a>","<a href=\"#\">R/fm_shape_sci_data_st.R<\/a>","<a href=\"#\">R/fm_shape_vms_logbook_data_st.R<\/a>"],[110,566,157,260,226,87,114],[48,291,73,108,104,31,47],[20,155,64,95,99,30,47],[28,136,9,13,5,1,0],["1","2","4","2","2","3","5"],["41.67%","53.26%","87.67%","87.96%","95.19%","96.77%","100.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}","selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
         </div>
         <div class="tab-pane" title="Source" data-value="Source" id="tab-covr-2">
           <div id="files">
@@ -4422,7 +4422,7 @@ table.table-condensed {
                     <td class="num">49</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    ) {</pre>
+                      <pre class="language-r">) {</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5387,7 +5387,7 @@ table.table-condensed {
                     <td class="num">29</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'</pre>
+                      <pre class="language-r">#' </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5457,7 +5457,7 @@ table.table-condensed {
                     <td class="num">39</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'</pre>
+                      <pre class="language-r">#' </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5667,7 +5667,7 @@ table.table-condensed {
                     <td class="num">69</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5681,7 +5681,7 @@ table.table-condensed {
                     <td class="num">71</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -5702,7 +5702,7 @@ table.table-condensed {
                     <td class="num">74</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -5723,7 +5723,7 @@ table.table-condensed {
                     <td class="num">77</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5758,7 +5758,7 @@ table.table-condensed {
                     <td class="num">82</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -5772,14 +5772,14 @@ table.table-condensed {
                     <td class="num">84</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">85</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5954,7 +5954,7 @@ table.table-condensed {
                     <td class="num">110</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -5982,7 +5982,7 @@ table.table-condensed {
                     <td class="num">114</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -6003,7 +6003,7 @@ table.table-condensed {
                     <td class="num">117</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6304,7 +6304,7 @@ table.table-condensed {
                     <td class="num">160</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6346,7 +6346,7 @@ table.table-condensed {
                     <td class="num">166</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6374,7 +6374,7 @@ table.table-condensed {
                     <td class="num">170</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6395,7 +6395,7 @@ table.table-condensed {
                     <td class="num">173</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6423,7 +6423,7 @@ table.table-condensed {
                     <td class="num">177</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6472,7 +6472,7 @@ table.table-condensed {
                     <td class="num">184</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -6500,7 +6500,7 @@ table.table-condensed {
                     <td class="num">188</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6528,7 +6528,7 @@ table.table-condensed {
                     <td class="num">192</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -6542,7 +6542,7 @@ table.table-condensed {
                     <td class="num">194</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">      </pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -6563,7 +6563,7 @@ table.table-condensed {
                     <td class="num">197</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">      </pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -6584,7 +6584,7 @@ table.table-condensed {
                     <td class="num">200</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">      </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6598,7 +6598,7 @@ table.table-condensed {
                     <td class="num">202</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6626,7 +6626,7 @@ table.table-condensed {
                     <td class="num">206</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -6661,7 +6661,7 @@ table.table-condensed {
                     <td class="num">211</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -6675,7 +6675,7 @@ table.table-condensed {
                     <td class="num">213</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6696,7 +6696,7 @@ table.table-condensed {
                     <td class="num">216</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6759,7 +6759,7 @@ table.table-condensed {
                     <td class="num">225</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -6947,7 +6947,7 @@ table.table-condensed {
                     <td class="num">25</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'   )</pre>
+                      <pre class="language-r">#' )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -7793,7 +7793,7 @@ table.table-condensed {
                     <td class="num">35</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 )</pre>
+                      <pre class="language-r">#' )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -7828,28 +7828,28 @@ table.table-condensed {
                     <td class="num">40</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 "Solea_solea",</pre>
+                      <pre class="language-r">#'                                     "Solea_solea",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">41</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 "vmslogbook_data.Rds",</pre>
+                      <pre class="language-r">#'                                     "vmslogbook_data.Rds",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">42</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 package = "FishMap"</pre>
+                      <pre class="language-r">#'                                     package = "FishMap"</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">43</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 )</pre>
+                      <pre class="language-r">#' )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -7884,28 +7884,28 @@ table.table-condensed {
                     <td class="num">48</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 "Solea_solea",</pre>
+                      <pre class="language-r">#'                                  "Solea_solea",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">49</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 "study_domain.Rds",</pre>
+                      <pre class="language-r">#'                                  "study_domain.Rds",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">50</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 package = "FishMap"</pre>
+                      <pre class="language-r">#'                                  package = "FishMap"</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">51</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                                 )</pre>
+                      <pre class="language-r">#' )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -7940,105 +7940,105 @@ table.table-condensed {
                     <td class="num">56</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          fleet = c("OTB_DEF_&gt;=70_0","OTB_CEP_&gt;=70_0","OTT_DEF_&gt;=70_0"),</pre>
+                      <pre class="language-r">#'                                fleet = c("OTB_DEF_&gt;=70_0","OTB_CEP_&gt;=70_0","OTT_DEF_&gt;=70_0"),</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">57</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          fitted_data = "biomass",</pre>
+                      <pre class="language-r">#'                                fitted_data = "biomass",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">58</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          survey_data = survey_data,</pre>
+                      <pre class="language-r">#'                                survey_data = survey_data,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">59</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          vmslogbook_data = vmslogbook_data,</pre>
+                      <pre class="language-r">#'                                vmslogbook_data = vmslogbook_data,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">60</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          study_domain = study_domain,</pre>
+                      <pre class="language-r">#'                                study_domain = study_domain,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">61</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          year_start = 2018,</pre>
+                      <pre class="language-r">#'                                year_start = 2018,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">62</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          year_end = 2018,</pre>
+                      <pre class="language-r">#'                                year_end = 2018,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">63</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          month_start = 11,</pre>
+                      <pre class="language-r">#'                                month_start = 11,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">64</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          month_end = 11,</pre>
+                      <pre class="language-r">#'                                month_end = 11,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">65</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          time_step = "Month",</pre>
+                      <pre class="language-r">#'                                time_step = "Month",</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">66</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          k = 0.25,</pre>
+                      <pre class="language-r">#'                                k = 0.25,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">67</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          grid_xmin = -6,</pre>
+                      <pre class="language-r">#'                                grid_xmin = -6,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">68</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          grid_xmax = 0,</pre>
+                      <pre class="language-r">#'                                grid_xmax = 0,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">69</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          grid_ymin = 42,</pre>
+                      <pre class="language-r">#'                                grid_ymin = 42,</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">70</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">#'                          grid_ymax = 48)</pre>
+                      <pre class="language-r">#'                                grid_ymax = 48)</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -8171,7 +8171,7 @@ table.table-condensed {
                     <td class="num">89</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">                         ) {</pre>
+                      <pre class="language-r">) {</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -8388,7 +8388,7 @@ table.table-condensed {
                     <td class="num">120</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -8402,7 +8402,7 @@ table.table-condensed {
                     <td class="num">122</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -8423,7 +8423,7 @@ table.table-condensed {
                     <td class="num">125</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -8479,7 +8479,7 @@ table.table-condensed {
                     <td class="num">133</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -8493,7 +8493,7 @@ table.table-condensed {
                     <td class="num">135</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -8514,7 +8514,7 @@ table.table-condensed {
                     <td class="num">138</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="missed">
@@ -8570,7 +8570,7 @@ table.table-condensed {
                     <td class="num">146</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -8934,7 +8934,7 @@ table.table-condensed {
                     <td class="num">198</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    )</pre>
+                      <pre class="language-r">  )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -9158,7 +9158,7 @@ table.table-condensed {
                     <td class="num">230</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -9179,7 +9179,7 @@ table.table-condensed {
                     <td class="num">233</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r"></pre>
+                      <pre class="language-r">  </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -9354,14 +9354,14 @@ table.table-condensed {
                     <td class="num">258</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">              )</pre>
+                      <pre class="language-r">  )</pre>
                     </td>
                   </tr>
                   <tr class="never">
                     <td class="num">259</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">         )</pre>
+                      <pre class="language-r">  )</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -9654,7 +9654,7 @@ table.table-condensed {
                     <td class="num">40</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    ) {</pre>
+                      <pre class="language-r">) {</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -9745,14 +9745,14 @@ table.table-condensed {
                     <td class="num">53</td>
                     <td class="coverage">3<em>x</em></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">                            coords = c("long","lati"),</pre>
+                      <pre class="language-r">                             coords = c("long","lati"),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">54</td>
                     <td class="coverage">3<em>x</em></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">                            crs = grid_projection) %&gt;%</pre>
+                      <pre class="language-r">                             crs = grid_projection) %&gt;%</pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -10255,7 +10255,7 @@ table.table-condensed {
                     <td class="num">38</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">    ) {</pre>
+                      <pre class="language-r">) {</pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -10500,7 +10500,7 @@ table.table-condensed {
                     <td class="num">73</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -10514,7 +10514,7 @@ table.table-condensed {
                     <td class="num">75</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">      </pre>
                     </td>
                   </tr>
                   <tr class="covered">
@@ -10612,7 +10612,7 @@ table.table-condensed {
                     <td class="num">89</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">      </pre>
                     </td>
                   </tr>
                   <tr class="never">
@@ -10626,7 +10626,7 @@ table.table-condensed {
                     <td class="num">91</td>
                     <td class="coverage"></td>
                     <td class="col-sm-12">
-                      <pre class="language-r">  </pre>
+                      <pre class="language-r">    </pre>
                     </td>
                   </tr>
                   <tr class="never">

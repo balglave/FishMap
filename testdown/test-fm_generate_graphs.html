@@ -113,13 +113,13 @@
 <h2>Summary<a href="test-fm_generate_graphs.html#summary-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ul>
 <li><p><strong>Number of test(s)</strong> : 2</p></li>
-<li><p><strong>Number of expectation(s)</strong> : 8</p></li>
+<li><p><strong>Number of expectation(s)</strong> : 9</p></li>
 <li><p><strong>Number of successful expectation(s)</strong> : 2</p></li>
 <li><p><strong>Number of failed expectation(s)</strong> : 0</p></li>
 <li><p><strong>Number of errored expectation(s)</strong> : 0</p></li>
 <li><p><strong>Number of expectations with warning(s)</strong> : 0</p></li>
 <li><p><strong>Number of validated skip expectation(s)</strong> : 0</p></li>
-<li><p><strong>Number of skipped expectation(s)</strong> : 6</p></li>
+<li><p><strong>Number of skipped expectation(s)</strong> : 7</p></li>
 </ul>
 </div>
 <div id="details-3" class="section level2 unnumbered hasAnchor">
@@ -149,7 +149,7 @@
 <td align="left">NA (was skipped)</td>
 <td align="left"># Update expected outputs here</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_generate_graphs.R#24</td>
+<td align="left">test-fm_generate_graphs.R#30</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
@@ -157,55 +157,63 @@
 <td align="left">NA (was skipped)</td>
 <td align="left">expect_true(file.exists(file.path(output_inst_dir, paste0(“part3_output_”, test_resolution , “.rds”))))</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_generate_graphs.R#44</td>
+<td align="left">test-fm_generate_graphs.R#57</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="odd">
-<td align="left">fm_generate_graphs works</td>
-<td align="left">Testing the result of <code>fm_generate_graphs()</code> is a list</td>
-<td align="left">expect_true(object = inherits(x = fm_graph_results, what = “list”))</td>
-<td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_generate_graphs.R#50</td>
-<td align="left">2023-04-12 07:39:02</td>
-</tr>
-<tr class="even">
-<td align="left">fm_generate_graphs works</td>
-<td align="left">Testing class of the list returned by <code>fm_generate_graphs()</code></td>
-<td align="left">expect_equal(object = class(fm_graph_results[[“pred_plot”]]), expected = c(“gg”, “ggplot”))</td>
-<td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
-<td align="left">test-fm_generate_graphs.R#54</td>
-<td align="left">2023-04-12 07:39:02</td>
-</tr>
-<tr class="odd">
-<td align="left">fm_generate_graphs works</td>
+<td align="left">fm_fit_model works</td>
 <td align="left">NA (was skipped)</td>
-<td align="left">expected = c(“gg”, “ggplot”))</td>
-<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_generate_graphs.R#55</td>
-<td align="left">NA (was skipped)</td>
-</tr>
-<tr class="even">
-<td align="left">fm_generate_graphs works</td>
-<td align="left">NA (was skipped)</td>
-<td align="left">expected_outputs &lt;- readr::read_rds(</td>
+<td align="left">expect_true(file.exists(file.path(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
 <td align="left">test-fm_generate_graphs.R#60</td>
 <td align="left">NA (was skipped)</td>
 </tr>
+<tr class="even">
+<td align="left">fm_generate_graphs works</td>
+<td align="left">Testing the result of <code>fm_generate_graphs()</code> is a list</td>
+<td align="left">expect_true(object = inherits(x = fm_graph_results, what = “list”))</td>
+<td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
+<td align="left">test-fm_generate_graphs.R#73</td>
+<td align="left">2023-04-12 11:24:16</td>
+</tr>
+<tr class="odd">
+<td align="left">fm_generate_graphs works</td>
+<td align="left">Testing class of the list returned by <code>fm_generate_graphs()</code></td>
+<td align="left">expect_equal(object = class(fm_graph_results[[“pred_plot”]]), expected = c(“gg”, “ggplot”))</td>
+<td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
+<td align="left">test-fm_generate_graphs.R#77</td>
+<td align="left">2023-04-12 11:24:16</td>
+</tr>
+<tr class="even">
+<td align="left">fm_generate_graphs works</td>
+<td align="left">NA (was skipped)</td>
+<td align="left">expected = c(“gg”, “ggplot”))</td>
+<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
+<td align="left">test-fm_generate_graphs.R#78</td>
+<td align="left">NA (was skipped)</td>
+</tr>
 <tr class="odd">
 <td align="left">fm_generate_graphs works</td>
 <td align="left">NA (was skipped)</td>
-<td align="left"># expect_equal(</td>
+<td align="left">expected_outputs &lt;- readr::read_rds(</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_generate_graphs.R#69</td>
+<td align="left">test-fm_generate_graphs.R#83</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 <tr class="even">
 <td align="left">fm_generate_graphs works</td>
 <td align="left">NA (was skipped)</td>
+<td align="left"># expect_equal(</td>
+<td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
+<td align="left">test-fm_generate_graphs.R#92</td>
+<td align="left">NA (was skipped)</td>
+</tr>
+<tr class="odd">
+<td align="left">fm_generate_graphs works</td>
+<td align="left">NA (was skipped)</td>
 <td align="left"># expected = expected_outputs,</td>
 <td align="left"><span title="This expectation was not run, either because it comes after a validated skip or after an expectation that throw an error.">🔄 <font color='blue'>Skipped</font></span></td>
-<td align="left">test-fm_generate_graphs.R#71</td>
+<td align="left">test-fm_generate_graphs.R#94</td>
 <td align="left">NA (was skipped)</td>
 </tr>
 </tbody>
