@@ -1,8 +1,8 @@
 ---
-title: "Dev - Load Data"
+title: "B - Dev - Load Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-load-data}
+  %\VignetteIndexEntry{b-dev-load-data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

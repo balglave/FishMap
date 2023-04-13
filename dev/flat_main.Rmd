@@ -10,17 +10,8 @@ editor_options:
 pkgload::load_all(export_all = FALSE)
 ```
 
-```{r message=FALSE}
-library(dplyr)
-library(INLA)
-library(ggplot2)
-library(sf)
-library(stringr)
-library(tidyr)
-library(TMB)
-library(tictoc)
-library(testthat)
-library(knitr)
+```{r}
+library(FishMap)
 ```
 
 # `main.R`
@@ -232,6 +223,6 @@ test_that("Main functions work together", {
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/flat_main.Rmd", check = FALSE,
-               vignette_name = "User - running fishmap")
+               vignette_name = "A - User - running fishmap")
 # To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use everytime needed`
 ```

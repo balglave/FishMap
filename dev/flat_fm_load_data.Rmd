@@ -1177,7 +1177,7 @@ test_that("fm_load_data works", {
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
 fusen::inflate(flat_file = "dev/flat_fm_load_data.Rmd", check = FALSE,
-               vignette_name = "Dev - Load Data")
+               vignette_name = "B - Dev - Load Data")
 # To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use everytime needed`
 ```
 

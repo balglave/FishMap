@@ -31,8 +31,8 @@ source(here::here("dev","run_main_and_save_output.R"))
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
-fusen::inflate(flat_file = "dev/flat_run_main_and_save_output.Rmd",
-               vignette_name = "dev - execute main",
+fusen::inflate(flat_file = "dev/archive/flat_run_main_and_save_output.Rmd",
+               vignette_name = "C - Archive - execute main",
                check = FALSE)
 
 # To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use every time needed`
