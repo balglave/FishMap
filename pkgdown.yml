@@ -11,7 +11,7 @@ articles:
   dev-check-model-reproducibility-highres: dev-check-model-reproducibility-highres.html
   dev-check-model-reproducibility-lowres: dev-check-model-reproducibility-lowres.html
   dev_how_to_maintain_my_tests_and_examples: dev_how_to_maintain_my_tests_and_examples.html
-last_built: 2023-04-13T11:43Z
+last_built: 2023-04-13T12:29Z
 urls:
   reference: https://balglave.github.io/FishMap/reference
   article: https://balglave.github.io/FishMap/articles
