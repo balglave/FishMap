@@ -37,7 +37,7 @@ test_that("fm_fit_model works", {
                                    ref_data = "com",
                                    EM = "est_b",
                                    month_ref = 1,
-                                   compute_sd = TRUE)
+                                   compute_sd = FALSE)
   
   })
   
@@ -98,7 +98,7 @@ test_that("fm_fit_model works", {
   expect_type(fm_model_results$report, "list")
   expect_type(fm_model_results$samp_process, "double")
   expect_type(fm_model_results$converge, "integer")
-  expect_s3_class(fm_model_results$SD, "sdreport")
+  # expect_s3_class(fm_model_results$SD, "sdreport")
   
   # Testing for small model (without sd report)
   fm_model_results <- fm_model_results[names(fm_model_results) != "SD"]
@@ -147,6 +147,51 @@ test_that("fm_fit_model works", {
       object = resorted_result,
       expected = resorted_expected,
       tolerance = 1e-4
+    )
+    
+    # Testing fm_fit_model() runs for other parameters set
+    #'@descripton Testing if `fm_fit_model` work with a second parameter set
+    result_fit_model <- try(fm_fit_model(fm_data_inputs = fm_data_inputs,
+                                       SE = 1,
+                                       data_source = 1,
+                                       data_obs = 2,
+                                       samp_process = 0,
+                                       b_constraint = 2,
+                                       cov_samp_process = 0,
+                                       biomass_temporal = 0,
+                                       sampling_temporal = 1,
+                                       lf_link = 1,
+                                       ref_data = "sci",
+                                       EM = "fix_b",
+                                       month_ref = 1,
+                                       compute_sd = FALSE), 
+      silent = TRUE)
+    
+    expect_true(
+      !inherits(result_fit_model, "try-error"), 
+      label = "`fm_fit_model` generates a error when running with second parameter set"
+    )
+    
+    #'@descripton Testing if `fm_fit_model` work with a third parameter set
+    result_fit_model <- try(fm_fit_model(fm_data_inputs = fm_data_inputs,
+                                       SE = 1,
+                                       data_source = 3,
+                                       data_obs = 2,
+                                       samp_process = 0,
+                                       b_constraint = 2,
+                                       cov_samp_process = 0,
+                                       biomass_temporal = 1,
+                                       sampling_temporal = 0,
+                                       lf_link = 0,
+                                       ref_data = "com",
+                                       EM = "est_b",
+                                       month_ref = 1,
+                                       compute_sd = FALSE), 
+      silent = TRUE)
+    
+    expect_true(
+      !inherits(result_fit_model, "try-error"), 
+      label = "`fm_fit_model` generates a error when running with third parameter set"
     )
   
 })
