@@ -1,5 +1,5 @@
 ---
-title: "dev - check high resolution model reproducibility with same package version"
+title: "C - Archive - check high resolution model reproducibility with same package version"
 author: "swann floc'hlay"
 date: '2023-03-16'
 output: rmarkdown::html_vignette
@@ -180,7 +180,7 @@ unlink(tmp_folder)
 ```{r eval=FALSE}
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
-  input = here::here("dev/dev_check_model_reproducibility_highres_same_pkg_version.Rmd"),
+  input = here::here("dev/archive/dev_check_model_reproducibility_highres_same_pkg_version.Rmd"),
   output = here::here("vignettes/dev-check-model-reproducibility-highres-same-pkg-version.Rmd")
 )
 ```

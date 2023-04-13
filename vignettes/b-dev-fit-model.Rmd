@@ -1,8 +1,8 @@
 ---
-title: "Dev - Fit Model"
+title: "B - Dev - Fit Model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-fit-model}
+  %\VignetteIndexEntry{b-dev-fit-model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

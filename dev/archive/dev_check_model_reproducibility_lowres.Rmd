@@ -1,5 +1,5 @@
 ---
-title: "dev - check low resolution model reproducibility"
+title: "C - Archive - check low resolution model reproducibility"
 author: "swann floc'hlay"
 date: '2023-03-09'
 output: rmarkdown::html_vignette
@@ -298,7 +298,7 @@ unlink(tmp_folder)
 ```{r eval=FALSE}
 # knit the Rmd as a compiled Rmd in vignettes
 knitr::knit(
-  input = here::here("dev/dev_check_model_reproducibility_lowres.Rmd"),
+  input = here::here("dev/archive/dev_check_model_reproducibility_lowres.Rmd"),
   output = here::here("vignettes/dev-check-model-reproducibility-lowres.Rmd")
 )
 ```

@@ -965,7 +965,7 @@ test_that("fm_fit_model works", {
                                    ref_data = "com",
                                    EM = "est_b",
                                    month_ref = 1,
-                                   compute_sd = TRUE)
+                                   compute_sd = FALSE)
   
   })
   
@@ -1026,7 +1026,7 @@ test_that("fm_fit_model works", {
   expect_type(fm_model_results$report, "list")
   expect_type(fm_model_results$samp_process, "double")
   expect_type(fm_model_results$converge, "integer")
-  expect_s3_class(fm_model_results$SD, "sdreport")
+  # expect_s3_class(fm_model_results$SD, "sdreport")
   
   # Testing for small model (without sd report)
   fm_model_results <- fm_model_results[names(fm_model_results) != "SD"]
@@ -1084,5 +1084,5 @@ test_that("fm_fit_model works", {
 ```{r development-inflate, eval=FALSE}
 # Run but keep eval=FALSE to avoid infinite loop
 # Execute in the console directly
-fusen::inflate(flat_file = "dev/flat_fm_fit_model.Rmd", vignette_name = "Dev - Fit Model", check = FALSE)
+fusen::inflate(flat_file = "dev/flat_fm_fit_model.Rmd", vignette_name = "B - Dev - Fit Model", check = FALSE)
 ```

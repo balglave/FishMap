@@ -1,8 +1,8 @@
 ---
-title: "Dev - Generate Graphs"
+title: "B - Dev - Generate Graphs"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dev-generate-graphs}
+  %\VignetteIndexEntry{b-dev-generate-graphs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

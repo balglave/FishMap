@@ -1,5 +1,5 @@
 ---
-title: "Dev - How to maintain my tests and-examples"
+title: "B - Dev - How to maintain my tests and-examples"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{dev-how-to-maintain-my-tests-and-examples}
@@ -51,7 +51,7 @@ These outputs are also reused in tests in the same way.
 
 The function examples are not based on this model and so the data will not be stored in `examples`.
 
-The results of the model are larger, so only part of it will be stored in `tests/testthat` for unit testing. See the section on how.
+The results of the model are larger, so it will be stored in `tests/testthat` for unit testing. See the section on how.
 
 ## How these results are stored
 
@@ -104,8 +104,8 @@ if(test_resolution == "small"){
   fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_small.rds", package = "FishMap"))
   
 }else if (test_resolution == "big") {
-  ## TODO use correct params for line below
-  # fm_data_inputs <- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)
+  
+fm_data_inputs <- readr::read_rds(system.file("examples", "part1_output_big.rds", package = "FishMap"))
 }
 
 # run part2
@@ -136,11 +136,9 @@ Code explanation:
 
 ### The "big" model
 
-**The unit tests for the "big" model are not yet implemented. So, this is not possible to show a example.**
+The unit tests are identical between the small and large model. They will compare the results of the current model with the recorded results (you will find a section below that explains how this works)
 
-Due to the amount of data, only some of it will need to be stored in the `tests/testthat` folder as this will only be used for testing. 
-
-Find more information about what we will have to check for the big model on this [comment](https://github.com/balglave/FishMap/issues/47#issuecomment-1470406550)
+The difference between the two model is in the storage of the data. In the case of the "big" model, they are stored in a sub-folder `data` which is located in `tests/testthat` as explained at the beginning.
 
 ### Updating outputs
 
@@ -160,7 +158,10 @@ if (Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS") == "TRUE") {
     readr::write_rds(x = fm_model_results,
                      file = file.path(output_inst_dir, paste0("part2_output_", test_resolution , ".rds")))
   }else if (test_resolution == "big") {
-    ## TODO what we need to check
+    
+    readr::write_rds(x = fm_data_inputs,
+                       file = file.path("data", paste0("part1_output_", test_resolution , ".rds")))
+    }
   }
   
 }
@@ -206,6 +207,22 @@ FISHMAP_UPDATE_TEST_OUTPUTS=FALSE
 ```
 - You can verify your `.Renviron` variable has been correctly reset with the command `Sys.getenv("FISHMAP_UPDATE_TEST_OUTPUTS")`. It should return `FALSE` now.
 - Run the unit tests again. There should be no more errors. If this is the case, then changes in your code have not been taken into account.
+
+## Choose a model for CI
+
+To run the "big" model in the CI, you will need to modify the `R-CMD-check.yaml` workflow in `.github/workflows`. 
+
+Proceed with the following steps:
+
+- Change the value of `FISHMAP_TEST_RESOLUTION` to "big".
+- Push on your branch with `[test] Running big model to tests changes`.
+
+> Because you are running a big model, this will take a long time.
+
+- If all goes well, change `FISHMAP_TEST_RESOLUTION` back to "small" and push on your branch.
+
+> Why: We don't want the big model to always run on the main branch.
+
 
 ## If you have a problem with the version of the package for INLA and TMB and the possible consequences for the test results
 
