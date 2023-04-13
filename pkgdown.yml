@@ -2,16 +2,16 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  a-user-running-fishmap: a-user-running-fishmap.html
+  b-dev-fit-model: b-dev-fit-model.html
+  b-dev-generate-graphs: b-dev-generate-graphs.html
+  b-dev-load-data: b-dev-load-data.html
+  c-archive-execute-main: c-archive-execute-main.html
   dev-check-model-reproducibility-highres-same-pkg-version: dev-check-model-reproducibility-highres-same-pkg-version.html
   dev-check-model-reproducibility-highres: dev-check-model-reproducibility-highres.html
   dev-check-model-reproducibility-lowres: dev-check-model-reproducibility-lowres.html
-  dev-execute-main: dev-execute-main.html
-  dev-fit-model: dev-fit-model.html
-  dev-generate-graphs: dev-generate-graphs.html
-  dev-load-data: dev-load-data.html
   dev_how_to_maintain_my_tests_and_examples: dev_how_to_maintain_my_tests_and_examples.html
-  user-running-fishmap: user-running-fishmap.html
-last_built: 2023-04-12T16:49Z
+last_built: 2023-04-13T09:53Z
 urls:
   reference: https://balglave.github.io/FishMap/reference
   article: https://balglave.github.io/FishMap/articles

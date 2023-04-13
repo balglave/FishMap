@@ -16,6 +16,21 @@
     <loc>https://balglave.github.io/FishMap/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://balglave.github.io/FishMap/articles/a-user-running-fishmap.html</loc>
+  </url>
+  <url>
+    <loc>https://balglave.github.io/FishMap/articles/b-dev-fit-model.html</loc>
+  </url>
+  <url>
+    <loc>https://balglave.github.io/FishMap/articles/b-dev-generate-graphs.html</loc>
+  </url>
+  <url>
+    <loc>https://balglave.github.io/FishMap/articles/b-dev-load-data.html</loc>
+  </url>
+  <url>
+    <loc>https://balglave.github.io/FishMap/articles/c-archive-execute-main.html</loc>
+  </url>
+  <url>
     <loc>https://balglave.github.io/FishMap/articles/dev-check-model-reproducibility-highres-same-pkg-version.html</loc>
   </url>
   <url>
@@ -25,25 +40,10 @@
     <loc>https://balglave.github.io/FishMap/articles/dev-check-model-reproducibility-lowres.html</loc>
   </url>
   <url>
-    <loc>https://balglave.github.io/FishMap/articles/dev-execute-main.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/articles/dev-fit-model.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/articles/dev-generate-graphs.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/articles/dev-load-data.html</loc>
-  </url>
-  <url>
     <loc>https://balglave.github.io/FishMap/articles/dev_how_to_maintain_my_tests_and_examples.html</loc>
   </url>
   <url>
     <loc>https://balglave.github.io/FishMap/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://balglave.github.io/FishMap/articles/user-running-fishmap.html</loc>
   </url>
   <url>
     <loc>https://balglave.github.io/FishMap/authors.html</loc>

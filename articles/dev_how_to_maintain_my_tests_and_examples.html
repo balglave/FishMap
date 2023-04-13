@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dev - How to maintain my tests and-examples • FishMap</title>
+<title>B - Dev - How to maintain my tests and-examples • FishMap</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Dev - How to maintain my tests and-examples">
+<script src="../pkgdown.js"></script><meta property="og:title" content="B - Dev - How to maintain my tests and-examples">
 <meta property="og:description" content="FishMap">
 <meta property="og:image" content="https://balglave.github.io/FishMap/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -57,31 +57,31 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/dev-check-model-reproducibility-highres-same-pkg-version.html">archive - check high resolution model reproducibility with same package version</a>
+      <a href="../articles/a-user-running-fishmap.html">A - User - running fishmap</a>
     </li>
     <li>
-      <a href="../articles/dev-check-model-reproducibility-highres.html">archive - check high resolution model reproducibility</a>
+      <a href="../articles/b-dev-fit-model.html">B - Dev - Fit Model</a>
     </li>
     <li>
-      <a href="../articles/dev-check-model-reproducibility-lowres.html">archive - check low resolution model reproducibility</a>
+      <a href="../articles/b-dev-generate-graphs.html">B - Dev - Generate Graphs</a>
     </li>
     <li>
-      <a href="../articles/dev-execute-main.html">archive - execute main</a>
+      <a href="../articles/b-dev-load-data.html">B - Dev - Load Data</a>
     </li>
     <li>
-      <a href="../articles/dev-fit-model.html">Dev - Fit Model</a>
+      <a href="../articles/c-archive-execute-main.html">C - Archive - execute main</a>
     </li>
     <li>
-      <a href="../articles/dev-generate-graphs.html">Dev - Generate Graphs</a>
+      <a href="../articles/dev-check-model-reproducibility-highres-same-pkg-version.html">C - Archive - check high resolution model reproducibility with same package version</a>
     </li>
     <li>
-      <a href="../articles/dev-load-data.html">Dev - Load Data</a>
+      <a href="../articles/dev-check-model-reproducibility-highres.html">C- Archive - check high resolution model reproducibility</a>
     </li>
     <li>
-      <a href="../articles/dev_how_to_maintain_my_tests_and_examples.html">Dev - How to maintain my tests and-examples</a>
+      <a href="../articles/dev-check-model-reproducibility-lowres.html">C - Archive - check low resolution model reproducibility</a>
     </li>
     <li>
-      <a href="../articles/user-running-fishmap.html">User - running fishmap</a>
+      <a href="../articles/dev_how_to_maintain_my_tests_and_examples.html">B - Dev - How to maintain my tests and-examples</a>
     </li>
   </ul>
 </li>
@@ -102,7 +102,8 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Dev - How to maintain my tests and-examples</h1>
+      <h1 data-toc-skip>B - Dev - How to maintain my tests
+and-examples</h1>
             
       
       
@@ -162,9 +163,9 @@ following code:</p>
 </h3>
 <p>The function examples are not based on this model and so the data
 will not be stored in <code>examples</code>.</p>
-<p>The results of the model are larger, so only part of it will be
-stored in <code>tests/testthat</code> for unit testing. See the section
-on how.</p>
+<p>The results of the model are larger, so it will be stored in
+<code>tests/testthat</code> for unit testing. See the section on
+how.</p>
 </div>
 </div>
 <div class="section level2">
@@ -229,8 +230,8 @@ results as before the changes.</li>
 <span>  <span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_small.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  </span>
 <span><span class="op">}</span><span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"big"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co">## TODO use correct params for line below</span></span>
-<span>  <span class="co"># fm_data_inputs &lt;- fm_load_data(k = 0.75, month_start = 10, month_end = 12, ...)</span></span>
+<span>  </span>
+<span><span class="va">fm_data_inputs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">read_rds</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"examples"</span>, <span class="st">"part1_output_big.rds"</span>, package <span class="op">=</span> <span class="st">"FishMap"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># run part2</span></span>
@@ -262,13 +263,13 @@ results as before the changes.</li>
 <div class="section level3">
 <h3 id="the-big-model-1">The “big” model<a class="anchor" aria-label="anchor" href="#the-big-model-1"></a>
 </h3>
-<p><strong>The unit tests for the “big” model are not yet implemented.
-So, this is not possible to show a example.</strong></p>
-<p>Due to the amount of data, only some of it will need to be stored in
-the <code>tests/testthat</code> folder as this will only be used for
-testing.</p>
-<p>Find more information about what we will have to check for the big
-model on this <a href="https://github.com/balglave/FishMap/issues/47#issuecomment-1470406550" class="external-link">comment</a></p>
+<p>The unit tests are identical between the small and large model. They
+will compare the results of the current model with the recorded results
+(you will find a section below that explains how this works)</p>
+<p>The difference between the two model is in the storage of the data.
+In the case of the “big” model, they are stored in a sub-folder
+<code>data</code> which is located in <code>tests/testthat</code> as
+explained at the beginning.</p>
 </div>
 <div class="section level3">
 <h3 id="updating-outputs">Updating outputs<a class="anchor" aria-label="anchor" href="#updating-outputs"></a>
@@ -284,30 +285,32 @@ the output read corresponds to the output you just created.</p>
 outputs thanks to the modification of an environment variable named
 <code>FISHMAP_UPDATE_TEST_OUTPUTS</code>. In the code of unit tests, you
 will see code as follows :</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Update expected outputs here</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># save output depending if we are in flat or in test</span></span>
-<span>  <span class="va">output_inst_dir</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"examples"</span><span class="op">)</span> </span>
-<span>  </span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"small"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_rds.html" class="external-link">write_rds</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">fm_model_results</span>,</span>
-<span>                     file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_inst_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"part2_output_"</span>, <span class="va">test_resolution</span> , <span class="st">".rds"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">test_resolution</span> <span class="op">==</span> <span class="st">"big"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co">## TODO what we need to check</span></span>
-<span>  <span class="op">}</span></span>
-<span>  </span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># check output is saved as rds</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"TRUE"</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  </span>
-<span>  </span>
-<span>  <span class="va">output_inst_dir</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst"</span>, <span class="st">"examples"</span><span class="op">)</span></span>
-<span>  </span>
-<span>  <span class="co">#' @description Test to check if we can save output</span></span>
-<span>  <span class="fu">expect_true</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">output_inst_dir</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"part2_output_"</span>, <span class="va">test_resolution</span> , <span class="st">".rds"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Update expected outputs here</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">Sys.getenv</span>(<span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span>) <span class="sc">==</span> <span class="st">"TRUE"</span>) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save output depending if we are in flat or in test</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  output_inst_dir <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"inst"</span>, <span class="st">"examples"</span>) </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (test_resolution <span class="sc">==</span> <span class="st">"small"</span>) {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    readr<span class="sc">::</span><span class="fu">write_rds</span>(<span class="at">x =</span> fm_model_results,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">file =</span> <span class="fu">file.path</span>(output_inst_dir, <span class="fu">paste0</span>(<span class="st">"part2_output_"</span>, test_resolution , <span class="st">".rds"</span>)))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span> (test_resolution <span class="sc">==</span> <span class="st">"big"</span>) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    readr<span class="sc">::</span><span class="fu">write_rds</span>(<span class="at">x =</span> fm_data_inputs,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">file =</span> <span class="fu">file.path</span>(<span class="st">"data"</span>, <span class="fu">paste0</span>(<span class="st">"part1_output_"</span>, test_resolution , <span class="st">".rds"</span>)))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># check output is saved as rds</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">Sys.getenv</span>(<span class="st">"FISHMAP_UPDATE_TEST_OUTPUTS"</span>) <span class="sc">==</span> <span class="st">"TRUE"</span>) {</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  output_inst_dir <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"inst"</span>, <span class="st">"examples"</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">#' @description Test to check if we can save output</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_true</span>(<span class="fu">file.exists</span>(<span class="fu">file.path</span>(output_inst_dir, <span class="fu">paste0</span>(<span class="st">"part2_output_"</span>, test_resolution , <span class="st">".rds"</span>))))</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Code explanation:</p>
 <ul>
 <li>The first part updates the rds file output in the “inst/examples”
@@ -350,6 +353,31 @@ the case, then changes in your code have not been taken into
 account.</li>
 </ul>
 </div>
+</div>
+<div class="section level2">
+<h2 id="choose-a-model-for-ci">Choose a model for CI<a class="anchor" aria-label="anchor" href="#choose-a-model-for-ci"></a>
+</h2>
+<p>To run the “big” model in the CI, you will need to modify the
+<code>R-CMD-check.yaml</code> workflow in
+<code>.github/workflows</code>.</p>
+<p>Proceed with the following steps:</p>
+<ul>
+<li>Change the value of <code>FISHMAP_TEST_RESOLUTION</code> to
+“big”.</li>
+<li>Push on your branch with
+<code>[test] Running big model to tests changes</code>.</li>
+</ul>
+<blockquote>
+<p>Because you are running a big model, this will take a long time.</p>
+</blockquote>
+<ul>
+<li>If all goes well, change <code>FISHMAP_TEST_RESOLUTION</code> back
+to “small” and push on your branch.</li>
+</ul>
+<blockquote>
+<p>Why: We don’t want the big model to always run on the main
+branch.</p>
+</blockquote>
 </div>
 <div class="section level2">
 <h2 id="if-you-have-a-problem-with-the-version-of-the-package-for-inla-and-tmb-and-the-possible-consequences-for-the-test-results">If you have a problem with the version of the package for INLA and
