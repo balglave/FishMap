@@ -158,11 +158,11 @@ test_that("fm_fit_model works", {
                                        samp_process = 0,
                                        b_constraint = 2,
                                        cov_samp_process = 0,
-                                       biomass_temporal = 0,
-                                       sampling_temporal = 1,
-                                       lf_link = 1,
-                                       ref_data = "sci",
-                                       EM = "fix_b",
+                                       biomass_temporal = 0, #changed
+                                       sampling_temporal = 1, # changed
+                                       lf_link = 1, # changed
+                                       ref_data = "sci", # changed
+                                       EM = "fix_b", # changed
                                        month_ref = 1,
                                        compute_sd = FALSE), 
       silent = TRUE)
@@ -175,7 +175,7 @@ test_that("fm_fit_model works", {
     #'@descripton Testing if `fm_fit_model` work with a third parameter set
     result_fit_model <- try(fm_fit_model(fm_data_inputs = fm_data_inputs,
                                        SE = 1,
-                                       data_source = 3,
+                                       data_source = 3, # changed
                                        data_obs = 2,
                                        samp_process = 0,
                                        b_constraint = 2,
