@@ -62,7 +62,9 @@ fm_shape_sci_data_st <- function(
     as.data.frame() %>%
     dplyr::select(-geometry)
 
-  survey_data_2$Sci.obs_spp <- survey_data_2$CatchWgt_spp/survey_data_2$HaulDur
+  ## Truc astuce
+  if(scientific_observation == "Density") survey_data_2$Sci.obs_spp <- Sci.obs_spp$CatchWgt_spp/Sci.obs_spp$SweptArea_km2
+  if(scientific_observation == "CPUE") survey_data_2$Sci.obs_spp <- survey_data_2$CatchWgt_spp/survey_data_2$HaulDur
 
   y_sci_i <- survey_data_2$Sci.obs_spp # scientific observation
   t_sci_i <- survey_data_2$t # time step
