@@ -226,3 +226,5 @@ fusen::inflate(flat_file = "dev/flat_main.Rmd", check = FALSE,
                vignette_name = "A - User - running fishmap")
 # To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use everytime needed`
 ```
+
+Ceci est un commentaire ajouté par Juliette le 25/04/2023.
