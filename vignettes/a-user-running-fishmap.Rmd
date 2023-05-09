@@ -33,7 +33,7 @@ This vignette runs a toy example of the FishMap spatio-temporal model. The execu
 
 ### input data
 
-FishMap requires three types of input data :
+FishMap requires three types of input data:
 
 * survey data
 * vms x logbook data
