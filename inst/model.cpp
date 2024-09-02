@@ -1,4 +1,4 @@
-// Space time 
+// Space time
 #include <TMB.hpp>
 //#include <atomic_math.hpp>  //for D_lgamma
 
@@ -66,7 +66,7 @@ Type dzinflognorm(Type x, Type meanlog, Type encounter_prob, Type log_notencount
   }else{
     if(give_log==false) Return = encounter_prob * dlnorm( x, meanlog - square(sdlog)/2, sdlog, false );
     if(give_log==true) Return = log(encounter_prob) + dlnorm( x, meanlog - square(sdlog)/2, sdlog, true );
-  } 
+  }
   return Return;
 }
 
@@ -84,7 +84,7 @@ Type dzinfgamma(Type x, Type posmean, Type encounter_prob, Type log_notencounter
   }else{
     if(give_log==false) Return = encounter_prob * dgamma( x, pow(cv,-2), posmean*pow(cv,2), false );
     if(give_log==true) Return = log(encounter_prob) + dgamma( x, pow(cv,-2), posmean*pow(cv,2), true );
-  } 
+  }
   return Return;
 }
 
@@ -112,12 +112,12 @@ Type objective_function<Type>::operator() (){
   using namespace R_inla;
   using namespace Eigen;
   using namespace density;
-  
-  
+
+
   ///////////////////////////////////
   // Model configurations and indices
   ///////////////////////////////////
-  
+
   DATA_FACTOR( options_vec );
   // Slot 0 - Prior (DEPRECATED): prior on random effects (0=SPDE_GMRF; 1=ICAR_GMRF)
   // Slot 1 - Alpha: Alpha (neighborhood)
@@ -143,10 +143,10 @@ Type objective_function<Type>::operator() (){
   // Slot 21 - biomassAR1: temporal AR1 process in the latent field of biomass (0: no temporal correlation, 1: AR1 temporal correlation)
   // Slot 22 - sampAR1: temporal AR1 process in the sampling intensity (0: no temporal correlation, 1: AR1 temporal correlation)
   // Slot 23 - anisotropy: the spatial random effects account for spatial anisotropy (0: no, 1: yes)
-  
+
   // Note: lot of deprecated stuff to keep the model relatively parcimonious
   // But I might come back to those ideas, so I left these options
-  
+
   // Indices
   DATA_INTEGER(n_x);
   DATA_INTEGER(n_t);
@@ -154,17 +154,17 @@ Type objective_function<Type>::operator() (){
   DATA_INTEGER(n_p);
   DATA_INTEGER(n_eta);
   int t,i,x,p;
-  
-  
+
+
   ///////////////////////////////////////////////////////////////////
   // ---------------------- Biomass field -------------------------//
   ///////////////////////////////////////////////////////////////////
-  
-  
+
+
   ////////
   // Data
   ////////
-  
+
   // SPDE objects
   DATA_STRUCT(spde,spde_t); // standard spde objects
   DATA_STRUCT(spde_aniso,spde_aniso_t); // anisotropic spde objects
@@ -173,8 +173,8 @@ Type objective_function<Type>::operator() (){
   DATA_MATRIX( cov_x_pred ); // Covariates
   DATA_IMATRIX(Aix_ij_pred); // Matrix and weight vector to relate mesh nodes to datapoints
   DATA_VECTOR(Aix_w_pred);
-  
-  
+
+
   /////////////
   // Parameters (random and fixed for the latent field only)
   /////////////
@@ -183,7 +183,7 @@ Type objective_function<Type>::operator() (){
   PARAMETER(beta_j0);
   PARAMETER_VECTOR(beta_j0year);
   PARAMETER_VECTOR(beta_j0season);
-  
+
   // Random effects
   PARAMETER_ARRAY(deltainput_x);
   PARAMETER_ARRAY(epsiloninput_x);
@@ -192,64 +192,64 @@ Type objective_function<Type>::operator() (){
   PARAMETER_VECTOR(logtaAR1_S);
   PARAMETER(rho_epsilon);
   PARAMETER_VECTOR(ln_Hdelta_input);
-  
-  
+
+
   /////////////////
   // derived values
   /////////////////
   // likelihood
   vector<Type> jnll_comp(5);
   jnll_comp.setZero();
-  
+
   // random effect matrices
   matrix<Type> delta_x( n_x , n_t );
   matrix<Type> epsilon_x( n_x , n_t );
   array<Type> delta_p(n_p, n_t);
   array<Type> epsilon_p(n_p, n_t);
-  
+
   delta_x.setZero();
   epsilon_x.setZero();
   delta_p.setZero();
   epsilon_p.setZero();
-  
-  
+
+
   // parameters definition
   vector<Type> logtau_S( n_S );
   vector<Type> logtauAR1_S( n_S );
   vector<Type> MargSD_S( n_S );
   vector<Type> MargSDAR1_S( n_S );
   vector<Type> Range_S( n_S );
-  
+
   for( int s=0; s<n_S; s++){
-    
+
     logtau_S(s) = logta_S(s) - logkappa_S(s);
     logtauAR1_S(s) = logtaAR1_S(s) - logkappa_S(s);
     Range_S(s) = sqrt(8) / exp(logkappa_S(s));
     MargSD_S(s) = 1 / sqrt(4*M_PI) / exp(logtau_S(s)) / exp(logkappa_S(s));
     MargSDAR1_S(s) = 1 / sqrt(4*M_PI) / exp(logtauAR1_S(s)) / exp(logkappa_S(s));
-    
+
   }
-  
+
   // Anisotropy elements
   matrix<Type> H_delta(2,2);
   H_delta(0,0) = exp(ln_Hdelta_input(0));
   H_delta(1,0) = ln_Hdelta_input(1);
   H_delta(0,1) = ln_Hdelta_input(1);
   H_delta(1,1) = (1+ln_Hdelta_input(1)*ln_Hdelta_input(1)) / exp(ln_Hdelta_input(0));
-  
+
   // introduce precision matrix
   SparseMatrix<Type> Q;
-  
+
   for(t=0; t<n_t; t++){
-    
+
     // transform random effect
     for( int x=0; x<n_x; x++){
-      
+
       if(options_vec(7)==0) delta_x(x,t) = deltainput_x(x,t) / exp(logtau_S(0));
       if(options_vec(7)==1) epsilon_x(x,t) = epsiloninput_x(x,t) / exp(logtauAR1_S(0));
-      
+
     }
-    
+
     // Precision matrices (perhaps the 2 lines below could be moved outside the loop, should try...)
     if(options_vec(9)==1) Q = Q_spde(spde_aniso, exp(logkappa_S(0)), H_delta );
     if(options_vec(9)==0) Q = Q_spde(spde, exp(logkappa_S(0)) );
@@ -257,80 +257,80 @@ Type objective_function<Type>::operator() (){
     if(options_vec(7)==0) jnll_comp(3) += GMRF(Q)(deltainput_x.col(t));
     if(options_vec(7)==1 & t == 0) jnll_comp(3) +=  GMRF(Q)(epsiloninput_x.col(t));
     if(options_vec(7)==1 & t > 0) jnll_comp(3) += GMRF(Q)(epsiloninput_x.col(t) - rho_epsilon*epsiloninput_x.col(t-1));
-    
+
     // Projection for plotting
     for( int Arow=0; Arow<Aix_ij_pred.rows(); Arow++ ){
-      
+
       int p = Aix_ij_pred(Arow,0);
       int x = Aix_ij_pred(Arow,1);
       if(options_vec(7)==0) delta_p(p,t) += Aix_w_pred(Arow) * delta_x(x,t);
       if(options_vec(7)==1) epsilon_p(p,t) += Aix_w_pred(Arow) * epsilon_x(x,t);
-    
+
     }
-    
+
   }
-  
+
   //-------------------------------
   // Prediction of the latent field
   //-------------------------------
-  
+
   matrix<Type> S_p(n_p,n_t);
   matrix<Type> linpredS_p(n_p,n_t);
   linpredS_p.setZero();
-  
+
   vector<Type> beta_j_t(cov_x_pred.row(0).size());
   Type sum_beta_j;
-  
+
   for(t=0; t<n_t; t++){
-    
+
     if(options_vec(6)==1){
       beta_j_t = beta_j.row(0);
     }else{
       beta_j_t = beta_j.row(t);
     }
     linpredS_p.col(t) = cov_x_pred * beta_j_t;
-    
+
   }
-  
+
   for(int t=0; t<n_t; t++){
     for(int p=0; p<n_p; p++){
       if(options_vec(10)==0) S_p(p,t) = exp(beta_j0 + beta_j0year(t) + beta_j0season(t) +  linpredS_p(p,t) + delta_p(p,t) + epsilon_p(p,t) );
       if(options_vec(10)==1) S_p(p,t) = plogis(beta_j0 + beta_j0year(t) + beta_j0season(t) +  linpredS_p(p,t) + delta_p(p,t) + epsilon_p(p,t) );
     }
   }
-  
-  
+
+
   ///////////////////////////////////////////////////////////////////
   // ---------------------- Commercial data -----------------------//
   ///////////////////////////////////////////////////////////////////
-  
+
   if(options_vec(1) == 3 | options_vec(1) == 1){
-    
+
     ////////
     // Data
     ////////
-    
+
     // indices
     DATA_INTEGER(n_com_i);
-    
+
     // commercial observations stuff
     DATA_MATRIX( cov_x_com );
     DATA_ARRAY( c_com_x );       	// Response (count) for each observation i (commercial data)
     DATA_VECTOR( y_com_i );       	// Response (0:not surveyed, 1:surveyed) for each site (commercial data)
     DATA_FACTOR( b_com_i );
     DATA_FACTOR( t_com_i );
-    DATA_VECTOR( q2_com ); 
+    DATA_VECTOR( q2_com );
     DATA_VECTOR( weights_com );
     DATA_MATRIX( cov_fb );  //design matrix for sampling of commercial data
     DATA_IMATRIX(Aix_ij_com);
     DATA_VECTOR(Aix_w_com);
-    
+
     // Point process stuff
     DATA_MATRIX( cov_fb_pred );
     DATA_VECTOR(W);
-    
+
     //////////////
-    // Parameters 
+    // Parameters
     //////////////
     PARAMETER_VECTOR( q1_com );
     PARAMETER_VECTOR( logSigma_com );
@@ -418,14 +418,9 @@ Type objective_function<Type>::operator() (){
 
       }
 
-      REPORT( q1_com );
-      REPORT( Sigma_com );
-      REPORT( encounterprob_com );
-      REPORT( log_notencounterprob_com );
-      REPORT( E_com );
 
     }
-    
+
     if(options_vec(10)==1){
 
 
@@ -442,16 +437,12 @@ Type objective_function<Type>::operator() (){
       }
     }
 
-    REPORT( delta_com_i );
-    REPORT( S_com_i );
-    REPORT( epsilon_com_i );
-
     //////////////////////////////////////
     // Sampling process of commercial data
     /////////////////////////////////////
-    
+
     if( options_vec(3) == 1){
-      
+
       // Parameters
       PARAMETER_MATRIX(beta_fb);
       PARAMETER_VECTOR(beta_fb0);
@@ -465,7 +456,7 @@ Type objective_function<Type>::operator() (){
       PARAMETER_ARRAY( psiinput_x );
       PARAMETER(rho_psi);
       PARAMETER_VECTOR(ln_Heta_input);
-      
+
       // Derived values
       Type b;
       array<Type> eta_x( n_x , n_t , n_eta );
@@ -505,24 +496,24 @@ Type objective_function<Type>::operator() (){
         for( int f=0; f<n_eta; f++){
 
           for(int s=0; s<n_x; s++){
-            
+
             eta_x(s,t,f) = etainput_x(s,t,f) / exp(logtau_S(f+1));
             etainput2_x(s) = etainput_x(s,t,f);
-            
+
             // Auto regression of random spatial effect
             if(options_vec(8)==1){
-              
+
               psiinput2_x(s) = psiinput_x(s,t,f);
               psiinput3_x(s) = psiinput_x(s,t-1,f);
               psi_x(s,t,f) = psiinput_x(s,t,f) / exp(logtauAR1_S(f+1));
-              
+
             }
-            
+
           }
-          
+
           if(options_vec(9)==1) Q = Q_spde(spde_aniso, exp(logkappa_S(f+1)), H_eta );
           if(options_vec(9)==0) Q = Q_spde(spde, exp(logkappa_S(f+1)) );
-          
+
           if(options_vec(8)==0) jnll_comp(4) += GMRF(Q)(etainput2_x); // latent field for sampling
           if(options_vec(8)==1){
             if(options_vec(9)==1) Q = Q_spde(spde_aniso, exp(logkappa_S(f+1)), H_eta );
@@ -530,7 +521,7 @@ Type objective_function<Type>::operator() (){
             if(t == 0) jnll_comp(4) += GMRF(Q)(psiinput2_x); // latent field for sampling
             if(t > 0) jnll_comp(4) += GMRF(Q)(psiinput2_x - rho_psi*psiinput3_x); // latent field for sampling
           }
-          
+
         }
 
       }
@@ -556,32 +547,32 @@ Type objective_function<Type>::operator() (){
 
       // // Continuous version of samplign process
       // for(int i=0; i<n_com_i; i++){
-      // 
+      //
       //   if(options_vec(6)==1){
       //     linpredR_i = cov_fb * beta_fb(b_com_i(i));
       //   }else{
       //     linpredR_i(i) = 0;
       //   }
-      // 
+      //
       //   if(options_vec(4)==1){
-      // 
+      //
       //     b=exp(par_b(t_com_i(i),b_com_i(i))) + exp(par_bseason(t_com_i(i),b_com_i(i))) + exp(par_byear(t_com_i(i),b_com_i(i))) + exp(par_bseasonyear(t_com_i(i),b_com_i(i)));
-      // 
+      //
       //   }
-      // 
+      //
       //   if(options_vec(4)==2){
-      // 
+      //
       //     b=par_b(t_com_i(i),b_com_i(i)) + par_bseason(t_com_i(i),b_com_i(i)) + par_byear(t_com_i(i),b_com_i(i)) + par_bseasonyear(t_com_i(i),b_com_i(i));
-      // 
+      //
       //   }
-      // 
+      //
       //   if(options_vec(10)==0) fact_S = b*(log(S_com_i(i)));
       //   if(options_vec(10)==1) fact_S = b*(logit(S_com_i(i)));
-      // 
+      //
       //   log_lambda_i(i) = beta_fb0(b_com_i(i)) + beta_fb0year(t_com_i(i),b_com_i(i)) + beta_fb0season(t_com_i(i),b_com_i(i)) + fact_S + linpredR_i(i) + eta_i(i) +  psi_i(i); //
       //   jnll_comp(2) -= weights_com(0) * ( log_lambda_i(i) ); // log density of poisson process (see Diggle (2013))          }
       //   // For standardisation constant, see below
-      // 
+      //
       // }
 
 
@@ -631,57 +622,44 @@ Type objective_function<Type>::operator() (){
             if(options_vec(10)==1) fact_S = b*(logit(S_com_i(i)));
 
             lambda_p(p,t,f) = exp(  beta_fb0(f) + beta_fb0year(t,f) + beta_fb0season(t,f) + fact_S + linpredR_p(p) + eta_p(p,t,f) + psi_p(p,t,f));
-            
-            
+
+
             if((!isNA(c_com_x(p,t,f)))) jnll_comp(2) -= (Type(1)-lambda_p(p,t,f) + c_com_x(p,t,f)*log(lambda_p(p,t,f)));
-            
+
           }
 
         }
 
       }
 
-      // Outputs
-      REPORT( lambda_p );
-      REPORT(beta_fb0);
-      REPORT(beta_fb0year);
-      REPORT(beta_fb0season);
-      REPORT(linpredR_p);
-      REPORT( beta_fb );
-      REPORT( par_b );
-      REPORT( par_bseason );
-      REPORT( par_byear );
-      REPORT( par_bseasonyear );
-      REPORT( eta_p );
-      REPORT( psi_p );
-      
+
     }
-    
+
   }
-  
+
   //////////////////////////////////// Scientific /////////////////////////////////////////
-  
+
   if(options_vec(1) == 2 | options_vec(1) == 1){
-    
+
     ////////
     // Data
     ////////
-    
+
     DATA_INTEGER(n_sci_i);
     DATA_MATRIX( cov_x_sci );
     DATA_VECTOR( y_sci_i );
     DATA_VECTOR( q2_sci );
     DATA_FACTOR( t_sci_i );
-    
+
     //////////////
-    // Parameters 
+    // Parameters
     //////////////
     PARAMETER(logSigma_sci);
     PARAMETER_VECTOR(q1_sci);
     PARAMETER_VECTOR( k_sci );
     DATA_IMATRIX(Aix_ij_sci);
     DATA_VECTOR(Aix_w_sci);
-    
+
     /////////////////
     // derived values
     /////////////////
@@ -763,12 +741,6 @@ Type objective_function<Type>::operator() (){
       //////////
       // Outputs
       //////////
-      REPORT( q1_sci );
-      REPORT( Sigma_sci );
-
-      REPORT( E_sci );
-      REPORT( encounterprob_sci );
-      REPORT( log_notencounterprob_sci );
 
     }
 
@@ -788,43 +760,28 @@ Type objective_function<Type>::operator() (){
 
     }
 
-    REPORT( delta_sci_i);
-    REPORT( S_sci_i);
-    REPORT( epsilon_sci_i );
-    
   }
-  
+
   // Total objective
   Type jnll;
   int n_jnll = jnll_comp.size();
   for(int i=0; i<n_jnll; i++){
     jnll += jnll_comp(i);
   }
-  
+
   vector<Type> total_abundance(n_t);
   for(int t=0; t<n_t; t++){
     total_abundance(t) = S_p.col(t).sum();
   }
-  
+
   // Reporting
   REPORT( S_p );
-  REPORT( total_abundance );
-  REPORT( Range_S );
-  REPORT( MargSD_S );
-  REPORT( MargSDAR1_S );
-  REPORT( beta_j );
-  REPORT( delta_p );
-  REPORT( delta_x );
-  REPORT( epsilon_p );
-  REPORT( epsilon_x );
-  
-  REPORT( jnll_comp );
-  
+
   if(options_vec(0)==1){
-    ADREPORT( total_abundance );
-    ADREPORT(S_p);
+    // ADREPORT( total_abundance );
+    // ADREPORT(S_p);
   }
-  
-  
+
+
   return jnll;
 }

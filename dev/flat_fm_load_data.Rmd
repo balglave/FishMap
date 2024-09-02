@@ -58,15 +58,12 @@ fm_build_domain_mesh_spde <- function(
     resol,
     grid_projection,
     study_domain,
-    create_mesh = c("from_shapefile", "from_data"),
+    create_mesh = "from_shapefile",
     k,
     vmslogbook_data,
     study_domain_sf,
     Alpha
 ) {
-  
-  # Check create_mesh value
-  create_mesh <- match.arg(create_mesh)
   
   ## Build regular grid objects
   # Create raster of the grid
@@ -106,7 +103,7 @@ fm_build_domain_mesh_spde <- function(
       loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
       boundary=list(bound,bound2),
       max.edge=c(1/k, 2/k), ## mandatory
-      cutoff=0.1/k,crs = inla.CRS(projargs = CRS(grid_projection))) ## good to have >0
+      cutoff=0.1/k,crs = CRS(grid_projection)) ## good to have >0
     
   }else if(create_mesh == "from_data"){
     
