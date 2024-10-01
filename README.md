@@ -14,7 +14,7 @@ The goal of FishMap is to map fish distribution using both preferentially sample
 
 ## Installation
 
-**N.b.** The package is currently being updated as part of the functions developped rely on the `raster` and `sp` packages
+**N.b.** The package is currently being updated as part of the functions developped rely on the `raster` and `sp` packages.
 
 ### Dependencies
 
