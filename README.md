@@ -12,9 +12,9 @@ coverage](https://codecov.io/gh/balglave/FishMap/branch/main/graph/badge.svg)](h
 
 The goal of FishMap is to map fish distribution using both preferentially sampled data (*e.g.*, commercial catch data) and standardized data (*e.g.*, survey data). It is based on a joint spatio-temporal hierarchical model that accounts for preferential sampling - see [Alglave et al. (2022)](https://academic.oup.com/icesjms/article/79/4/1133/6543974) and [Alglave et al. (2023)](https://cdnsciencepub.com/doi/abs/10.1139/cjfas-2022-0110). The inference of the spatio-temporal field is performed using `TMB` and the [SPDE approach](https://rss.onlinelibrary.wiley.com/doi/10.1111/j.1467-9868.2011.00777.x) to enhance the algorithm's speed.
 
-## Installation
-
 **N.b.** The package is currently being updated as some functions rely on the packages `rgdal`, `raster` and `sp` that are now deprecated.
+
+## Installation
 
 ### Dependencies
 
