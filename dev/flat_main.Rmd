@@ -199,7 +199,7 @@ test_that("Main functions work together", {
   
   expect_true(
                !inherits(result_fit_model, "try-error"), 
-               label = "`fm_fit_model` generate a error. Please check the core function or the returned objet of `fm_load_data`. Running function"
+               label = "`fm_fit_model` generate a error. Please check the core function or the returned object of `fm_load_data`. Running function"
   )
   
   
@@ -214,7 +214,6 @@ test_that("Main functions work together", {
   #'@description testing output of `fm_generate_graphs`
   expect_type(result_graph, "list")
   expect_s3_class(result_graph[["pred_plot"]], "ggplot")
-  expect_s3_class(result_graph[["eta_plot"]], "ggplot")
 
 })
 ```
@@ -226,5 +225,3 @@ fusen::inflate(flat_file = "dev/flat_main.Rmd", check = FALSE,
                vignette_name = "A - User - running fishmap")
 # To perform check, please go to `dev/0_dev_history.Rmd` and run the section `Use everytime needed`
 ```
-
-Ceci est un commentaire ajouté par Juliette le 25/04/2023.

@@ -1,0 +1,68 @@
+flat_fm_fit_model.Rmd:
+  path: dev/flat_fm_fit_model.Rmd
+  state: active
+  R:
+  - R/fm_build_data_params_map.R
+  - R/fm_fit_model.R
+  tests:
+  - tests/testthat/test-fm_build_data_params_map.R
+  - tests/testthat/test-fm_fit_model.R
+  vignettes: vignettes/b-dev-fit-model.Rmd
+  inflate:
+    flat_file: dev/flat_fm_fit_model.Rmd
+    vignette_name: B - Dev - Fit Model
+    open_vignette: true
+    check: false
+    document: true
+    overwrite: ask
+    clean: ask
+flat_fm_generate_graphs.Rmd:
+  path: dev/flat_fm_generate_graphs.Rmd
+  state: active
+  R: R/fm_generate_graphs.R
+  tests: tests/testthat/test-fm_generate_graphs.R
+  vignettes: vignettes/b-dev-generate-graphs.Rmd
+  inflate:
+    flat_file: dev/flat_fm_generate_graphs.Rmd
+    vignette_name: B - Dev - Generate Graphs
+    open_vignette: true
+    check: false
+    document: true
+    overwrite: ask
+    clean: ask
+flat_fm_load_data.Rmd:
+  path: dev/flat_fm_load_data.Rmd
+  state: active
+  R:
+  - R/fm_build_domain_mesh_spde.R
+  - R/fm_load_data.R
+  - R/fm_shape_sci_data_st.R
+  - R/fm_shape_vms_logbook_data_st.R
+  tests:
+  - tests/testthat/test-fm_build_domain_mesh_spde.R
+  - tests/testthat/test-fm_shape_sci_data_st.R
+  - tests/testthat/test-fm_shape_vms_logbook_data_st.R
+  - tests/testthat/test-fm_load_data.R
+  vignettes: vignettes/b-dev-load-data.Rmd
+  inflate:
+    flat_file: dev/flat_fm_load_data.Rmd
+    vignette_name: B - Dev - Load Data
+    open_vignette: true
+    check: false
+    document: true
+    overwrite: ask
+    clean: ask
+flat_main.Rmd:
+  path: dev/flat_main.Rmd
+  state: active
+  R: []
+  tests: tests/testthat/test-fm_generate_graphs--generate-output-graphs.R
+  vignettes: vignettes/a-user-running-fishmap.Rmd
+  inflate:
+    flat_file: dev/flat_main.Rmd
+    vignette_name: A - User - running fishmap
+    open_vignette: true
+    check: false
+    document: true
+    overwrite: ask
+    clean: ask

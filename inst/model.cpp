@@ -632,6 +632,9 @@ Type objective_function<Type>::operator() (){
 
       }
 
+      if(options_vec(3)==1){
+        REPORT( lambda_p );
+      }
 
     }
 
@@ -781,7 +784,6 @@ Type objective_function<Type>::operator() (){
     // ADREPORT( total_abundance );
     // ADREPORT(S_p);
   }
-
 
   return jnll;
 }

@@ -8,10 +8,12 @@ editor_options:
 ```{r development, include=FALSE}
 library(testthat)
 library(dplyr)
+library(fmesher)
 library(INLA)
 library(ggplot2)
 library(sf)
 library(stringr)
+library(terra)
 library(tidyr)
 library(TMB)
 library(tictoc)
@@ -36,13 +38,13 @@ This function will construct the mesh of the spatial domain.
 #' @importFrom dplyr mutate select
 #' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
 #' @importFrom sf st_as_sf st_intersects st_join st_coordinates
-#' @importFrom sp SpatialPointsDataFrame CRS
 #' @importFrom methods as
+#' @importFrom terra ext ncell as.points as.polygons values rast
 #' 
 #' @inheritParams fm_load_data
 #' @param grid_limit extent object Limits of the grid for the spatial domain
 #' @param resol numeric Resolution of the discretization grid
-#' @param grid_projection character A character string of projection arguments for `sp::CRS()`
+#' @param grid_projection character A character string of projection arguments for `sf` and `terra` objects
 #' @param study_domain sf data.frame Study_domain object
 #' @param create_mesh character Method for creating mesh (either `from_shapefile` the mesh will be more regular on the grid or `from_data` the mesh will be denser in the areas where there are data). Default is `from_shapefile`
 #' @param k k
@@ -67,19 +69,19 @@ fm_build_domain_mesh_spde <- function(
   
   ## Build regular grid objects
   # Create raster of the grid
-  grid <- raster::raster(grid_limit,res = resol,crs = grid_projection)
+  grid <- rast(ext = grid_limit, res = resol, crs = grid_projection)
   
   # Create spatialpolygon based on raster
-  gridpolygon <- raster::rasterToPolygons(grid)
+  gridpolygon <- as.polygons(grid, dissolve = FALSE)
   gridpolygon$layer <- c(1:length(gridpolygon$layer))
   gridpolygon_sf <- st_as_sf(gridpolygon)
   
   # Create spatial points based on raster
-  raster_to_point <- raster::rasterToPoints(grid)
-  datapoint <- SpatialPointsDataFrame(coords=raster_to_point,
-                                      data=data.frame(layer = 1:nrow(raster_to_point)),
-                                      proj4string=CRS(grid_projection))
-  datapoint_sf <- st_as_sf(datapoint)
+  values(grid) <- 1:ncell(grid)
+  raster_to_point <- as.points(grid)
+  raster_to_point$layer <- 1:nrow(raster_to_point)
+  crs(raster_to_point) <- grid_projection
+  datapoint_sf <- st_as_sf(raster_to_point)
   datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
   
   # Cross grid with study domain
@@ -145,7 +147,7 @@ fm_build_domain_mesh_spde <- function(
   spde <- (inla.spde2.matern(mesh, alpha=Alpha)$param.inla)[c("M0","M1","M2")]
   
   ## Prediction mesh and related spde objects
-  mesh_pred <- inla.mesh.create( loc_x[,c('long','lati')] )
+  mesh_pred <- fm_rcdt_2d(as.matrix(loc_x[,c('long','lati')] ))
   W <- rep(1,nrow(loc_x))
   W <- c(W,rep(0,mesh_pred$n - nrow(loc_x)))
   
@@ -216,7 +218,7 @@ test_that("fm_build_domain_mesh_spde works", {
   study_domain <- readr::read_rds(study_domain_file)
   
   # mesh grid
-  grid_limit <- raster::extent(c(-6, 0, 42, 48))
+  grid_limit <- ext(c(-6, 0, 42, 48))
   
   ## run function
   result <- fm_build_domain_mesh_spde(
@@ -273,7 +275,7 @@ This fonction will shape the scientific data according to the selected time wind
 #' 
 #' @param survey_data_0 tibble Scientific data
 #' @param time.step_df data.frame Time window used
-#' @param grid_projection character A character string of projection arguments for `sp::CRS()`
+#' @param grid_projection character A character string of projection arguments for `sf`
 #' @param gridpolygon_sf sf data.frame Spatialpolygon based on raster
 #' @param scientific_observation character Measure unit of scientific observation (either `CPUE` or `Density`). Default is `CPUE`
 #' @param Sci.obs_spp data.frame Scientific observation data, used when scientific observation unit is `Density`
@@ -383,7 +385,7 @@ test_that("fm_shape_sci_data_st works", {
   study_domain <- readr::read_rds(study_domain_file)
   
   # mesh grid
-  grid_limit <- raster::extent(c(-6, 0, 42, 48))
+  grid_limit <- ext(c(-6, 0, 42, 48))
   
   # `fm_build_domain_mesh_spde()` call
   domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
@@ -467,7 +469,7 @@ test_that("fm_shape_sci_data_st works", {
 #' 
 #' @param vmslogbook_data_0 tibble VMS x LogBook data
 #' @param time.step_df data.frame Time window used
-#' @param grid_projection character A character string of projection arguments for `sp::CRS()`
+#' @param grid_projection character A character string of projection arguments for `sf`
 #' @param gridpolygon_sf sf data.frame Spatialpolygon based on raster
 #' @param loc_x data.frame Intersection of grid with study domain
 #' @param mesh inla.mesh Spatial grid of observations
@@ -603,7 +605,7 @@ test_that("fm_shape_vms_logbook_data_st works", {
   study_domain <- readr::read_rds(study_domain_file)
   
   # mesh grid
-  grid_limit <- raster::extent(c(-6, 0, 42, 48))
+  grid_limit <- ext(c(-6, 0, 42, 48))  
   
   # `fm_build_domain_mesh_spde()` call
   domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
@@ -786,7 +788,7 @@ fm_load_data <- function(species,
   grid_ymin <- grid_ymin
   grid_ymax <- grid_ymax
   
-  grid_limit <- raster::extent(
+  grid_limit <- terra::ext(
     c(grid_xmin,
       grid_xmax,
       grid_ymin,
@@ -1109,14 +1111,6 @@ test_that("fm_load_data works", {
   expect_type(fm_data_inputs[["n_survey"]], "double")
   expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
   
-  # retrieve tmp name of mesh dir, which changes for each execution
-  mesh_dir <- dirname(path = fm_data_inputs$mesh$meta$prefix)
-  mesh_aniso_dir <- dirname(path = fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix)
-  
-  #' @description Testing that tmpdir of the mesh exists
-  expect_true(dir.exists(mesh_dir))
-  expect_true(dir.exists(mesh_aniso_dir))
-  
   # Testing for small model
   if(test_resolution == "small"){
     
@@ -1131,12 +1125,6 @@ test_that("fm_load_data works", {
       file.path("data", paste0("part1_output_", test_resolution , ".rds"))
       )
     }
-    
-    # homogenize tmp dir value tested in above test
-    expected_outputs$mesh$meta$prefix <-
-      fm_data_inputs$mesh$meta$prefix
-    expected_outputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix <-
-      fm_data_inputs$MeshList_aniso$anisotropic_spde$mesh$meta$prefix
     
     # sort list and data frame elements to avoid order discrepancies
     resort_all <- function(x) {

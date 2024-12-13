@@ -19,13 +19,12 @@ Imports:
     INLA,
     magrittr,
     methods,
-    raster,
     rgdal,
     sf,
-    sp,
     splancs,
     stats,
     stringr,
+    terra,
     tictoc,
     tidyr,
     TMB,
@@ -41,5 +40,6 @@ VignetteBuilder:
 Additional_repositories: https://inla.r-inla-download.org/R/stable
 Config/FishMap/INLA/version: 22.12.16
 Config/FishMap/TMB/version: 1.9.2
+Config/fusen/version: 0.6.0
 Encoding: UTF-8
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.2
