@@ -37,6 +37,7 @@ This function will construct the mesh of the spatial domain.
 #' 
 #' @importFrom dplyr mutate select
 #' @importFrom INLA inla.nonconvex.hull inla.mesh.2d inla.CRS inla.spde2.matern inla.mesh.create inla.spde.make.A
+#' @importFrom fmesher fm_rcdt_2d
 #' @importFrom sf st_as_sf st_intersects st_join st_coordinates
 #' @importFrom methods as
 #' @importFrom terra ext ncell as.points as.polygons values rast
@@ -77,10 +78,10 @@ fm_build_domain_mesh_spde <- function(
   gridpolygon_sf <- st_as_sf(gridpolygon)
   
   # Create spatial points based on raster
-  values(grid) <- 1:ncell(grid)
+  terra::values(grid) <- 1:ncell(grid)
   raster_to_point <- as.points(grid)
   raster_to_point$layer <- 1:nrow(raster_to_point)
-  crs(raster_to_point) <- grid_projection
+  terra::crs(raster_to_point) <- grid_projection
   datapoint_sf <- st_as_sf(raster_to_point)
   datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
   
@@ -105,7 +106,7 @@ fm_build_domain_mesh_spde <- function(
       loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
       boundary=list(bound,bound2),
       max.edge=c(1/k, 2/k), ## mandatory
-      cutoff=0.1/k,crs = CRS(grid_projection)) ## good to have >0
+      cutoff=0.1/k,crs = grid_projection) ## good to have >0
     
   }else if(create_mesh == "from_data"){
     

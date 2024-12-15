@@ -15,6 +15,7 @@ Description: Combine survey and VMS data to model the distribution of fish
 License: MIT + file LICENSE
 Imports: 
     dplyr,
+    fmesher,
     ggplot2,
     INLA,
     magrittr,
