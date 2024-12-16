@@ -29,7 +29,6 @@ This function will generate graphs of the model predictions. It will use as inpu
 #' @importFrom stringr str_replace
 #' @importFrom tictoc tic toc
 #' @importFrom tidyr pivot_longer starts_with
-#' @importFrom rgdal projInfo
 #' 
 #' @return list A named list of all generated graphs (step 3)
 #' 

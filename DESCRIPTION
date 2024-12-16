@@ -20,7 +20,6 @@ Imports:
     INLA,
     magrittr,
     methods,
-    rgdal,
     sf,
     splancs,
     stats,

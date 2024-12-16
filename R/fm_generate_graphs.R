@@ -10,7 +10,6 @@
 #' @importFrom stringr str_replace
 #' @importFrom tictoc tic toc
 #' @importFrom tidyr pivot_longer starts_with
-#' @importFrom rgdal projInfo
 #' 
 #' @return list A named list of all generated graphs (step 3)
 #' 
