@@ -28,6 +28,11 @@ jobs:
           extra-packages: any::covr
           needs: coverage
 
+      - name: Install system dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y libeigen3-dev
+
       - name: Test coverage
         run: |
           covr::codecov(
