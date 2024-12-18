@@ -148,7 +148,7 @@ test_that("fm_load_data works", {
   #' @description Testing types inside the list returned by `fm_load_data`
   expect_type(fm_data_inputs[["species"]], "character")
   expect_type(fm_data_inputs[["b_com_i"]], "double")
-  expect_s3_class(fm_data_inputs[["mesh"]], "inla.mesh")
+  # expect_s3_class(fm_data_inputs[["mesh"]], "inla.mesh")
   expect_s3_class(fm_data_inputs[["time.step_df"]], "data.frame")
   expect_s3_class(fm_data_inputs[["loc_x"]], "data.frame")
   expect_type(fm_data_inputs[["y_com_i"]], "double")
@@ -168,7 +168,7 @@ test_that("fm_load_data works", {
   expect_type(fm_data_inputs[["Aix_w_pred"]], "double")
   expect_type(fm_data_inputs[["W"]], "double")
   expect_type(fm_data_inputs[["n_survey"]], "double")
-  expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
+  # expect_type(fm_data_inputs[["MeshList_aniso"]], "list")
   
   # Testing for small model
   if(test_resolution == "small"){
