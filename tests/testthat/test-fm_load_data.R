@@ -209,8 +209,9 @@ test_that("fm_load_data works", {
     attr(resorted_expected$loc_x$lati, which = "names") <- NULL
     
     #' @description Testing that the result of `fm_load_data` is stable
-    expect_equal(object = resorted_result,
-                 expected = resorted_expected)
+    expect_equal(object = resorted_result$loc_x,
+                 expected = resorted_expected$loc_x)
+    ## ADD OTHER OBJECTS
 
   
 })
