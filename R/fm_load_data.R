@@ -15,6 +15,8 @@
 #' @param time_step character Time step for the model (either `Month` for monthly time step or `Quarter` for quarterly time step). Default is `Month`
 #' @param k numeric Parameter controlling the number of knots of the mesh. The higher the denser.
 #' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  numeric Limitation of the grid for the spatial domain
+#' @param n_survey number of reference data (e.g. surveys) included in the analysis
+#' @param scientific_observation either "CPUE" or "Density". If "CPUE", then the scientific observations are expressed as catch per unit of effort (typically in kg / hour). This allows to be homogeneous with commercial observations that are CPUE. If "density", the scientific observations are expressed as catch divided by the area swept (as is classicaly done in fisheries science for scientific data), but units might not be homogeneous with the commercial data.
 #' @param seed integer The seed controlling for random effect. Default is 29510.
 #' 
 #' @importFrom dplyr ungroup select filter arrange mutate
@@ -85,6 +87,8 @@ fm_load_data <- function(species,
                          grid_xmax,
                          grid_ymin,
                          grid_ymax,
+                         n_survey = 1,
+                         scientific_observation = "CPUE",
                          seed = 29510
 ) {
   ## Load data
@@ -100,8 +104,6 @@ fm_load_data <- function(species,
   time_step <- match.arg(time_step)
   
   # Scientific data
-  n_survey <- 1 # number of surveys
-  scientific_observation <- "CPUE" # 'CPUE' or 'Density'
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
   # 'VMS x logbook' data

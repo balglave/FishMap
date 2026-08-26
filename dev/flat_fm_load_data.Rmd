@@ -71,21 +71,22 @@ fm_build_domain_mesh_spde <- function(
   ## Build regular grid objects
   # Create raster of the grid
   grid <- rast(ext = grid_limit, res = resol, crs = grid_projection)
-  
-  # Create spatialpolygon based on raster
+
+  ## Create spatialpolygon based on raster
+  # raster --> sf
   gridpolygon <- as.polygons(grid, dissolve = FALSE)
-  gridpolygon$layer <- c(1:length(gridpolygon$layer))
+  gridpolygon$layer <- 1:ncell(grid)
   gridpolygon_sf <- st_as_sf(gridpolygon)
   
-  # Create spatial points based on raster
-  terra::values(grid) <- 1:ncell(grid)
+  ## Create spatial points based on raster
+  # raster --> sf
   raster_to_point <- as.points(grid)
   raster_to_point$layer <- 1:nrow(raster_to_point)
-  terra::crs(raster_to_point) <- grid_projection
   datapoint_sf <- st_as_sf(raster_to_point)
-  datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,]
+  datapoint_sf_2 <- datapoint_sf[st_intersects(datapoint_sf,study_domain) %>% lengths > 0,] # intersect datapoint with spatial domain
   
-  # Cross grid with study domain
+  ## Cross grid with study domain and create dataframe of the locations
+  # sf --> data.frame
   datapoint_sf_2 <- st_join(datapoint_sf_2,study_domain)
   datapoint_2 <- datapoint_sf_2 %>%
     mutate(long = st_coordinates(.)[,1],
@@ -94,20 +95,22 @@ fm_build_domain_mesh_spde <- function(
     dplyr::select(-geometry)
   loc_x <- datapoint_2 %>% mutate(cell = 1:nrow(datapoint_2))
   
-  ## Build mesh
-  # mesh boundary
+  ## Build boundary fo the domain to build the mesh
   bound <- inla.nonconvex.hull(unique(as.matrix(datapoint_2[,c("long","lati")])),convex=-0.05)
   bound2 <- inla.nonconvex.hull(unique(as.matrix(datapoint_2[,c("long","lati")])),convex=-0.2)
   
-  # create mesh
+  ## create mesh
+  # from the spatial domaine
   if(create_mesh == "from_shapefile"){
     
     mesh <- inla.mesh.2d(
-      loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide locations or domain
+      loc=as.matrix(datapoint_2[,c("long","lati")]), ## provide regular locations over the domain domain
       boundary=list(bound,bound2),
-      max.edge=c(1/k, 2/k), ## mandatory
-      cutoff=0.1/k,crs = grid_projection) ## good to have >0
+      max.edge=c(1/k, 2/k),
+      cutoff=0.1/k,
+      crs = grid_projection)
     
+  # from the data
   }else if(create_mesh == "from_data"){
     
     ptvms_wgs84_sf <- st_as_sf(vmslogbook_data,coords = c("long","lati"),crs=grid_projection)
@@ -115,7 +118,7 @@ fm_build_domain_mesh_spde <- function(
     ptvms_wgs84_sf_2 <- st_join(ptvms_wgs84_sf_2,study_domain_sf)
     
     mesh <- inla.mesh.2d(
-      as.matrix(st_coordinates(ptvms_wgs84_sf_2)), ## provide locations or domain
+      as.matrix(st_coordinates(ptvms_wgs84_sf_2)), ## provide locations oof data
       boundary=list(bound,bound2),
       max.edge=c(1/k, 2/k), ## mandatory
       cutoff=0.1/k)
@@ -136,7 +139,7 @@ fm_build_domain_mesh_spde <- function(
   Tri_Area = rep(NA, nrow(E0))
   crossprod_fn = function(Vec1,Vec2) abs(det( rbind(Vec1,Vec2) ))
   for(i in 1:length(Tri_Area)) Tri_Area[i] = crossprod_fn( E0[i,],E1[i,] )/2   # T = area of each triangle
-  anisotropic_spde = inla.spde2.matern(anisotropic_mesh, alpha=2)
+  anisotropic_spde = inla.spde2.matern(anisotropic_mesh, alpha=Alpha)
   MeshList_aniso <- list(anisotropic_spde = anisotropic_spde,
                          Tri_Area = Tri_Area,
                          E0 = E0,
@@ -693,6 +696,12 @@ This function prepares all the necessary output for the model fitting. It will f
 #' @param time_step character Time step for the model (either `Month` for monthly time step or `Quarter` for quarterly time step). Default is `Month`
 #' @param k numeric Parameter controlling the number of knots of the mesh. The higher the denser.
 #' @param grid_xmin,grid_xmax,grid_ymin,grid_ymax  numeric Limitation of the grid for the spatial domain
+#' @param n_survey number of reference data (e.g. surveys) included in the analysis
+#' @param scientific_observation either "CPUE" or "Density". If "CPUE", then the scientific observations are expressed as catch per unit of effort (typically in kg / hour). This allows to be homogeneous with commercial observations that are CPUE. If "density", the scientific observations are expressed as catch divided by the area swept (as is classicaly done in fisheries science for scientific data), but units might not be homogeneous with the commercial data.
+#' @param grid_projection projection of the grid and other data. Default is "+proj=longlat +datum=WGS84".
+#' @param resol resolution of the discretization grid. Default is 0.05°
+#' @param create_mesh either "from_shapefile" or "from_data". "from_shapefile": the mesh is built based on the spatial domain and will be more regular, "from_data": the mesh will be denser in the areas where there are data.
+#' @param Alpha parameter controlling the smoothness parameter of the Matérn covariance function (see Lindgren et al., 2011)
 #' @param seed integer The seed controlling for random effect. Default is 29510.
 #' 
 #' @importFrom dplyr ungroup select filter arrange mutate
@@ -720,6 +729,12 @@ fm_load_data <- function(species,
                          grid_xmax,
                          grid_ymin,
                          grid_ymax,
+                         n_survey = 1,
+                         scientific_observation = "CPUE",
+                         grid_projection = "+proj=longlat +datum=WGS84",
+                         resol = 0.05,
+                         create_mesh = "from_shapefile",
+                         Alpha = 2,
                          seed = 29510
 ) {
   ## Load data
@@ -735,8 +750,6 @@ fm_load_data <- function(species,
   time_step <- match.arg(time_step)
   
   # Scientific data
-  n_survey <- 1 # number of surveys
-  scientific_observation <- "CPUE" # 'CPUE' or 'Density'
   survey_data_0 <- survey_data %>% ungroup %>% dplyr::select(-layer)
   
   # 'VMS x logbook' data
@@ -781,7 +794,6 @@ fm_load_data <- function(species,
     
   }
   
-  
   ## Configure spatial domain
   #--------------------------
   grid_xmin <- grid_xmin
@@ -795,19 +807,7 @@ fm_load_data <- function(species,
       grid_ymin,
       grid_ymax)
   )
-  
-  grid_projection <- "+proj=longlat +datum=WGS84"
-  
-  resol <- 0.05 # resolution of the discretization grid
-  create_mesh <- "from_shapefile"
-  # from_shapefile: the mesh will be more regular on the grid
-  # from_data: the mesh will be denser in the areas where there are data
-  
-  # Mesh parameterization
-  # reduce the mesh size (k = 0.25 now) reduces the number of knots at which the spatial random effect is computed.
-  k <- k
-  Alpha <- 2
-  
+
   ## Load domain / mesh / spde object
   domain_mesh_spde_outputs <- fm_build_domain_mesh_spde(
     grid_limit = grid_limit,

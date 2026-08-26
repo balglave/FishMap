@@ -21,6 +21,8 @@ fm_load_data(
   grid_xmax,
   grid_ymin,
   grid_ymax,
+  n_survey = 1,
+  scientific_observation = "CPUE",
   seed = 29510
 )
 }
@@ -50,6 +52,10 @@ fm_load_data(
 \item{k}{numeric Parameter controlling the number of knots of the mesh. The higher the denser.}
 
 \item{grid_xmin, grid_xmax, grid_ymin, grid_ymax}{numeric Limitation of the grid for the spatial domain}
+
+\item{n_survey}{number of reference data (e.g. surveys) included in the analysis}
+
+\item{scientific_observation}{either "CPUE" or "Density". If "CPUE", then the scientific observations are expressed as catch per unit of effort (typically in kg / hour). This allows to be homogeneous with commercial observations that are CPUE. If "density", the scientific observations are expressed as catch divided by the area swept (as is classicaly done in fisheries science for scientific data), but units might not be homogeneous with the commercial data.}
 
 \item{seed}{integer The seed controlling for random effect. Default is 29510.}
 }
